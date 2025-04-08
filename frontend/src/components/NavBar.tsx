@@ -7,14 +7,9 @@ const Navbar = () => {
       <Link className="navbar-brand" to="/movies">
         CineNiche
       </Link>
-      <button
-        className="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarNav"
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
+      <Link to="/genres" className="plain-link">
+        Browse by Genres
+      </Link>
     </nav>
   );
 };

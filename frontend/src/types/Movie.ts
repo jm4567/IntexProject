@@ -1,13 +1,13 @@
 export interface Movie {
-  show_id: string;
-  type: string;
+  showId: string;
   title: string;
+  type: string;
   director: string;
-  cast_list: string;
+  castList: string;
   country: string;
-  release_year: number;
+  releaseYear: number;
   rating: string;
   duration: string;
   description: string;
-  genre: string;
+  genres: string[];
 }

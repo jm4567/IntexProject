@@ -33,3 +33,16 @@
   margin-top: 0.5rem;
   font-size: 0.9rem;
 }
+
+.movie-row-scroll {
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scrollbar-width: thin;
+  scroll-snap-type: x mandatory;
+}
+
+.movie-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}

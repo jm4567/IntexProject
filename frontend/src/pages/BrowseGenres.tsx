@@ -2,7 +2,7 @@ import { useState } from 'react';
 import MovieCard from '../components/MovieCard';
 import GenreFilter from '../components/GenreFilter';
 
-function MoviesPage() {
+function BrowseGenres() {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   {
@@ -11,6 +11,12 @@ function MoviesPage() {
   return (
     <div className="container mt-4">
       <div className="row">
+        <div className="col-md-3">
+          <GenreFilter
+            selectedGenres={selectedGenres}
+            setSelectedGenres={setSelectedGenres}
+          />
+        </div>
         <div className="col-md-9">
           <MovieCard selectedGenres={selectedGenres} />
         </div>
@@ -19,4 +25,4 @@ function MoviesPage() {
   );
 }
 
-export default MoviesPage;
+export default BrowseGenres;
