@@ -45,5 +45,8 @@ public partial class MoviesTitle
     
     [Column("genre")]
     public required string Genre { get; set; }
+    
+    [Column("poster_url")]
+    public string? PosterUrl { get; set; }
 
 }

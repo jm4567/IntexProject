@@ -1,51 +1,40 @@
-import { useEffect, useState } from 'react';
 import { Movie } from '../types/Movie';
 import { useNavigate } from 'react-router-dom';
-import { fetchMovies } from '../api/MoviesAPI';
+import '../css/MovieRow.css';
 
-function MovieCard({ selectedGenres }: { selectedGenres: string[] }) {
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+interface MovieCardProps {
+  movie: Movie;
+}
+
+const MovieCard = ({ movie }: MovieCardProps) => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const loadMovies = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchMovies(selectedGenres);
-        setMovies(data.movies);
-      } catch (error) {
-        setError((error as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const handleClick = () => {
+    navigate(`/movie/${movie.title}/${movie.showId}`, {
+      state: {
+        id: movie.showId,
+        title: movie.title,
+        posterUrl: movie.posterUrl,
+        director: movie.director,
+        genres: movie.genres,
+      },
+    });
+  };
 
-    loadMovies();
-  }, [selectedGenres]);
-
-  if (loading) return <p>Loading Movies...</p>;
-  if (error) return <p className="text-red-500">Error: {error}</p>;
   return (
-    <>
-      {movies.map((m) => (
-        <div id="movieCard" className="card p-3 shadow-sm">
-          <h3 className="card-title">{m.title}</h3>
-          <div className="card-body">
-            <ul className="list-unstyled">
-              <li>
-                <strong>Director:</strong> {m.director}
-                <br />
-                <strong>Genre:</strong>{' '}
-                {m.genres && m.genres.length > 0 ? m.genres.join(', ') : 'None'}
-              </li>
-            </ul>
-          </div>
-        </div>
-      ))}
-    </>
+    <div
+      className="movie-card"
+      onClick={handleClick}
+      style={{ cursor: 'pointer' }}
+    >
+      <img
+        src={movie.posterUrl || 'https://via.placeholder.com/150x220'}
+        alt={movie.title}
+        className="movie-poster"
+      />
+      <p className="movie-title">{movie.title}</p>
+    </div>
   );
-}
+};
 
 export default MovieCard;

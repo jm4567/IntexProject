@@ -1,13 +1,27 @@
-import { useState } from 'react';
-import MovieCard from '../components/MovieCard';
+import { useEffect, useState } from 'react';
+import { Movie } from '../types/Movie';
+import { fetchMovies } from '../api/MoviesAPI';
 import GenreFilter from '../components/GenreFilter';
+import MovieCard from '../components/MovieCard';
 
 function BrowseGenres() {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  {
-    /*changed fontsize */
-  }
+  useEffect(() => {
+    const loadMovies = async () => {
+      try {
+        const data = await fetchMovies(selectedGenres);
+        setMovies(data.movies);
+      } catch (err) {
+        setError((err as Error).message);
+      }
+    };
+
+    loadMovies();
+  }, [selectedGenres]);
+
   return (
     <div className="container mt-4">
       <div className="row">
@@ -17,8 +31,16 @@ function BrowseGenres() {
             setSelectedGenres={setSelectedGenres}
           />
         </div>
+
         <div className="col-md-9">
-          <MovieCard selectedGenres={selectedGenres} />
+          {error && <p className="text-danger">{error}</p>}
+          <div className="row">
+            {movies.map((movie) => (
+              <div className="col-md-4 mb-4" key={movie.showId}>
+                <MovieCard movie={movie} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

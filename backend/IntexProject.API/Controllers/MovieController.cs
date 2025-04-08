@@ -45,7 +45,8 @@ namespace IntexProject.API.Controllers
                     m.ReleaseYear,
                     m.Rating,
                     m.Duration,
-                    m.Description
+                    m.Description, 
+                    m.PosterUrl
                 });
 
             var totalNumMovies = groupedQuery.Count();
@@ -76,6 +77,7 @@ namespace IntexProject.API.Controllers
                     g.Key.Rating,
                     g.Key.Duration,
                     g.Key.Description,
+                    PosterUrl = g.FirstOrDefault()?.PosterUrl,  // 👈 Add this
                     Genres = g.Select(x => x.Genre).Distinct().ToList()
                 })
                 .ToList();
@@ -86,7 +88,56 @@ namespace IntexProject.API.Controllers
                 TotalNumMovies = totalNumMovies
             });
         }
+        
+        [HttpGet("ShowMovies")]
+        public IActionResult ShowMovies(
+            int? pageSize = null,
+            int pageNum = 1,
+            [FromQuery] List<string>? movieCat = null,
+            bool ascending = true)
+        {
+            var baseQuery = _context.Titles.AsQueryable();
 
+            // Filter by genre (optional)
+            if (movieCat != null && movieCat.Any())
+            {
+                baseQuery = baseQuery.Where(m => movieCat.Contains(m.Genre));
+            }
+
+            // Bring into memory to flatten genres per movie
+            var grouped = baseQuery
+                .AsEnumerable()
+                .GroupBy(m => new
+                {
+                    m.ShowId,
+                    m.Title,
+                    m.PosterUrl
+                });
+
+            int total = grouped.Count();
+            int size = pageSize ?? total;
+
+            var movies = grouped
+                .OrderBy(g => ascending ? g.Key.Title : "") // crude order
+                .ThenByDescending(g => ascending ? "" : g.Key.Title)
+                .Skip((pageNum - 1) * size)
+                .Take(size)
+                .Select(g => new
+                {
+                    g.Key.ShowId,
+                    g.Key.Title,
+                    g.Key.PosterUrl,
+                    Genres = g.Select(x => x.Genre).Distinct().ToList()
+                })
+                .ToList();
+
+            return Ok(new
+            {
+                Movies = movies,
+                TotalNumMovies = total
+            });
+        }
+        
         [HttpGet("GetMovieGenres")]
         public IActionResult GetMovieGenres()
         {
@@ -95,7 +146,6 @@ namespace IntexProject.API.Controllers
                 .Distinct()
                 .OrderBy(g => g)
                 .ToList();
-
             return Ok(genres);
         }
 
