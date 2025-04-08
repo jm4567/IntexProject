@@ -1,0 +1,35 @@
+.movie-row {
+  margin: 2rem 1rem;
+}
+
+.row-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.movie-row-scroll {
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  gap: 1rem;
+  scroll-behavior: smooth;
+}
+
+.movie-card {
+  flex: 0 0 auto;
+  width: 150px;
+  text-align: center;
+}
+
+.movie-poster {
+  width: 100%;
+  height: 225px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.movie-title {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
