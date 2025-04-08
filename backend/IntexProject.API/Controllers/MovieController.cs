@@ -88,17 +88,54 @@ namespace IntexProject.API.Controllers
                 TotalNumMovies = totalNumMovies
             });
         }
-
-        [HttpGet("GetMovieGenres")]
-        public IActionResult GetMovieGenres()
+        
+        [HttpGet("ShowMovies")]
+        public IActionResult ShowMovies(
+            int? pageSize = null,
+            int pageNum = 1,
+            [FromQuery] List<string>? movieCat = null,
+            bool ascending = true)
         {
-            var genres = _context.Titles
-                .Select(m => m.Genre)
-                .Distinct()
-                .OrderBy(g => g)
+            var baseQuery = _context.Titles.AsQueryable();
+
+            // Filter by genre (optional)
+            if (movieCat != null && movieCat.Any())
+            {
+                baseQuery = baseQuery.Where(m => movieCat.Contains(m.Genre));
+            }
+
+            // Bring into memory to flatten genres per movie
+            var grouped = baseQuery
+                .AsEnumerable()
+                .GroupBy(m => new
+                {
+                    m.ShowId,
+                    m.Title,
+                    m.PosterUrl
+                });
+
+            int total = grouped.Count();
+            int size = pageSize ?? total;
+
+            var movies = grouped
+                .OrderBy(g => ascending ? g.Key.Title : "") // crude order
+                .ThenByDescending(g => ascending ? "" : g.Key.Title)
+                .Skip((pageNum - 1) * size)
+                .Take(size)
+                .Select(g => new
+                {
+                    g.Key.ShowId,
+                    g.Key.Title,
+                    g.Key.PosterUrl,
+                    Genres = g.Select(x => x.Genre).Distinct().ToList()
+                })
                 .ToList();
 
-            return Ok(genres);
+            return Ok(new
+            {
+                Movies = movies,
+                TotalNumMovies = total
+            });
         }
 
         [HttpGet("AllUsers")]
