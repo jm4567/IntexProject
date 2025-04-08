@@ -1,18 +1,28 @@
 .movie-card {
+  width: 250px;
+  height: 350px;
   flex: 0 0 auto;
-  width: 150px;
   text-align: center;
+  border: 1px solid black;
+  margin-right: 6rem;
+  margin-bottom: 100px;
 }
 
 .movie-poster {
-  width: 100%;
-  height: 225px;
-  object-fit: cover;
-  border-radius: 8px;
+  flex: 0 0 auto;
+  width: 150px;
+  text-align: center;
+  padding: 10px;
+  background-color: #fff; /* optional: white background */
 }
 
 .movie-title {
-  margin-top: 0.5rem;
+  margin-top: 330px;
   font-size: 0.9rem;
-  color: #333;
+  color: 333;
+}
+.movie-card:hover {
+  border-color: #999;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
