@@ -45,7 +45,8 @@ namespace IntexProject.API.Controllers
                     m.ReleaseYear,
                     m.Rating,
                     m.Duration,
-                    m.Description
+                    m.Description, 
+                    m.PosterUrl
                 });
 
             var totalNumMovies = groupedQuery.Count();
@@ -76,6 +77,7 @@ namespace IntexProject.API.Controllers
                     g.Key.Rating,
                     g.Key.Duration,
                     g.Key.Description,
+                    PosterUrl = g.FirstOrDefault()?.PosterUrl,  // 👈 Add this
                     Genres = g.Select(x => x.Genre).Distinct().ToList()
                 })
                 .ToList();
