@@ -137,6 +137,17 @@ namespace IntexProject.API.Controllers
                 TotalNumMovies = total
             });
         }
+        
+        [HttpGet("GetMovieGenres")]
+        public IActionResult GetMovieGenres()
+        {
+            var genres = _context.Titles
+                .Select(m => m.Genre)
+                .Distinct()
+                .OrderBy(g => g)
+                .ToList();
+            return Ok(genres);
+        }
 
         [HttpGet("AllUsers")]
         public IActionResult GetUsers()
