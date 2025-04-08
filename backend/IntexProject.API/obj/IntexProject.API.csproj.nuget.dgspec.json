@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/jennamagleby/Desktop/IntexProject/backend/IntexProject.API/IntexProject.API.csproj": {}
+    "/Users/karensakuma/RiderProjects/IntexProject/backend/IntexProject.API/IntexProject.API.csproj": {}
   },
   "projects": {
-    "/Users/jennamagleby/Desktop/IntexProject/backend/IntexProject.API/IntexProject.API.csproj": {
+    "/Users/karensakuma/RiderProjects/IntexProject/backend/IntexProject.API/IntexProject.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/jennamagleby/Desktop/IntexProject/backend/IntexProject.API/IntexProject.API.csproj",
+        "projectUniqueName": "/Users/karensakuma/RiderProjects/IntexProject/backend/IntexProject.API/IntexProject.API.csproj",
         "projectName": "IntexProject.API",
-        "projectPath": "/Users/jennamagleby/Desktop/IntexProject/backend/IntexProject.API/IntexProject.API.csproj",
-        "packagesPath": "/Users/jennamagleby/.nuget/packages/",
-        "outputPath": "/Users/jennamagleby/Desktop/IntexProject/backend/IntexProject.API/obj/",
+        "projectPath": "/Users/karensakuma/RiderProjects/IntexProject/backend/IntexProject.API/IntexProject.API.csproj",
+        "packagesPath": "/Users/karensakuma/.nuget/packages/",
+        "outputPath": "/Users/karensakuma/RiderProjects/IntexProject/backend/IntexProject.API/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/jennamagleby/.nuget/NuGet/NuGet.Config"
+          "/Users/karensakuma/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -95,7 +95,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.404/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.406/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

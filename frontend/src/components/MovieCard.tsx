@@ -9,7 +9,7 @@ const MovieCard = ({ movie }: MovieCardProps) => {
   return (
     <div className="movie-card">
       <img
-        src={'https://via.placeholder.com/150x220'} // Replace with movie.poster if available
+        src={movie.posterUrl || 'https://via.placeholder.com/150x220'} // Replace with movie.poster if available
         alt={movie.title}
         className="movie-poster"
       />

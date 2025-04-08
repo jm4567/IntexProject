@@ -3,21 +3,20 @@
   height: 350px;
   flex: 0 0 auto;
   text-align: center;
-  border: 1px solid black;
   margin-right: 6rem;
   margin-bottom: 100px;
 }
 
 .movie-poster {
   flex: 0 0 auto;
-  width: 150px;
+  width: 250px;
+  height: 350px;
   text-align: center;
-  padding: 10px;
   background-color: #fff; /* optional: white background */
 }
 
 .movie-title {
-  margin-top: 330px;
+  margin-top: 30px;
   font-size: 0.9rem;
   color: 333;
 }
