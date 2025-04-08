@@ -11,24 +11,48 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import MoviesPage from './pages/MoviesPage';
 import BrowseGenres from './pages/BrowseGenres';
 import ManageMovies from './pages/ManageMovies';
+import DefaultLayout from './components/DefaultLayout';
 
 function App() {
   return (
-    <main className="container-fluid px-0">
-      <NavBar />
-      <Header />
-      <Routes>
-        <Route path="/" element={<Homepage />} />
-        <Route path="/movies" element={<MoviesPage />} />
-        <Route path="/createaccount" element={<CreateAccount />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/movie/:title/:show_id" element={<MovieDetailsPages />} />
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/genres" element={<BrowseGenres />} />
-        <Route path="/managemovies" element={<ManageMovies />} />
-      </Routes>
-      <Footer />
-    </main>
+    <Routes>
+      <Route path="/" element={<Homepage />} />
+      <Route
+        path="/movies"
+        element={
+          <DefaultLayout>
+            <MoviesPage />
+          </DefaultLayout>
+        }
+      />
+      <Route
+        path="/createaccount"
+        element={
+          <DefaultLayout>
+            <CreateAccount />
+          </DefaultLayout>
+        }
+      />
+      <Route path="/login" element={<Login />} />
+      <Route
+        path="/movie/:title/:show_id"
+        element={
+          <DefaultLayout>
+            <MovieDetailsPages />
+          </DefaultLayout>
+        }
+      />
+      <Route path="/privacy" element={<PrivacyPolicy />} />
+      <Route path="/genres" element={<BrowseGenres />} />
+      <Route
+        path="/managemovies"
+        element={
+          <DefaultLayout>
+            <ManageMovies />
+          </DefaultLayout>
+        }
+      />
+    </Routes>
   );
 }
 
