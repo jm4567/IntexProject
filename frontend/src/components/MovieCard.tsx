@@ -1,15 +1,34 @@
 import { Movie } from '../types/Movie';
-import '../css/MovieRow.css'; // Make sure this is imported here
+import { useNavigate } from 'react-router-dom';
+import '../css/MovieRow.css';
 
 interface MovieCardProps {
   movie: Movie;
 }
 
 const MovieCard = ({ movie }: MovieCardProps) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/movie/${movie.title}/${movie.showId}`, {
+      state: {
+        id: movie.showId,
+        title: movie.title,
+        posterUrl: movie.posterUrl,
+        director: movie.director,
+        genres: movie.genres,
+      },
+    });
+  };
+
   return (
-    <div className="movie-card">
+    <div
+      className="movie-card"
+      onClick={handleClick}
+      style={{ cursor: 'pointer' }}
+    >
       <img
-        src={movie.posterUrl || 'https://via.placeholder.com/150x220'} // Replace with movie.poster if available
+        src={movie.posterUrl || 'https://via.placeholder.com/150x220'}
         alt={movie.title}
         className="movie-poster"
       />

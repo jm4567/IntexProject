@@ -1,5 +1,6 @@
 .movie-row {
   margin: 2rem 1rem;
+  padding-top: 1rem;
 }
 
 .row-title {
@@ -14,4 +15,5 @@
   padding-bottom: 50px;
   scrollbar-width: thin;
   scroll-snap-type: x mandatory;
+  gap: 1rem;
 }

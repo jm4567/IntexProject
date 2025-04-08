@@ -4,7 +4,11 @@
   flex: 0 0 auto;
   text-align: center;
   margin-right: 6rem;
+  margin-top: 10px;
   margin-bottom: 100px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease; /* smooth animation */
 }
 
 .movie-poster {
@@ -22,6 +26,7 @@
 }
 .movie-card:hover {
   border-color: #999;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   cursor: pointer;
+  transform: scale(1.05); /* makes it pop out */
 }
