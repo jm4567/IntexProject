@@ -1,4 +1,5 @@
 using IntexProject.API.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +16,27 @@ builder.Services.AddDbContext<MovieDbContext>(options =>
     options.UseSqlite(builder.Configuration["ConnectionStrings:MoviesConnection"]);
 });
 
-builder.Services.AddCors();
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseSqlite(builder.Configuration["ConnectionStrings:IdentityConnection"]);
+});
+
+
+//build cors policy to allow react app 
+builder.Services.AddCors(options => options.AddPolicy("AllowReactApp", 
+    policy => {
+
+        policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader(); 
+    })
+    
+);
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 var app = builder.Build();
 
@@ -26,12 +47,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(x => x.WithOrigins("http://localhost:3000"));
+app.UseCors("AllowReactApp");
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapIdentityApi<IdentityUser>();
 
 app.Run();

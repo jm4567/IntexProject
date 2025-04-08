@@ -156,6 +156,59 @@ namespace IntexProject.API.Controllers
 
             return Ok(ratings);
         }
+        
+        //action related to adding data
+        [HttpPost("AddMovie")]
+        public IActionResult AddMovies([FromBody] MoviesTitle newMovie)
+        {
+            _context.Titles.Add(newMovie);
+            _context.SaveChanges();
+            return Ok(newMovie);
+        }
+        
+        //action to update book
+
+        [HttpPut("UpdateMovie/{show_id}")]
+        public IActionResult UpdateBook(int show_id, [FromBody] MoviesTitle updatedMovie)
+        {
+            var existingMovie = _context.Titles.Find(show_id); //pull book into existing 
+
+            existingMovie.Type = updatedMovie.Type;
+            existingMovie.Title = updatedMovie.Title;
+            existingMovie.Director = updatedMovie.Director;
+            existingMovie.CastList = updatedMovie.CastList;
+            existingMovie.Country = updatedMovie.Country;
+            existingMovie.ReleaseYear = updatedMovie.ReleaseYear;
+            existingMovie.Rating = updatedMovie.Rating;
+            existingMovie.Duration = updatedMovie.Duration;
+            existingMovie.Description = updatedMovie.Description;
+            existingMovie.Genre = updatedMovie.Genre;
+    
+
+            _context.Titles.Update(existingMovie);
+            _context.SaveChanges();
+
+            return Ok(existingMovie);
+        }
+        //action to delete book
+
+        [HttpDelete("DeleteMovie/{show_id}")]
+
+        public IActionResult DeleteBook(int show_id)
+        {
+            var movie =  _context.Titles.Find(show_id);
+
+            if (movie == null)
+            {
+                return NotFound(new {message="Movie not found"});
+            }
+
+            _context.Titles.Remove(movie);
+            _context.SaveChanges();
+
+            return NoContent(); //successfully deleted the book
+        }
+
 
     }
 }
