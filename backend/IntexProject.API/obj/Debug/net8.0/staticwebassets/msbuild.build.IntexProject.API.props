@@ -1,11 +1,4 @@
 ﻿<Project>
-<<<<<<< HEAD
   <Import Project="Microsoft.AspNetCore.StaticWebAssetEndpoints.props" />
-=======
-<<<<<<< HEAD
-  <Import Project="Microsoft.AspNetCore.StaticWebAssetEndpoints.props" />
-=======
->>>>>>> origin
->>>>>>> kate
   <Import Project="Microsoft.AspNetCore.StaticWebAssets.props" />
 </Project>

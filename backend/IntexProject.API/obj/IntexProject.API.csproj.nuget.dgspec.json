@@ -1,21 +1,17 @@
 {
   "format": 1,
   "restore": {
-<<<<<<< HEAD
-    "C:\\Users\\rache\\OneDrive\\Documents\\GitHub\\IntexProject\\backend\\IntexProject.API\\IntexProject.API.csproj": {}
-=======
-<<<<<<< HEAD
-    "C:\\Users\\kfair\\Documents\\IntexProject\\backend\\IntexProject.API\\IntexProject.API.csproj": {}
+    "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\IntexProject.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kfair\\Documents\\IntexProject\\backend\\IntexProject.API\\IntexProject.API.csproj": {
+    "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\IntexProject.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kfair\\Documents\\IntexProject\\backend\\IntexProject.API\\IntexProject.API.csproj",
+        "projectUniqueName": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\IntexProject.API.csproj",
         "projectName": "IntexProject.API",
-        "projectPath": "C:\\Users\\kfair\\Documents\\IntexProject\\backend\\IntexProject.API\\IntexProject.API.csproj",
+        "projectPath": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\IntexProject.API.csproj",
         "packagesPath": "C:\\Users\\kfair\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kfair\\Documents\\IntexProject\\backend\\IntexProject.API\\obj\\",
+        "outputPath": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -24,45 +20,12 @@
           "C:\\Users\\kfair\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
-=======
-    "/Users/jennamagleby/Desktop/IntexProject/backend/IntexProject.API/IntexProject.API.csproj": {}
->>>>>>> kate
-  },
-  "projects": {
-    "C:\\Users\\rache\\OneDrive\\Documents\\GitHub\\IntexProject\\backend\\IntexProject.API\\IntexProject.API.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "C:\\Users\\rache\\OneDrive\\Documents\\GitHub\\IntexProject\\backend\\IntexProject.API\\IntexProject.API.csproj",
-        "projectName": "IntexProject.API",
-        "projectPath": "C:\\Users\\rache\\OneDrive\\Documents\\GitHub\\IntexProject\\backend\\IntexProject.API\\IntexProject.API.csproj",
-        "packagesPath": "C:\\Users\\rache\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\rache\\OneDrive\\Documents\\GitHub\\IntexProject\\backend\\IntexProject.API\\obj\\",
-        "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
-        "configFilePaths": [
-<<<<<<< HEAD
-          "C:\\Users\\rache\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
-=======
-          "/Users/jennamagleby/.nuget/NuGet/NuGet.Config"
->>>>>>> origin
->>>>>>> kate
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-<<<<<<< HEAD
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-=======
-<<<<<<< HEAD
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-=======
->>>>>>> origin
->>>>>>> kate
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -80,17 +43,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-<<<<<<< HEAD
-        },
-        "SdkAnalysisLevel": "9.0.200"
-=======
-<<<<<<< HEAD
         },
         "SdkAnalysisLevel": "9.0.100"
-=======
-        }
->>>>>>> origin
->>>>>>> kate
       },
       "frameworks": {
         "net8.0": {
@@ -148,15 +102,7 @@
               "privateAssets": "all"
             }
           },
-<<<<<<< HEAD
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
-=======
-<<<<<<< HEAD
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
-=======
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.404/PortableRuntimeIdentifierGraph.json"
->>>>>>> origin
->>>>>>> kate
         }
       }
     }
