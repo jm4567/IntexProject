@@ -12,7 +12,7 @@ function BrowseGenres() {
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await fetchMovies(selectedGenres);
+        const data = await fetchMovies(100, 100, selectedGenres);
         setMovies(data.movies);
       } catch (err) {
         setError((err as Error).message);

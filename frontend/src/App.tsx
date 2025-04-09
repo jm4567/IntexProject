@@ -25,8 +25,8 @@ function App() {
 
   return (
     <main className="container-fluid px-0">
-      {shouldShowFooter && <Footer />}
-      {shouldShowHeader && <NavBar />}
+      {/* {shouldShowFooter && <Footer />}
+      {shouldShowHeader && <NavBar />} */}
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/movies" element={<MoviesPage />} />
@@ -59,7 +59,7 @@ function App() {
         />
         <Route path="/register" element={<Register />} />
       </Routes>
-      {shouldShowHeader && <Header />}
+      {/* {shouldShowHeader && <Header />} */}
     </main>
   );
 }

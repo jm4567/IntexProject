@@ -37,7 +37,7 @@ const MoviesPage = () => {
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await fetchMovies([]); // get all movies
+        const data = await fetchMovies(100, 100, []); // get all movies
         setAllMovies(data.movies);
       } catch (err) {
         setError((err as Error).message);
