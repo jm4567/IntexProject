@@ -46,6 +46,13 @@ const MoviesPage = () => {
     loadMovies();
   }, []);
 
+  //for header
+  const topBannerMovies = allMovies.filter((movie) =>
+    ['s42', 's7073', 's603', 's6065', 's6891', 's6063', 's6152'].includes(
+      movie.showId
+    )
+  );
+
   return (
     <div className="full-screen-wrapper">
       <div className="movie-container">
@@ -56,7 +63,7 @@ const MoviesPage = () => {
         {/* Movie content over the background */}
         <div className="movie-content foreground-content">
           <NavBar />
-          <Header />
+          <Header movies={topBannerMovies} />
           <div className="container-fluid mt-4 foreground-content">
             <div className="row">
               <div>
