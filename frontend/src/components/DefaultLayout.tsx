@@ -11,7 +11,7 @@ function DefaultLayout({ children }: DefaultLayoutProps) {
   return (
     <main className="container-fluid px-0">
       <NavBar />
-      <Header />
+      <Header movies={[]} />
       {children}
       <Footer />
     </main>
