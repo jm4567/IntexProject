@@ -1,73 +1,35 @@
-import React, { useState, useEffect, createContext } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-const UserContext = createContext<User | null>(null);
+function Logout(props: { children: React.ReactNode }) {
+  const navigate = useNavigate();
 
-interface User {
-  email: string;
-}
+  const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
 
-function AuthorizeView(props: { children: React.ReactNode }) {
-  const [authorized, setAuthorized] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true); // add a loading state
-  //const navigate = useNavigate();
-  let emptyuser: User = { email: '' };
+    try {
+      const response = await fetch('https://localhost:5000/logout', {
+        method: 'POST',
+        credentials: 'include', // Ensure cookies are sent
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-  const [user, setUser] = useState(emptyuser);
-
-  useEffect(() => {
-    async function fetchWithRetry(url: string, options: any) {
-      try {
-        const response = await fetch(url, options);
-        //console.log('AuthorizeView: Raw Response:', response);
-
-        const contentType = response.headers.get('content-type');
-
-        // Ensure response is JSON before parsing
-        if (!contentType || !contentType.includes('application/json')) {
-          throw new Error('Invalid response format from server');
-        }
-
-        const data = await response.json();
-
-        if (data.email) {
-          setUser({ email: data.email });
-          setAuthorized(true);
-        } else {
-          throw new Error('Invalid user session');
-        }
-      } catch (error) {
-        setAuthorized(false);
-      } finally {
-        setLoading(false);
+      if (response.ok) {
+        navigate('/login');
+      } else {
+        console.error('Logout failed:', response.status);
       }
+    } catch (error) {
+      console.error('Logout error:', error);
     }
+  };
 
-    fetchWithRetry('https://localhost:5000/pingauth', {
-      method: 'GET',
-      credentials: 'include',
-    });
-  }, []);
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (authorized) {
-    return (
-      <UserContext.Provider value={user}>{props.children}</UserContext.Provider>
-    );
-  }
-
-  return <Navigate to="/login" />;
+  return (
+    <a className="logout" href="#" onClick={handleLogout}>
+      {props.children}
+    </a>
+  );
 }
 
-export function AuthorizedUser(props: { value: string }) {
-  const user = React.useContext(UserContext);
-
-  if (!user) return null; // Prevents errors if context is null
-
-  return props.value === 'email' ? <>{user.email}</> : null;
-}
-
-export default AuthorizeView;
+export default Logout;
