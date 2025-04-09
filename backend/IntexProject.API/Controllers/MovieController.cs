@@ -90,7 +90,56 @@ namespace IntexProject.API.Controllers
                 TotalNumMovies = totalNumMovies
             });
         }
+        
+        [HttpGet("ShowMovies")]
+        public IActionResult ShowMovies(
+            int? pageSize = null,
+            int pageNum = 1,
+            [FromQuery] List<string>? movieCat = null,
+            bool ascending = true)
+        {
+            var baseQuery = _context.Titles.AsQueryable();
 
+            // Filter by genre (optional)
+            if (movieCat != null && movieCat.Any())
+            {
+                baseQuery = baseQuery.Where(m => movieCat.Contains(m.Genre));
+            }
+
+            // Bring into memory to flatten genres per movie
+            var grouped = baseQuery
+                .AsEnumerable()
+                .GroupBy(m => new
+                {
+                    m.ShowId,
+                    m.Title,
+                    m.PosterUrl
+                });
+
+            int total = grouped.Count();
+            int size = pageSize ?? total;
+
+            var movies = grouped
+                .OrderBy(g => ascending ? g.Key.Title : "") // crude order
+                .ThenByDescending(g => ascending ? "" : g.Key.Title)
+                .Skip((pageNum - 1) * size)
+                .Take(size)
+                .Select(g => new
+                {
+                    g.Key.ShowId,
+                    g.Key.Title,
+                    g.Key.PosterUrl,
+                    Genres = g.Select(x => x.Genre).Distinct().ToList()
+                })
+                .ToList();
+
+            return Ok(new
+            {
+                Movies = movies,
+                TotalNumMovies = total
+            });
+        }
+        
         [HttpGet("GetMovieGenres")]
         public IActionResult GetMovieGenres()
         {
@@ -99,7 +148,6 @@ namespace IntexProject.API.Controllers
                 .Distinct()
                 .OrderBy(g => g)
                 .ToList();
-
             return Ok(genres);
         }
 
@@ -160,58 +208,143 @@ namespace IntexProject.API.Controllers
 
             return Ok(ratings);
         }
-        
+
         //action related to adding data
         [HttpPost("AddMovie")]
-        public IActionResult AddMovies([FromBody] MoviesTitle newMovie)
+        public IActionResult AddMovies([FromBody] MovieDto newMovie)
         {
-            _context.Titles.Add(newMovie);
-            _context.SaveChanges();
-            return Ok(newMovie);
-        }
-        
-        //action to update book
-
-        [HttpPut("UpdateMovie/{show_id}")]
-        public IActionResult UpdateBook(int show_id, [FromBody] MoviesTitle updatedMovie)
-        {
-            var existingMovie = _context.Titles.Find(show_id); //pull book into existing 
-
-            existingMovie.Type = updatedMovie.Type;
-            existingMovie.Title = updatedMovie.Title;
-            existingMovie.Director = updatedMovie.Director;
-            existingMovie.CastList = updatedMovie.CastList;
-            existingMovie.Country = updatedMovie.Country;
-            existingMovie.ReleaseYear = updatedMovie.ReleaseYear;
-            existingMovie.Rating = updatedMovie.Rating;
-            existingMovie.Duration = updatedMovie.Duration;
-            existingMovie.Description = updatedMovie.Description;
-            existingMovie.Genre = updatedMovie.Genre;
-    
-
-            _context.Titles.Update(existingMovie);
-            _context.SaveChanges();
-
-            return Ok(existingMovie);
-        }
-        //action to delete book
-
-        [HttpDelete("DeleteMovie/{show_id}")]
-
-        public IActionResult DeleteBook(int show_id)
-        {
-            var movie =  _context.Titles.Find(show_id);
-
-            if (movie == null)
+            if (newMovie.Genres == null || !newMovie.Genres.Any())
             {
-                return NotFound(new {message="Movie not found"});
+                return BadRequest("At least one genre is required.");
             }
 
-            _context.Titles.Remove(movie);
+            // ✅ Auto-generate ShowId: "s" + next available number
+            if (string.IsNullOrWhiteSpace(newMovie.ShowId))
+            {
+                // Pull only the showIds we care about into memory
+                var maxId = _context.Titles
+                    .Where(m => m.ShowId.StartsWith("s") && m.ShowId.Length > 1)
+                    .AsEnumerable() // Switch to LINQ-to-Objects
+                    .Select(m =>
+                    {
+                        var numPart = m.ShowId.Substring(1);
+                        return int.TryParse(numPart, out var idNum) ? idNum : 0;
+                    })
+                    .DefaultIfEmpty(0)
+                    .Max();
+
+                var nextId = maxId + 1;
+                newMovie.ShowId = $"s{nextId}";
+            }
+
+
+            var createdMovies = new List<MoviesTitle>();
+
+            foreach (var genre in newMovie.Genres.Distinct())
+            {
+                var alreadyExists = _context.Titles.Any(m =>
+                    m.ShowId.ToLower() == newMovie.ShowId.ToLower() &&
+                    m.Genre.ToLower() == genre.ToLower());
+
+                if (alreadyExists)
+                {
+                    continue;
+                }
+
+                var newRow = new MoviesTitle
+                {
+                    ShowId = newMovie.ShowId,
+                    Title = newMovie.Title,
+                    Type = newMovie.Type,
+                    Director = newMovie.Director,
+                    CastList = newMovie.CastList,
+                    Country = newMovie.Country,
+                    ReleaseYear = newMovie.ReleaseYear,
+                    Rating = newMovie.Rating,
+                    Duration = newMovie.Duration,
+                    Description = newMovie.Description,
+                    Genre = genre
+                };
+
+                _context.Titles.Add(newRow);
+                createdMovies.Add(newRow);
+            }
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error during SaveChanges: " + ex.Message);
+                return StatusCode(500, "An error occurred while saving the movie.");
+            }
+
+            return Ok(createdMovies);
+        }
+
+
+
+        [HttpPut("UpdateMovie/{show_id}")]
+        public IActionResult UpdateMovie(string show_id, [FromBody] MovieDto updatedMovie)
+        {
+            Console.WriteLine("Received PUT request");
+            Console.WriteLine($"Route ShowId: {show_id}");
+            Console.WriteLine($"Payload ShowId: {updatedMovie.ShowId}");
+
+            var existing = _context.Titles
+                .Where(m => m.ShowId.ToLower() == show_id.ToLower());
+
+            if (!existing.Any())
+            {
+                Console.WriteLine($"No match found in DB for: {show_id}");
+                return NotFound(new { message = $"No movie found with ShowId = {show_id}" });
+            }
+
+            _context.Titles.RemoveRange(existing);
+
+            foreach (var genre in updatedMovie.Genres)
+            {
+                var newRow = new MoviesTitle
+                {
+                    ShowId = updatedMovie.ShowId,
+                    Title = updatedMovie.Title,
+                    Type = updatedMovie.Type,
+                    Director = updatedMovie.Director,
+                    CastList = updatedMovie.CastList,
+                    Country = updatedMovie.Country,
+                    ReleaseYear = updatedMovie.ReleaseYear,
+                    Rating = updatedMovie.Rating,
+                    Duration = updatedMovie.Duration,
+                    Description = updatedMovie.Description,
+                    Genre = genre,
+                    // PosterUrl = updatedMovie.PosterUrl
+                };
+                _context.Titles.Add(newRow);
+            }
+
+            _context.SaveChanges();
+            return Ok();
+        }
+
+        //action to delete movie
+
+        [HttpDelete("DeleteMovie/{show_id}")]
+        public IActionResult DeleteMovie(string show_id)
+        {
+            var moviesToDelete = _context.Titles.Where(m => m.ShowId == show_id).ToList();
+
+            if (!moviesToDelete.Any())
+            {
+                return NotFound(new { message = "Movie not found" });
+            }
+
+            _context.Titles.RemoveRange(moviesToDelete);
             _context.SaveChanges();
 
-            return NoContent(); //successfully deleted the book
+            return NoContent(); // Success
         }
+
 
 
     }

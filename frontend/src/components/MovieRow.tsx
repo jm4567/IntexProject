@@ -1,5 +1,7 @@
-import { Movie } from '../types/Movie'; // adjust path if needed
-import '../css/MovieRow.css'; // be sure this file has the scroll styling
+import { Movie } from '../types/Movie';
+import MovieCard from './MovieCard';
+import '../css/MovieRow.css';
+import '../css/MovieCard.css';
 
 interface MovieRowProps {
   title: string;
@@ -12,19 +14,7 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       <h3 className="row-title mb-3">{title}</h3>
       <div className="movie-row-scroll d-flex overflow-auto gap-3 px-3">
         {movies.map((movie) => (
-          <div
-            className="movie-card text-center"
-            key={movie.showId}
-            style={{ width: '150px' }}
-          >
-            <img
-              src={'https://via.placeholder.com/150x220'}
-              alt={movie.title}
-              className="movie-poster img-fluid rounded"
-              style={{ height: '220px', objectFit: 'cover' }}
-            />
-            <p className="movie-title mt-2">{movie.title}</p>
-          </div>
+          <MovieCard key={movie.showId} movie={movie} />
         ))}
       </div>
     </div>

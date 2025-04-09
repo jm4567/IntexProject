@@ -9,5 +9,7 @@ export interface Movie {
   rating: string;
   duration: string;
   description: string;
-  genres: string[];
+  genre?: string; // for legacy/backend usage (ignored in form)
+  genres: string[]; // used in forms and sent to backend
+  posterUrl?: string; // optional if not used yet
 }

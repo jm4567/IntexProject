@@ -1,6 +1,7 @@
 {
   "format": 1,
   "restore": {
+<<<<<<< HEAD
     "C:\\Users\\kfair\\Documents\\IntexProject\\backend\\IntexProject.API\\IntexProject.API.csproj": {}
   },
   "projects": {
@@ -20,12 +21,31 @@
           "C:\\Users\\kfair\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+=======
+    "/Users/jennamagleby/Desktop/IntexProject/backend/IntexProject.API/IntexProject.API.csproj": {}
+  },
+  "projects": {
+    "/Users/jennamagleby/Desktop/IntexProject/backend/IntexProject.API/IntexProject.API.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/jennamagleby/Desktop/IntexProject/backend/IntexProject.API/IntexProject.API.csproj",
+        "projectName": "IntexProject.API",
+        "projectPath": "/Users/jennamagleby/Desktop/IntexProject/backend/IntexProject.API/IntexProject.API.csproj",
+        "packagesPath": "/Users/jennamagleby/.nuget/packages/",
+        "outputPath": "/Users/jennamagleby/Desktop/IntexProject/backend/IntexProject.API/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/jennamagleby/.nuget/NuGet/NuGet.Config"
+>>>>>>> origin
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+<<<<<<< HEAD
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+=======
+>>>>>>> origin
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -43,8 +63,12 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
+<<<<<<< HEAD
         },
         "SdkAnalysisLevel": "9.0.100"
+=======
+        }
+>>>>>>> origin
       },
       "frameworks": {
         "net8.0": {
@@ -102,7 +126,11 @@
               "privateAssets": "all"
             }
           },
+<<<<<<< HEAD
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+=======
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.404/PortableRuntimeIdentifierGraph.json"
+>>>>>>> origin
         }
       }
     }
