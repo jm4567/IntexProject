@@ -1,24 +1,122 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import Button from './Button';
+import '@fortawesome/fontawesome-free/css/all.css'; // Ensure Font Awesome is loaded
 import FormInput from './FormInput';
+import Button from './Button';
 
-
-export const LoginForm = () => {
-  const [username, setUsername] = useState('');
+const LoginForm = () => {
+  // State variables for email, password, remember me, and error messages
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberme, setRememberme] = useState<boolean>(false);
 
+  // state variable for error messages
+  const [error, setError] = useState<string>('');
+  const navigate = useNavigate();
+
+  const handleGoogleLogin = () => {
+    // Redirect to the backend endpoint that initiates the Google challenge.
+    window.location.href = 'https://localhost:5000/external-login/google';
+  };
+
+  // Dynamically load the retro Google Font (for the welcome text)
   useEffect(() => {
-    const link = document.createElement("link");
-    link.href = "https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap";
-    link.rel = "stylesheet";
+    const link = document.createElement('link');
+    link.href =
+      'https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap';
+    link.rel = 'stylesheet';
     document.head.appendChild(link);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+   // useEffect(() => {
+  //   const script = document.createElement('script');
+  //   script.src = 'https://accounts.google.com/gsi/client';
+  //   script.async = true;
+  //   script.defer = true;
+  //   script.onload = () => {
+  //     // Use a type assertion so TypeScript doesn't complain
+  //     const google = (window as any).google;
+  //     if (google && google.accounts) {
+  //       google.accounts.id.initialize({
+  //         client_id:
+  //           '502286415472-a6q0duatohbvu7mdf43jbuiulhg3p381.apps.googleusercontent.com',
+  //         callback: handleGoogleResponse,
+  //       });
+
+  //       google.accounts.id.renderButton(
+  //         document.getElementById('g_id_signin'),
+  //         { theme: 'outline', size: 'large' }
+  //       );
+  //     } else {
+  //       console.error('Google API failed to load.');
+  //     }
+  //   };
+
+  //   document.body.appendChild(script);
+
+  //   return () => {
+  //     document.body.removeChild(script);
+  //   };
+  // }, []);
+
+  // Generic change handler for inputs
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, type, checked, value } = e.target;
+    if (type === 'checkbox') {
+      setRememberme(checked);
+    } else if (name === 'email') {
+      setEmail(value);
+    } else if (name === 'password') {
+      setPassword(value);
+    }
+  };
+
+  // Navigate to registration page
+  const handleRegisterClick = () => {
+    navigate('/register');
+  };
+
+  // Form submit handler
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle login logic here
+    setError(''); // Clear previous errors
+
+    if (!email || !password) {
+      setError('Please fill in all fields.');
+      return;
+    }
+
+    // Choose correct URL based on the rememberme toggle
+    const loginUrl = rememberme
+      ? 'https://localhost:5000/login?useCookies=true&useSessionCookies=false'
+      : 'https://localhost:5000/login?useSessionCookies=true&useCookies=false';
+
+    try {
+      const response = await fetch(loginUrl, {
+        method: 'POST',
+        credentials: 'include', // ✅ Ensures cookies are sent & received
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      // Parse JSON only if content exists
+      let data = null;
+      const contentLength = response.headers.get('content-length');
+      if (contentLength && parseInt(contentLength, 10) > 0) {
+        data = await response.json();
+      }
+
+      if (!response.ok) {
+        throw new Error(data?.message || 'Invalid email or password.');
+      }
+
+      navigate('/');
+    } catch (error: any) {
+      setError(error.message || 'Error logging in.');
+      console.error('Fetch attempt failed:', error);
+    }
   };
 
   return (
@@ -29,30 +127,50 @@ export const LoginForm = () => {
         alt="Logo"
       />
 
-      <InputsContainer>
+      <InputWrapper>
         <FormInput
-          placeholder="Username"
-          id="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          type="email"
+          name="email" // Added name
+          id="email" // Changed id to email
+          placeholder="Email address"
+          value={email}
+          onChange={handleChange}
         />
+      </InputWrapper>
+
+      <InputWrapper>
         <FormInput
-          placeholder="Password"
-          id="password"
           type="password"
+          name="password" // Added name
+          id="password" // Changed id to password
+          placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={handleChange}
         />
-      </InputsContainer>
+      </InputWrapper>
+
+      <CheckboxWrapper>
+        <Checkbox
+          type="checkbox"
+          name="rememberme"
+          checked={rememberme}
+          onChange={handleChange}
+          id="rememberme"
+        />
+        <CheckboxLabel htmlFor="rememberme">Remember password</CheckboxLabel>
+      </CheckboxWrapper>
 
       <Button type="submit">SIGN IN</Button>
-      <ForgotPasswordLink href="#">Forgot Password</ForgotPasswordLink>
-      <ForgotPasswordLink href="#">Create Account</ForgotPasswordLink>
+
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+      <ForgotPasswordLink onClick={handleRegisterClick}>Create Account</ForgotPasswordLink>
     </FormContainer>
   );
 };
 
-/* ----- STYLES ----- */
+export default LoginForm;
+
+/* ==================== STYLED COMPONENTS ==================== */
 
 const FormContainer = styled.form`
   /* Center form items, limit width so it doesn't overflow ticket */
@@ -81,12 +199,34 @@ const LogoImage = styled.img`
   object-fit: contain;
 `;
 
-const InputsContainer = styled.div`
+const InputWrapper = styled.div`
   width: 90%;
   display: flex;
   flex-direction: column;
   gap: 0px; /* space between fields */
   margin-bottom: 20px;
+`;
+
+const CheckboxWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+`;
+
+const Checkbox = styled.input`
+  margin-right: 6px;
+`;
+
+const CheckboxLabel = styled.label`
+  font-size: 12px;
+  color:rgba(243, 222, 190, 1);
+`;
+
+const ErrorMessage = styled.p`
+  color: rgba(234, 170, 54, 1);
+  font-size: 12px;
+  text-align: cent
 `;
 
 const ForgotPasswordLink = styled.a`
@@ -105,5 +245,3 @@ const ForgotPasswordLink = styled.a`
     color: #d48830
   }
 `;
-
-export default LoginForm;

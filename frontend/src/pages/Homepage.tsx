@@ -1,5 +1,17 @@
+import AuthorizeView, { AuthorizedUser } from '../components/AuthorizeView';
+import Logout from '../components/Logout';
+
+
 function Homepage() {
-  return <h1>This is the homepage</h1>;
+  return (
+    <AuthorizeView>
+      <span>
+        <Logout>
+          Logout <AuthorizedUser value="email" />
+        </Logout>
+      </span>
+    </AuthorizeView>
+  );
 }
 
 export default Homepage;

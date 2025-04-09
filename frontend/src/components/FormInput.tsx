@@ -4,7 +4,8 @@ import styled from 'styled-components';
 interface FormInputProps {
   placeholder: string;
   type?: string;
-  id: string;
+  id?: string;
+  name?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -14,12 +15,14 @@ export const FormInput = ({
   type = 'text',
   id,
   value,
+  name,
   onChange,
 }: FormInputProps) => {
   return (
     <InputWrapper>
       <Input
         type={type}
+        name={name}
         id={id}
         value={value}
         onChange={onChange}
