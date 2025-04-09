@@ -1,5 +1,4 @@
-// File: pages/ManageMovies.tsx
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Movie } from '../types/Movie';
 import { deleteMovie, fetchMovies } from '../api/MoviesAPI';
 import Pagination from '../components/PaginationStyled';
@@ -17,6 +16,9 @@ function ManageMovies() {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
+
+  // ✨ Scroll ref
+  const topRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadMovies = async () => {
@@ -45,6 +47,11 @@ function ManageMovies() {
     }
   };
 
+  const handleEdit = (movie: Movie) => {
+    setEditingMovie(movie);
+    topRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   if (loading)
     return (
       <p className="text-center text-lg text-[#264653] font-semibold">
@@ -59,6 +66,9 @@ function ManageMovies() {
       style={{ background: '#fdf6ec' }}
       className="min-h-screen text-[#264653] px-6 py-10 font-sans"
     >
+      {/* 🔝 Scroll Target */}
+      <div ref={topRef} />
+
       <h1
         className="text-4xl font-bold mb-8 text-center tracking-wider uppercase"
         style={{ color: '#264653' }}
@@ -123,7 +133,7 @@ function ManageMovies() {
 
       <AdminTable
         movies={movies}
-        onEdit={setEditingMovie}
+        onEdit={handleEdit} // 🛠 Uses scroll-to-top
         onDelete={handleDelete}
       />
 

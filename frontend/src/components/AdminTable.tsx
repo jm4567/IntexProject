@@ -1,3 +1,4 @@
+// File: components/AdminTable.tsx
 import React from 'react';
 import styles from './AdminTable.module.css';
 import { Movie } from '../types/Movie';
@@ -15,6 +16,7 @@ const AdminTable: React.FC<Props> = ({ movies, onEdit, onDelete }) => {
         <thead>
           <tr>
             <th>Show ID</th>
+            <th>Poster</th>
             <th>Title</th>
             <th>Type</th>
             <th>Director</th>
@@ -32,6 +34,38 @@ const AdminTable: React.FC<Props> = ({ movies, onEdit, onDelete }) => {
           {movies.map((movie) => (
             <tr key={movie.showId} className={styles.row}>
               <td>{movie.showId}</td>
+
+              <td>
+                <div
+                  style={{
+                    overflow: 'hidden',
+                    borderRadius: '6px',
+                    width: '80px',
+                  }}
+                >
+                  <img
+                    src={movie.posterUrl || '/images/Image_coming_soon.png'}
+                    alt={movie.title || 'Poster Coming Soon'}
+                    style={{
+                      width: '80px',
+                      height: '120px',
+                      objectFit: 'contain',
+                      borderRadius: '6px',
+                      boxShadow: '0 0 6px rgba(0,0,0,0.15)',
+                      transition: 'transform 0.2s ease-in-out',
+                    }}
+                    onMouseOver={(e) =>
+                      ((e.target as HTMLImageElement).style.transform =
+                        'scale(1.05)')
+                    }
+                    onMouseOut={(e) =>
+                      ((e.target as HTMLImageElement).style.transform =
+                        'scale(1)')
+                    }
+                  />
+                </div>
+              </td>
+
               <td>{movie.title}</td>
               <td>{movie.type}</td>
               <td>{movie.director}</td>
