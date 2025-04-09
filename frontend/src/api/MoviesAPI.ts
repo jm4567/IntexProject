@@ -154,3 +154,20 @@ export const fetchAllMovies = async (
     throw error;
   }
 };
+
+export const fetchMovieById = async (showId: string): Promise<Movie> => {
+  try {
+    const response = await fetch(
+      `https://localhost:5000/api/Movie/GetMovieById/${showId}`
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch movie with ID ${showId}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching movie by ID:', error);
+    throw error;
+  }
+};

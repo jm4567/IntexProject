@@ -1,34 +1,44 @@
-import { useLocation } from 'react-router-dom';
-import '../css/MovieDetail.css';
+import { useLocation, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import MovieRow from '../components/MovieRow';
-import { useState } from 'react';
 import { Movie } from '../types/Movie';
-import { fetchAllMovies } from '../api/MoviesAPI';
-import { useEffect } from 'react';
+import { fetchAllMovies, fetchMovieById } from '../api/MoviesAPI';
+import '../css/MovieDetail.css';
 
-function MovieDetailsPages() {
+function MovieDetailsPage() {
   const location = useLocation();
-  const movieData = location.state;
+  const { showId } = useParams();
+  const [movieData, setMovieData] = useState<Movie | null>(
+    location.state || null
+  );
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadAllMovies = async () => {
+    const loadData = async () => {
       try {
-        const data = await fetchAllMovies([]);
-        setAllMovies(data.movies);
+        if (location.state) {
+          setMovieData(location.state as Movie); // preload from nav state
+        }
+
+        if (showId) {
+          const fetchedMovie = await fetchMovieById(showId);
+          setMovieData(fetchedMovie); // always fetch fresh version too
+        }
+
+        const all = await fetchAllMovies([]);
+        setAllMovies(all.movies);
       } catch (err) {
         setError((err as Error).message);
       }
     };
 
-    loadAllMovies();
-  }, []);
-
+    loadData();
+  }, [showId]);
   if (!movieData) {
-    return <p className="text-center mt-5">No movie data available.</p>;
+    return <p className="text-center mt-5">Loading movie details...</p>;
   }
 
   const {
@@ -51,12 +61,10 @@ function MovieDetailsPages() {
       <div className="foreground-content">
         <div className="container-fluid movie-detail-container py-5 px-4">
           <div className="row justify-content-center align-items-start">
-            {/* Movie Poster */}
             <div className="col-lg-4 col-md-5 text-center mb-4 mb-md-0">
               <img src={posterUrl} alt={title} className="movie-poster-img" />
             </div>
 
-            {/* Movie Details */}
             <div className="col-lg-6 col-md-7">
               <div className="movie-detail ps-md-4">
                 <h1 className="fw-bold display-4">{title}</h1>
@@ -91,6 +99,7 @@ function MovieDetailsPages() {
                 </button>
               </div>
             </div>
+
             <h1 className="mb-3">Movies like {title}:</h1>
             <MovieRow title="" movies={allMovies} />
           </div>
@@ -100,4 +109,4 @@ function MovieDetailsPages() {
   );
 }
 
-export default MovieDetailsPages;
+export default MovieDetailsPage;
