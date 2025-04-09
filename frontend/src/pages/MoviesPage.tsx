@@ -57,10 +57,16 @@ const MoviesPage = () => {
         <div className="movie-content foreground-content">
           <NavBar />
           <Header />
-          <div className="container mt-4 foreground-content">
+          <div className="container-fluid mt-4 foreground-content">
             <div className="row">
-              <div className="col-md-12">
+              <div>
+                <h1 className="mb-3">Recently Watched</h1>
+                {error && <p className="text-danger">{error}</p>}
+                <MovieRow title="" movies={allMovies} />
                 <h1 className="mb-3">All Movies</h1>
+                {error && <p className="text-danger">{error}</p>}
+                <MovieRow title="" movies={allMovies} />
+                <h1 className="mb-3">Temp Title</h1>
                 {error && <p className="text-danger">{error}</p>}
                 <MovieRow title="" movies={allMovies} />
               </div>

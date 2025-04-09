@@ -45,7 +45,7 @@ const InputWrapper = styled.div`
 
 const Input = styled.input`
   width: 100%;
-  padding: 12px; 
+  padding: 12px;
   border: 1px solid #43786c;
   border-radius: 7px;
   font-family:

@@ -115,3 +115,14 @@
   transform: translateY(100%);
   transition: transform 1s ease-in-out;
 }
+
+.drop-down {
+  color: black;
+}
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+  padding: 0 2rem;
+}

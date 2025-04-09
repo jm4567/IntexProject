@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Select from 'react-select';
 
 function GenreFilter({
   selectedGenres,
@@ -7,7 +8,7 @@ function GenreFilter({
   selectedGenres: string[];
   setSelectedGenres: (genres: string[]) => void;
 }) {
-  const [genres, setGenres] = useState<string[]>([]); // Get genre list from backend on mount
+  const [genres, setGenres] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchGenres = async () => {
@@ -16,42 +17,34 @@ function GenreFilter({
           'https://localhost:5000/api/Movie/GetMovieGenres'
         );
         const data = await response.json();
-        setGenres(data.sort()); // Optional: sort alphabetically
+        setGenres(data.sort());
       } catch (error) {
         console.error('Error fetching genres', error);
       }
     };
     fetchGenres();
-  }, []); // Handle checkbox toggle
+  }, []);
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const genre = e.target.value;
-    const updated = selectedGenres.includes(genre)
-      ? selectedGenres.filter((g) => g !== genre)
-      : [...selectedGenres, genre];
-    setSelectedGenres(updated);
+  const options = genres.map((genre) => ({
+    value: genre,
+    label: genre,
+  }));
+
+  const handleChange = (selected: any) => {
+    setSelectedGenres(selected ? selected.map((opt: any) => opt.value) : []);
   };
 
   return (
-    <div className="genre-filter">
-      <h5>Genres</h5>
-      <div className="genre-list">
-        {genres.map((g) => (
-          <div key={g} className="genre-item">
-            <input
-              type="checkbox"
-              id={g}
-              value={g}
-              checked={selectedGenres.includes(g)} // ✅ Reflect current selection
-              onChange={handleCheckboxChange}
-              className="genre-checkbox"
-            />
-            <label htmlFor={g} className="genre-text">
-              {g}
-            </label>
-          </div>
-        ))}
-      </div>
+    <div className="genre-filter mb-4">
+      <label className="form-label fw-bold">Genres</label>
+      <Select
+        isMulti
+        options={options}
+        value={options.filter((opt) => selectedGenres.includes(opt.value))}
+        onChange={handleChange}
+        placeholder="Choose genres..."
+        classNamePrefix="select"
+      />
     </div>
   );
 }

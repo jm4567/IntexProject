@@ -6,14 +6,63 @@
 .row-title {
   font-size: 1.5rem;
   font-weight: bold;
-  margin-bottom: 1rem;
+  margin-left: 0.5rem;
+  color: white;
+}
+
+.movie-row-hover-container {
+  position: relative;
 }
 
 .movie-row-scroll {
   display: flex;
   overflow-x: auto;
   padding-bottom: 50px;
-  scrollbar-width: thin;
+  scrollbar-width: none;
   scroll-snap-type: x mandatory;
-  gap: 1rem;
+  scroll-behavior: smooth;
+}
+
+.movie-row-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Arrows styling */
+.scroll-arrow {
+  position: absolute;
+  top: 35%; /* Adjust vertical placement */
+  transform: translateY(-50%);
+  font-size: 2rem;
+  color: white;
+  background: rgba(140, 138, 138, 0.4); /* subtle dark overlay */
+  padding: 16px 10px;
+  z-index: 5;
+  cursor: pointer;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    background 0.3s ease,
+    transform 0.2s ease;
+  box-shadow: 0 12px 10px rgba(150, 148, 148, 0.3);
+}
+
+.scroll-arrow:hover {
+  background: rgba(193, 191, 191, 0.7);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.scroll-arrow.left {
+  left: 10px;
+}
+
+.scroll-arrow.right {
+  right: 10px;
+}
+
+/* Show arrows only when hovering the row */
+.movie-row-hover-container:hover .scroll-arrow {
+  opacity: 1;
+  pointer-events: auto;
 }

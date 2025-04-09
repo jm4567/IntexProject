@@ -2,14 +2,25 @@
   max-height: 1000px;
   width: 100%;
   object-fit: cover;
+  background-color: white;
 }
 
 .movie-poster-img {
-  height: auto;
+  height: 600px;
   width: 100%; /* or try 80% if it's too wide */
   max-width: 500px; /* adjust as needed */
   display: block;
   margin-top: 30px; /* pushes it lower */
   margin-left: auto;
   margin-right: auto;
+  background-color: white;
+}
+
+.full-screen-wrapper {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #f3debe;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
