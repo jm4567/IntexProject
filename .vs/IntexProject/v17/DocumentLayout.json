@@ -1,33 +1,33 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\kfair\\Documents\\IntexProject-1\\",
+  "WorkspaceRootPath": "C:\\Users\\kfair\\IntexProject\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|c:\\users\\kfair\\documents\\intexproject-1\\backend\\intexproject.api\\controllers\\rolecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|c:\\users\\kfair\\intexproject\\backend\\intexproject.api\\controllers\\rolecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|solutionrelative:backend\\intexproject.api\\controllers\\rolecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|c:\\users\\kfair\\documents\\intexproject-1\\backend\\intexproject.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|c:\\users\\kfair\\intexproject\\backend\\intexproject.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|solutionrelative:backend\\intexproject.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|c:\\users\\kfair\\documents\\intexproject-1\\backend\\intexproject.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "AbsoluteMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|c:\\users\\kfair\\intexproject\\backend\\intexproject.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|solutionrelative:backend\\intexproject.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|c:\\users\\kfair\\documents\\intexproject-1\\backend\\intexproject.api\\models\\noopemailsenders.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|c:\\users\\kfair\\intexproject\\backend\\intexproject.api\\models\\noopemailsenders.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|solutionrelative:backend\\intexproject.api\\models\\noopemailsenders.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|c:\\users\\kfair\\documents\\intexproject-1\\backend\\intexproject.api\\services\\customuserclaimsprincipalfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|c:\\users\\kfair\\intexproject\\backend\\intexproject.api\\services\\customuserclaimsprincipalfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|solutionrelative:backend\\intexproject.api\\services\\customuserclaimsprincipalfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|c:\\users\\kfair\\documents\\intexproject-1\\backend\\intexproject.api\\models\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|c:\\users\\kfair\\intexproject\\backend\\intexproject.api\\models\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|solutionrelative:backend\\intexproject.api\\models\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|c:\\users\\kfair\\documents\\intexproject-1\\backend\\intexproject.api\\controllers\\moviecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|c:\\users\\kfair\\intexproject\\backend\\intexproject.api\\controllers\\moviecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{54BF9216-7F2B-48A4-BA6B-464CAC713829}|backend\\IntexProject.API\\IntexProject.API.csproj|solutionrelative:backend\\intexproject.api\\controllers\\moviecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -38,7 +38,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -74,11 +74,24 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "RoleController.cs",
+              "DocumentMoniker": "C:\\Users\\kfair\\IntexProject\\backend\\IntexProject.API\\Controllers\\RoleController.cs",
+              "RelativeDocumentMoniker": "backend\\IntexProject.API\\Controllers\\RoleController.cs",
+              "ToolTip": "C:\\Users\\kfair\\IntexProject\\backend\\IntexProject.API\\Controllers\\RoleController.cs",
+              "RelativeToolTip": "backend\\IntexProject.API\\Controllers\\RoleController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-09T02:03:38.599Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 5,
               "Title": "ApplicationDbContext.cs",
-              "DocumentMoniker": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\Models\\ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\kfair\\IntexProject\\backend\\IntexProject.API\\Models\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "backend\\IntexProject.API\\Models\\ApplicationDbContext.cs",
-              "ToolTip": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\Models\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Users\\kfair\\IntexProject\\backend\\IntexProject.API\\Models\\ApplicationDbContext.cs",
               "RelativeToolTip": "backend\\IntexProject.API\\Models\\ApplicationDbContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -86,24 +99,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "RoleController.cs",
-              "DocumentMoniker": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\Controllers\\RoleController.cs",
-              "RelativeDocumentMoniker": "backend\\IntexProject.API\\Controllers\\RoleController.cs",
-              "ToolTip": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\Controllers\\RoleController.cs",
-              "RelativeToolTip": "backend\\IntexProject.API\\Controllers\\RoleController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-09T02:03:38.599Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 3,
               "Title": "NoOpEmailSenders.cs",
-              "DocumentMoniker": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\Models\\NoOpEmailSenders.cs",
+              "DocumentMoniker": "C:\\Users\\kfair\\IntexProject\\backend\\IntexProject.API\\Models\\NoOpEmailSenders.cs",
               "RelativeDocumentMoniker": "backend\\IntexProject.API\\Models\\NoOpEmailSenders.cs",
-              "ToolTip": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\Models\\NoOpEmailSenders.cs",
+              "ToolTip": "C:\\Users\\kfair\\IntexProject\\backend\\IntexProject.API\\Models\\NoOpEmailSenders.cs",
               "RelativeToolTip": "backend\\IntexProject.API\\Models\\NoOpEmailSenders.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -113,9 +113,9 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\kfair\\IntexProject\\backend\\IntexProject.API\\Program.cs",
               "RelativeDocumentMoniker": "backend\\IntexProject.API\\Program.cs",
-              "ToolTip": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\Program.cs",
+              "ToolTip": "C:\\Users\\kfair\\IntexProject\\backend\\IntexProject.API\\Program.cs",
               "RelativeToolTip": "backend\\IntexProject.API\\Program.cs",
               "ViewState": "AgIAAB8AAAAAAAAAAAAEwE4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -125,9 +125,9 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\appsettings.json",
+              "DocumentMoniker": "C:\\Users\\kfair\\IntexProject\\backend\\IntexProject.API\\appsettings.json",
               "RelativeDocumentMoniker": "backend\\IntexProject.API\\appsettings.json",
-              "ToolTip": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\appsettings.json",
+              "ToolTip": "C:\\Users\\kfair\\IntexProject\\backend\\IntexProject.API\\appsettings.json",
               "RelativeToolTip": "backend\\IntexProject.API\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
@@ -137,9 +137,9 @@
               "$type": "Document",
               "DocumentIndex": 4,
               "Title": "CustomUserClaimsPrincipalFactory.cs",
-              "DocumentMoniker": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\Services\\CustomUserClaimsPrincipalFactory.cs",
+              "DocumentMoniker": "C:\\Users\\kfair\\IntexProject\\backend\\IntexProject.API\\Services\\CustomUserClaimsPrincipalFactory.cs",
               "RelativeDocumentMoniker": "backend\\IntexProject.API\\Services\\CustomUserClaimsPrincipalFactory.cs",
-              "ToolTip": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\Services\\CustomUserClaimsPrincipalFactory.cs",
+              "ToolTip": "C:\\Users\\kfair\\IntexProject\\backend\\IntexProject.API\\Services\\CustomUserClaimsPrincipalFactory.cs",
               "RelativeToolTip": "backend\\IntexProject.API\\Services\\CustomUserClaimsPrincipalFactory.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -149,9 +149,9 @@
               "$type": "Document",
               "DocumentIndex": 6,
               "Title": "MovieController.cs",
-              "DocumentMoniker": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\Controllers\\MovieController.cs",
+              "DocumentMoniker": "C:\\Users\\kfair\\IntexProject\\backend\\IntexProject.API\\Controllers\\MovieController.cs",
               "RelativeDocumentMoniker": "backend\\IntexProject.API\\Controllers\\MovieController.cs",
-              "ToolTip": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\Controllers\\MovieController.cs",
+              "ToolTip": "C:\\Users\\kfair\\IntexProject\\backend\\IntexProject.API\\Controllers\\MovieController.cs",
               "RelativeToolTip": "backend\\IntexProject.API\\Controllers\\MovieController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
