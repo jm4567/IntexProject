@@ -363,60 +363,6 @@ namespace IntexProject.API.Controllers
             return NoContent(); // Success
         }
 
-        [HttpGet("MyMovies")]
-        [Authorize]
-        public async Task<IActionResult> GetUserRatedMovies()
-        {
-            var movieUser = await GetMovieUserFromIdentityAsync();
-            if (movieUser == null)
-            {
-                return Unauthorized("User not found.");
-            }
-
-            var watchedShowIds = await _context.Ratings
-                .Where(r => r.UserId == movieUser.UserId)
-                .Select(r => r.ShowId)
-                .Distinct()
-                .ToListAsync();
-
-            var watchedRaw = await _context.Titles
-            .Where(m => watchedShowIds.Contains(m.ShowId))
-            .ToListAsync(); // ✅ only await this
-
-                    var watchedMovies = watchedRaw
-                        .GroupBy(m => new
-                        {
-                            m.ShowId,
-                            m.Title,
-                            m.Type,
-                            m.Director,
-                            m.CastList,
-                            m.Country,
-                            m.ReleaseYear,
-                            m.Rating,
-                            m.Duration,
-                            m.Description,
-                            m.PosterUrl
-                        })
-                        .Select(g => new
-                        {
-                            g.Key.ShowId,
-                            g.Key.Title,
-                            g.Key.Type,
-                            g.Key.Director,
-                            g.Key.CastList,
-                            g.Key.Country,
-                            g.Key.ReleaseYear,
-                            g.Key.Rating,
-                            g.Key.Duration,
-                            g.Key.Description,
-                            g.Key.PosterUrl,
-                            Genres = g.Select(x => x.Genre).Distinct().ToList()
-                        })
-                        .ToList(); // ✅ now this is plain synchronous
-
-            return Ok(watchedMovies);
-        }
         [HttpGet("GetMovieById/{show_id}")]
         public IActionResult GetMovieById(string show_id)
         {
