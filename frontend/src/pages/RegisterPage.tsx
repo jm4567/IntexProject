@@ -1,133 +1,182 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+"use client";
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
-function Register() {
-  // state variables for email and passwords
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+
+const RegisterForm = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // state variable for error messages
-  const [error, setError] = useState('');
+  const handleLoginClick = () => navigate("/login");
 
-  const handleLoginClick = () => {
-    navigate('/loginpage');
-  };
-
-  // handle change events for input fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === 'email') setEmail(value);
-    if (name === 'password') setPassword(value);
-    if (name === 'confirmPassword') setConfirmPassword(value);
+    if (name === "email") setEmail(value);
+    if (name === "password") setPassword(value);
+    if (name === "confirmPassword") setConfirmPassword(value);
   };
 
-  // handle submit event for the form
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // validate email and passwords
     if (!email || !password || !confirmPassword) {
-      setError('Please fill in all fields.');
+      setError("Please fill in all fields.");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email address.');
+      setError("Please enter a valid email address.");
     } else if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError("Passwords do not match.");
     } else {
-      // clear error message
-      setError('');
-      // post data to the /register api
-      fetch('https://localhost:5000/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      })
-        //.then((response) => response.json())
-        .then((data) => {
-          // handle success or error from the server
-          console.log(data);
-          if (data.ok) setError('Successful registration. Please log in.');
-          else setError('Error registering.');
-        })
-        .catch((error) => {
-          // handle network error
-          console.error(error);
-          setError('Error registering.');
+      setError("");
+      try {
+        const response = await fetch("https://localhost:5000/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
         });
+
+        if (response.ok) {
+          setError("Successful registration. Please log in.");
+          navigate("/login");
+        } else {
+          setError("Error registering.");
+        }
+      } catch (error) {
+        console.error(error);
+        setError("Error registering.");
+      }
     }
   };
 
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.href =
+      'https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }, []);
+
   return (
-    <div className="container">
-      <div className="row">
-        <div className="card border-0 shadow rounded-3 ">
-          <div className="card-body p-4 p-sm-5">
-            <h5 className="card-title text-center mb-5 fw-light fs-5">
-              Register
-            </h5>
-            <form onSubmit={handleSubmit}>
-              <div className="form-floating mb-3">
-                <input
-                  className="form-control"
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={email}
-                  onChange={handleChange}
-                />
-                <label htmlFor="email">Email address</label>
-              </div>
-              <div className="form-floating mb-3">
-                <input
-                  className="form-control"
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={password}
-                  onChange={handleChange}
-                />
-                <label htmlFor="password">Password</label>
-              </div>
-              <div className="form-floating mb-3">
-                <input
-                  className="form-control"
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={confirmPassword}
-                  onChange={handleChange}
-                />
-                <label htmlFor="confirmPassword">Confirm Password</label>
-              </div>
+    <FormContainer onSubmit={handleSubmit}>
+      <WelcomeText>CREATE ACCOUNT</WelcomeText>
+      <LogoImage
+        src="https://cdn.builder.io/api/v1/image/assets/5c6b8122df8048069c23eb442ff67257/b1909f44462666afeb14dc5a60b269c13c38030b?placeholderIfAbsent=true"
+        alt="Logo"
+      />
 
-              <div className="d-grid mb-2">
-                <button
-                  className="btn btn-primary btn-login text-uppercase fw-bold"
-                  type="submit"
-                >
-                  Register
-                </button>
-              </div>
-              <div className="d-grid mb-2">
-                <button
-                  className="btn btn-primary btn-login text-uppercase fw-bold"
-                  onClick={handleLoginClick}
-                >
-                  Go to Login
-                </button>
-              </div>
-            </form>
-            <strong>{error && <p className="error">{error}</p>}</strong>
-          </div>
-        </div>
-      </div>
-    </div>
+      <Input type="email" name="email" placeholder="Email address" value={email} onChange={handleChange} />
+      <Input type="password" name="password" placeholder="Password" value={password} onChange={handleChange} />
+      <Input type="password" name="confirmPassword" placeholder="Confirm Password" value={confirmPassword} onChange={handleChange} />
+
+      <Button type="submit">Register</Button>
+      <Button type="button" onClick={handleLoginClick}>Go to Login</Button>
+
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+    </FormContainer>
   );
-}
+};
 
-export default Register;
+const RegisterPage = () => {
+  return (
+    <LoginContainer>
+      <TicketWrapper>
+        <RegisterForm />
+      </TicketWrapper>
+    </LoginContainer>
+  );
+};
+
+export default RegisterPage;
+
+/* ---------- STYLED COMPONENTS ---------- */
+const LoginContainer = styled.main`
+  background-color: rgba(244, 223, 191, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 0 20px;
+`;
+
+const TicketWrapper = styled.div`
+  position: relative;
+  width: 700px;
+  height: 650px;
+  background-image: url("https://cdn.builder.io/api/v1/image/assets/5c6b8122df8048069c23eb442ff67257/2523baa9f1d8b127976b6590ec89261114914812?placeholderIfAbsent=true");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+`;
+
+const FormContainer = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 240px;
+`;
+
+const WelcomeText = styled.h1`
+  margin-bottom: 24px;
+  color: rgba(243, 222, 190, 1);
+  font-family: 'Press Start 2P', cursive;
+  font-size: 18px;
+  text-align: center;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+`;
+
+const Button = styled.button`
+  width: 70%;
+  background-color: rgba(234, 170, 54, 1);
+  border: none;
+  color: white;
+  padding: 6px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-family:
+    Baloo 2,
+    -apple-system,
+    Roboto,
+    Helvetica,
+    sans-serif;
+  color: #8B0000;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #d48830;
+  }
+`;
+
+const ErrorMessage = styled.p`
+  color:rgba(234, 170, 54, 1);
+  font-size: 12px;
+  margin-top: 10px;
+`;
+
+const LogoImage = styled.img`
+  width: 80px;
+  height: auto;
+  margin-bottom: 20px;
+  object-fit: contain;
+`;
+

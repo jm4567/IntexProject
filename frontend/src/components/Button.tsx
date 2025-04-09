@@ -28,7 +28,7 @@ const StyledButton = styled.button`
     Helvetica,
     sans-serif;
   font-size: 20px;
-  color: rgba(243, 222, 191, 1);
+  color: #8B0000;
   text-align: center;
   margin-bottom: 20px;
 

@@ -413,6 +413,55 @@
         }
       }
     },
+    "/api/Movie/ShowMovies": {
+      "get": {
+        "tags": [
+          "Movie"
+        ],
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNum",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "movieCat",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "ascending",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Movie/GetMovieGenres": {
       "get": {
         "tags": [
@@ -458,17 +507,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MoviesTitle"
+                "$ref": "#/components/schemas/MovieDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/MoviesTitle"
+                "$ref": "#/components/schemas/MovieDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/MoviesTitle"
+                "$ref": "#/components/schemas/MovieDto"
               }
             }
           }
@@ -491,8 +540,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             }
           }
         ],
@@ -500,17 +548,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MoviesTitle"
+                "$ref": "#/components/schemas/MovieDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/MoviesTitle"
+                "$ref": "#/components/schemas/MovieDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/MoviesTitle"
+                "$ref": "#/components/schemas/MovieDto"
               }
             }
           }
@@ -533,8 +581,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             }
           }
         ],
@@ -736,28 +783,20 @@
         },
         "additionalProperties": false
       },
-      "MoviesTitle": {
-        "required": [
-          "description",
-          "genre",
-          "releaseYear",
-          "showId",
-          "title",
-          "type"
-        ],
+      "MovieDto": {
         "type": "object",
         "properties": {
           "showId": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "type": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "title": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
           },
           "director": {
             "type": "string",
@@ -784,15 +823,14 @@
             "nullable": true
           },
           "description": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "genre": {
             "type": "string",
             "nullable": true
           },
-          "posterUrl": {
-            "type": "string",
+          "genres": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
             "nullable": true
           }
         },

@@ -1,6 +1,5 @@
 import { useLocation } from 'react-router-dom';
 import NavBar from './components/NavBar';
-import Header from './components/Header';
 import Homepage from './pages/Homepage';
 import Footer from './components/Footer';
 import './css/styles.css';
@@ -14,11 +13,12 @@ import LoginPage from './pages/LoginPage';
 import Register from './pages/RegisterPage';
 import { Routes, Route } from 'react-router-dom';
 import DefaultLayout from './components/DefaultLayout';
+import Header from './components/Header'
 
 function App() {
   const location = useLocation();
-  const hideHeaderOnPaths = ['/login']; // Hide nav bar for login page
-  const hideFooterrOnPaths = ['/login']; // Hide footer for login page
+  const hideHeaderOnPaths = ['/login', '/register']; // Hide nav bar for login page
+  const hideFooterrOnPaths = ['/login', '/register']; // Hide footer for login page
 
   const shouldShowHeader = !hideHeaderOnPaths.includes(location.pathname);
   const shouldShowFooter = !hideFooterrOnPaths.includes(location.pathname);

@@ -7133,22 +7133,17 @@
     ]
   },
   "packageFolders": {
-<<<<<<< HEAD
     "C:\\Users\\kfair\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
-=======
-    "/Users/jennamagleby/.nuget/packages/": {}
->>>>>>> origin
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-<<<<<<< HEAD
-      "projectUniqueName": "C:\\Users\\kfair\\Documents\\IntexProject\\backend\\IntexProject.API\\IntexProject.API.csproj",
+      "projectUniqueName": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\IntexProject.API.csproj",
       "projectName": "IntexProject.API",
-      "projectPath": "C:\\Users\\kfair\\Documents\\IntexProject\\backend\\IntexProject.API\\IntexProject.API.csproj",
+      "projectPath": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\IntexProject.API.csproj",
       "packagesPath": "C:\\Users\\kfair\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\kfair\\Documents\\IntexProject\\backend\\IntexProject.API\\obj\\",
+      "outputPath": "C:\\Users\\kfair\\Documents\\IntexProject-1\\backend\\IntexProject.API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -7157,25 +7152,12 @@
         "C:\\Users\\kfair\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
-=======
-      "projectUniqueName": "/Users/jennamagleby/Desktop/IntexProject/backend/IntexProject.API/IntexProject.API.csproj",
-      "projectName": "IntexProject.API",
-      "projectPath": "/Users/jennamagleby/Desktop/IntexProject/backend/IntexProject.API/IntexProject.API.csproj",
-      "packagesPath": "/Users/jennamagleby/.nuget/packages/",
-      "outputPath": "/Users/jennamagleby/Desktop/IntexProject/backend/IntexProject.API/obj/",
-      "projectStyle": "PackageReference",
-      "configFilePaths": [
-        "/Users/jennamagleby/.nuget/NuGet/NuGet.Config"
->>>>>>> origin
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-<<<<<<< HEAD
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-=======
->>>>>>> origin
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -7193,12 +7175,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-<<<<<<< HEAD
       },
       "SdkAnalysisLevel": "9.0.100"
-=======
-      }
->>>>>>> origin
     },
     "frameworks": {
       "net8.0": {
@@ -7256,11 +7234,7 @@
             "privateAssets": "all"
           }
         },
-<<<<<<< HEAD
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
-=======
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.404/PortableRuntimeIdentifierGraph.json"
->>>>>>> origin
       }
     }
   }
