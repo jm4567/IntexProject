@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Movie } from '../types/Movie';
-import { fetchMovies } from '../api/MoviesAPI';
+import { fetchAllMovies } from '../api/MoviesAPI';
 import GenreFilter from '../components/GenreFilter';
 import MovieCard from '../components/MovieCard';
 
@@ -12,7 +12,7 @@ function BrowseGenres() {
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await fetchMovies(100, 100, selectedGenres);
+        const data = await fetchAllMovies(selectedGenres);
         setMovies(data.movies);
       } catch (err) {
         setError((err as Error).message);

@@ -1,7 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Homepage from './pages/Homepage';
-import Footer from './components/Footer';
 import './css/styles.css';
 import CreateAccount from './pages/CreateAccount';
 import MovieDetailsPages from './pages/MovieDetailsPages';
