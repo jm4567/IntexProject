@@ -130,9 +130,6 @@ app.MapGet("/pingauth", (HttpContext context, ClaimsPrincipal user) =>
     }
     var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com";
     return Results.Json(new { email = email });
-
-    var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com";
-    return Results.Json(new { email = email });
 }).RequireAuthorization();
 
 app.Run();
