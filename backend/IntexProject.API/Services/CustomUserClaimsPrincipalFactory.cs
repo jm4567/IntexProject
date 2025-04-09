@@ -7,7 +7,7 @@ namespace IntexProject.API.Services;
 public class CustomUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<IdentityUser>
 {
     public CustomUserClaimsPrincipalFactory(
-        UserManager<IdentityUser> userManager, 
+        UserManager<IdentityUser> userManager,
         IOptions<IdentityOptions> optionsAccessor)
         : base(userManager, optionsAccessor) { }
 
