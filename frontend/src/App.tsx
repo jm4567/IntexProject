@@ -15,23 +15,6 @@ import DefaultLayout from './components/DefaultLayout';
 
 function App() {
   return (
-<<<<<<< HEAD
-    <main className="container-fluid px-0">
-      <NavBar />
-      <Header />
-      <Routes>
-        <Route path="/" element={<Homepage />} />
-        <Route path="/movies" element={<MoviesPage />} />
-        <Route path="/createaccount" element={<CreateAccount />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/movie/:show_id" element={<MovieDetailsPages />} />
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/genres" element={<BrowseGenres />} />
-        <Route path="/managemovies" element={<ManageMovies />} />
-      </Routes>
-      <Footer />
-    </main>
-=======
     <Routes>
       <Route path="/" element={<Homepage />} />
       <Route
@@ -52,7 +35,7 @@ function App() {
       />
       <Route path="/login" element={<Login />} />
       <Route
-        path="/movie/:title/:show_id"
+        path="/movie/:show_id"
         element={
           <DefaultLayout>
             <MovieDetailsPages />
@@ -70,7 +53,6 @@ function App() {
         }
       />
     </Routes>
->>>>>>> 5c50c0dfa4d4a66241c9599a56faffd2d791dc84
   );
 }
 
