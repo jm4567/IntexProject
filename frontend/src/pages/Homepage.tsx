@@ -1,15 +1,15 @@
 import { useNavigate } from 'react-router-dom';
-import NavBar from '../components/NavBar';
 import '../css/Homepage.css';
-import { useState } from 'react';
-import AuthorizeView, { AuthorizedUser } from '../components/AuthorizeView';
-import Logout from '../components/Logout';
+import '../css/NavBar.css';
+// import AuthorizeView, { AuthorizedUser } from '../components/AuthorizeView';
+// import Logout from '../components/Logout';
+import Logo from '../components/logo';
 
 function Homepage() {
   const navigate = useNavigate();
   return (
     <div className="homepage-container">
-      <NavBar />
+      <Logo />
       <div className="background-overlay">
         <img
           src="/images/homepage.png"
