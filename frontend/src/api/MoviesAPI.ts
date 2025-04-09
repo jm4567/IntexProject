@@ -97,6 +97,39 @@ export const deleteMovie = async (showId: string): Promise<void> => {
   }
 };
 
+//used in the browse genres page only
+export const fetchMoreMovies = async (
+  selectedGenres: string[],
+  pageNum = 1,
+  pageSize: number
+): Promise<FetchMoviesResponse> => {
+  try {
+    const genreParams = selectedGenres
+      .map((genre) => `movieCat=${encodeURIComponent(genre)}`)
+      .join('&');
+
+    const paginationParams = `pageNum=${pageNum}&pageSize=${pageSize}`;
+    const queryParams = [genreParams, paginationParams]
+      .filter(Boolean)
+      .join('&');
+
+    const url = `${API_URL}/ShowMovies?${queryParams}`;
+
+    console.log('Requesting URL:', url); // helpful for debugging
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch movies');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching movies:', error);
+    throw error;
+  }
+};
+
 export const fetchAllMovies = async (
   selectedGenres: string[]
 ): Promise<FetchMoviesResponse> => {

@@ -6,6 +6,7 @@
   margin-right: 6rem;
   margin-top: 10px;
   margin-bottom: 100px;
+  background-color: #fff; /* optional: white background */
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease; /* smooth animation */
