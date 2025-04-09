@@ -1,11 +1,12 @@
 {
   "Version": 1,
-  "Hash": "SdY3NyrJE2N3FCF3aB4mTs+zBySlO1yDeRhVwBSqwxI=",
+  "Hash": "Vj0zb2g2LIxdmSsE4sMQmLoIw6uKzfE7PnDyLcFZQ+k=",
   "Source": "IntexProject.API",
   "BasePath": "_content/IntexProject.API",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": []
+  "Assets": [],
+  "Endpoints": []
 }

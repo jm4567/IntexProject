@@ -1,0 +1,71 @@
+/* AdminTable.module.css */
+
+.tableContainer {
+  overflow-x: auto;
+  background: #fdf6ec; /* cream background */
+  border: 2px solid #264653;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0px #264653;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.95rem;
+  color: #1e1e1e;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fdf6ec;
+}
+
+.table th {
+  background-color: #264653;
+  color: white;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.table td {
+  padding: 12px;
+  border-top: 1px solid #ccc;
+}
+
+.row:hover {
+  background: #f4a261;
+  color: #1e1e1e;
+}
+
+.btnEdit {
+  background: #2a9d8f;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  width: 100%;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btnEdit:hover {
+  background: #21867a;
+}
+
+.btnDelete {
+  background: #e76f51;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  width: 100%;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btnDelete:hover {
+  background: #d1495b;
+}

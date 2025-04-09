@@ -1,9 +1,12 @@
+// File: pages/ManageMovies.tsx
 import { useEffect, useState } from 'react';
 import { Movie } from '../types/Movie';
 import { deleteMovie, fetchMovies } from '../api/MoviesAPI';
-import Pagination from '../components/Pagination';
+import Pagination from '../components/PaginationStyled';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
+import { confirmDelete } from '../utils/confirmDelete';
+import AdminTable from '../components/AdminTable';
 
 function ManageMovies() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -31,10 +34,8 @@ function ManageMovies() {
   }, [pageSize, pageNum]);
 
   const handleDelete = async (showId: string) => {
-    const confirmDelete = window.confirm(
-      'Are you sure you want to delete this movie/TV show?'
-    );
-    if (!confirmDelete) return;
+    const isConfirmed = await confirmDelete();
+    if (!isConfirmed) return;
 
     try {
       await deleteMovie(showId);
@@ -44,19 +45,53 @@ function ManageMovies() {
     }
   };
 
-  if (loading) return <p>Loading movies and TV shows...</p>;
-  if (error) return <p className="text-red-500">Error: {error}</p>;
+  if (loading)
+    return (
+      <p className="text-center text-lg text-[#264653] font-semibold">
+        Loading movies and TV shows...
+      </p>
+    );
+  if (error)
+    return <p className="text-center text-red-600 font-bold">Error: {error}</p>;
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-semibold mb-4 text-center">
-        Admin - Movies and TV Shows
+    <div
+      style={{ background: '#fdf6ec' }}
+      className="min-h-screen text-[#264653] px-6 py-10 font-sans"
+    >
+      <h1
+        className="text-4xl font-bold mb-8 text-center tracking-wider uppercase"
+        style={{ color: '#264653' }}
+      >
+        Admin Dashboard
       </h1>
 
       {!showForm && (
-        <div className="flex justify-center mb-4">
-          <button className="btn btn-success" onClick={() => setShowForm(true)}>
-            Add Movie
+        <div className="flex justify-center mb-6">
+          <button
+            style={{
+              backgroundColor: '#e4572e',
+              color: 'white',
+              fontWeight: 'bold',
+              fontSize: '1rem',
+              padding: '10px 24px',
+              borderRadius: '9999px',
+              boxShadow: '0 0 10px rgba(120, 84, 211, 0.92)',
+              border: '2px solid white',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+            }}
+            onMouseEnter={(e) =>
+              ((e.target as HTMLButtonElement).style.backgroundColor =
+                '#922b21')
+            }
+            onMouseLeave={(e) =>
+              ((e.target as HTMLButtonElement).style.backgroundColor =
+                '#b03a2e')
+            }
+            onClick={() => setShowForm(true)}
+          >
+            ➕ Add Movie / TV Show
           </button>
         </div>
       )}
@@ -86,60 +121,13 @@ function ManageMovies() {
         />
       )}
 
-      <div className="overflow-x-auto">
-        <table className="table table-bordered table-striped w-full">
-          <thead className="table-dark">
-            <tr>
-              <th>Show ID</th>
-              <th>Title</th>
-              <th>Type</th>
-              <th>Director</th>
-              <th>Cast</th>
-              <th>Country</th>
-              <th>Release Year</th>
-              <th>Rating</th>
-              <th>Duration</th>
-              <th>Description</th>
-              <th>Genres</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {movies.map((movie) => (
-              <tr key={movie.showId}>
-                <td>{movie.showId}</td>
-                <td>{movie.title}</td>
-                <td>{movie.type}</td>
-                <td>{movie.director}</td>
-                <td>{movie.castList}</td>
-                <td>{movie.country}</td>
-                <td>{movie.releaseYear}</td>
-                <td>{movie.rating}</td>
-                <td>{movie.duration}</td>
-                <td>{movie.description}</td>
-                <td>{movie.genres.join(', ')}</td>
-                <td>
-                  <button
-                    onClick={() => setEditingMovie(movie)}
-                    className="btn btn-primary btn-sm w-full mb-1"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-danger btn-sm w-full"
-                    onClick={() => handleDelete(movie.showId)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <AdminTable
+        movies={movies}
+        onEdit={setEditingMovie}
+        onDelete={handleDelete}
+      />
 
-      {/* Centered Pagination */}
-      <div className="flex justify-center mt-6">
+      <div className="flex justify-center mt-10">
         <Pagination
           currentPage={pageNum}
           totalPages={totalPages}
@@ -148,6 +136,12 @@ function ManageMovies() {
           onPageSizeChange={(newSize) => {
             setPageSize(newSize);
             setPageNum(1);
+          }}
+          themeColors={{
+            border: '#264653',
+            active: '#e76f51',
+            hover: '#f4a261',
+            text: '#264653',
           }}
         />
       </div>
