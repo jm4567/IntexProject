@@ -158,7 +158,14 @@ export const fetchAllMovies = async (
 export const fetchMovieById = async (showId: string): Promise<Movie> => {
   try {
     const response = await fetch(
-      `https://localhost:5000/api/Movie/GetMovieById/${showId}`
+      `https://localhost:5000/api/Movie/GetMovieById/${showId}`,
+      {
+        method: 'GET',
+        credentials: 'include', // ✅ Sends auth cookie
+        headers: {
+          'Content-Type': 'application/json', // ✅ Best practice
+        },
+      }
     );
 
     if (!response.ok) {
@@ -171,3 +178,4 @@ export const fetchMovieById = async (showId: string): Promise<Movie> => {
     throw error;
   }
 };
+

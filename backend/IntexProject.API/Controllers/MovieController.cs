@@ -1,20 +1,37 @@
 using IntexProject.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace IntexProject.API.Controllers
 {
+    // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    
     public class MovieController : ControllerBase
     {
         private readonly MovieDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public MovieController(MovieDbContext temp)
+        public MovieController(MovieDbContext temp, UserManager<IdentityUser> userManager)
         {
             _context = temp;
+            _userManager = userManager;
+        }
+
+        // Helper method to check logins 
+        private async Task<MoviesUser?> GetMovieUserFromIdentityAsync()
+        {
+            var identityUser = await _userManager.GetUserAsync(User);
+            var email = identityUser?.Email;
+
+            if (string.IsNullOrEmpty(email))
+                return null;
+
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
         [HttpGet("AllMovies")]

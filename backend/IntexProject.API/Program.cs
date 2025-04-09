@@ -3,36 +3,36 @@ using IntexProject.API.Models;
 using IntexProject.API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using IntexProject.API.Models.Recommender;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add CORS
+// CORS for React frontend
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") // <-- your React dev URL
+        policy.WithOrigins("http://localhost:3000")
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials(); // needed if sending cookies
+              .AllowCredentials();
     });
 });
+
 // Add services to the container.
 
+// Add services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add databases
-
 builder.Services.AddDbContext<MovieDbContext>(options =>
-{
-    options.UseSqlite(builder.Configuration["ConnectionStrings:MoviesConnection"]);
-});
+    options.UseSqlite(builder.Configuration["ConnectionStrings:MoviesConnection"]));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlite(builder.Configuration["ConnectionStrings:IdentityConnection"]);
-});
+    options.UseSqlite(builder.Configuration["ConnectionStrings:IdentityConnection"]));
 
 builder.Services.AddAuthorization();
 
@@ -43,26 +43,53 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
-    options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email; // Ensure email is stored in claims
+    options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
+    options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
 });
-
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, CustomUserClaimsPrincipalFactory>();
 
-builder.Services.ConfigureApplicationCookie(options => 
+builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
-    options.Cookie.SameSite = SameSiteMode.None; // Change after adding https for production
+    options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.Name = ".AspNetCore.Identity.Application";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.None;
+    // For dev, if you're not using HTTPS, use None:
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;  // Use Always for production with HTTPS
+
+    // Override redirection events for API calls
+    options.Events.OnRedirectToLogin = context =>
+    {
+        if (context.Request.Path.StartsWithSegments("/api"))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        }
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    };
+
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        if (context.Request.Path.StartsWithSegments("/api"))
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            return Task.CompletedTask;
+        }
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    };
     options.LoginPath = "/login";
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-
 });
 
 builder.Services.AddSingleton<IEmailSender<IdentityUser>, NoOpEmailSender<IdentityUser>>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middleware pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -70,12 +97,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowReactApp");
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapControllers();
 app.MapIdentityApi<IdentityUser>();
@@ -84,31 +109,32 @@ app.MapPost("/logout", async (HttpContext context, SignInManager<IdentityUser> s
 {
     await signInManager.SignOutAsync();
 
-    // Ensure authentication cookie is removed
     context.Response.Cookies.Delete(".AspNetCore.Identity.Application", new CookieOptions
     {
         HttpOnly = true,
-        Secure = false,
-        SameSite = SameSiteMode.None
+        Secure = true, // Set to true if you're using HTTPS
+        SameSite = SameSiteMode.None,
+        Path = "/" // CRITICAL: must match the Path where the cookie was set
     });
 
     return Results.Ok(new { message = "Logout successful" });
 }).RequireAuthorization();
 
-
 app.MapGet("/pingauth", (HttpContext context, ClaimsPrincipal user) =>
 {
     Console.WriteLine($"User authenticated? {user.Identity?.IsAuthenticated}");
-
     if (!user.Identity?.IsAuthenticated ?? false)
     {
         Console.WriteLine("Unauthorized request to /pingauth");
         return Results.Unauthorized();
     }
+    var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com";
+    return Results.Json(new { email = email });
 
-    var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com"; // Ensure it's never null
-    return Results.Json(new { email = email }); // Return as JSON
+    var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com";
+    return Results.Json(new { email = email });
 }).RequireAuthorization();
 
 app.Run();
+
 

@@ -48,6 +48,7 @@ const MoviesPage = () => {
     loadMovies();
   }, []);
 
+  //for header
   const topBannerMovies = allMovies.filter((movie) =>
     ['s42', 's7073', 's603', 's6065', 's6891', 's6063', 's6152'].includes(
       movie.showId

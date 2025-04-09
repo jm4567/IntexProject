@@ -13,6 +13,7 @@ import Register from './pages/RegisterPage';
 import { Routes, Route } from 'react-router-dom';
 import DefaultLayout from './components/DefaultLayout';
 import Header from './components/Header';
+import AuthorizeView from './components/AuthorizeView';
 
 function App() {
   const location = useLocation();
@@ -27,8 +28,9 @@ function App() {
       {/* {shouldShowFooter && <Footer />}
       {shouldShowHeader && <NavBar />} */}
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Homepage />} />
-        <Route path="/movies" element={<MoviesPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route
           path="/createaccount"
           element={
@@ -37,7 +39,8 @@ function App() {
             </DefaultLayout>
           }
         />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route
           path="/movie/:showId"
           element={
@@ -46,18 +49,36 @@ function App() {
             </DefaultLayout>
           }
         />
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/genres" element={<BrowseGenres />} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/movies"
+          element={
+            <AuthorizeView>
+              <MoviesPage />
+            </AuthorizeView>
+          }
+        />
+        <Route
+          path="/genres"
+          element={
+            <AuthorizeView>
+              <BrowseGenres />
+            </AuthorizeView>
+          }
+        />
         <Route
           path="/managemovies"
           element={
-            <DefaultLayout>
-              <ManageMovies />
-            </DefaultLayout>
+            <AuthorizeView>
+              <DefaultLayout>
+                <ManageMovies />
+              </DefaultLayout>
+            </AuthorizeView>
           }
         />
-        <Route path="/register" element={<Register />} />
       </Routes>
+
       {/* {shouldShowHeader && <Header />} */}
     </main>
   );

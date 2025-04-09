@@ -30,4 +30,5 @@ bin/
 *.exe
 **/obj/
 **/bin/
+appsettings.json
 

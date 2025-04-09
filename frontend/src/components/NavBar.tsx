@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Logo from './Logo';
 import { useLocation } from 'react-router-dom';
 import MovieSearch from './MovieSearch';
+import { logoutUser } from '../api/logoutUser';
 
 const Navbar = () => {
   //toggle search
@@ -99,7 +100,20 @@ const Navbar = () => {
             <Link to="/setting" className="dropdown-item">
               <span className="icon">⚙️</span> Settings
             </Link>
-            <button className="dropdown-item">Sign Out</button>
+            <button
+              className="dropdown-item"
+              onClick={async () => {
+                const success = await logoutUser();
+                if (success) {
+                  document.cookie = ".AspNetCore.Identity.Application=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;"
+                  window.location.href = '/login'; // ✅ Full reload to clear state
+                } else {
+                  console.error('Logout failed');
+                }
+              }}
+            >
+              Sign Out
+            </button>
           </div>
         )}
       </div>
