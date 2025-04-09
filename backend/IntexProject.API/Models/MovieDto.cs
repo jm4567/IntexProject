@@ -12,7 +12,7 @@ public class MovieDto
     public string? Rating { get; set; }
     public string? Duration { get; set; }
     public string Description { get; set; }
-    //public string? PosterUrl { get; set; }
+    public string? PosterUrl { get; set; }
 
     public List<string> Genres { get; set; } = new(); // ✅ array from frontend
 }
