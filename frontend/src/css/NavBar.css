@@ -1,0 +1,237 @@
+/* Navbar.css
+
+.cust-navbar-setting {
+  background-color: #f3debe;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+.navbar-left,
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* controls spacing between items }*/
+
+/* .navbar-brand {
+  margin-right: 1rem;
+  font-size: 2rem;
+  color: #104057;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand img {
+  margin-right: 10px;
+}
+
+.navbar-content {
+  display: flex;
+  align-items: center;
+}
+
+.plain-link {
+  color: #104057;
+  font-weight: 500;
+  text-decoration: none;
+  margin-left: 2rem;
+}
+
+.plain-link:hover {
+  color: #f9a826;
+  transition: color 0.3s ease;
+} */
+.nav-wrapper {
+  position: relative;
+  background-color: #f3debe;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+}
+/* Left - Logo */
+.nav-logo {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  width: 150px;
+  gap: 0.5rem; /* 🧠 decrease this to reduce spacing */
+}
+
+/* Center - Pill nav */
+.nav-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+  max-width: 1000px;
+  z-index: 1;
+}
+
+.nav-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 3rem;
+  background-color: #eee8dc;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  width: 100%;
+}
+
+/* Pill content layout */
+.nav-left,
+.nav-middle,
+.nav-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Links */
+.nav-link {
+  text-decoration: none;
+  color: #104057;
+  font-weight: 500;
+}
+
+.genre-link {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.arrow {
+  font-size: 0.8rem;
+  position: relative;
+  top: 1px;
+}
+
+.nav-item {
+  font-weight: 500;
+  color: #1a1a1a;
+  cursor: pointer;
+}
+
+.navbar-brand {
+  margin-right: 1rem;
+  font-size: 2rem;
+  color: #104057;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+/* Search */
+.search-icon {
+  font-size: 2rem;
+}
+
+/* Right side */
+.nav-profile {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.nav-avatar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+@font-face {
+  font-family: 'RetroCool';
+  src: url('/fonts/RetroCool.ttff') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+.navbar-name {
+  font-family: 'RetroCool', cursive;
+  font-size: 3.5rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-right: 1rem;
+  color: #104057;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transform: scaleY(1.1); /* stretches upward */
+}
+
+.avatar-img {
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+}
+
+/* Dropdown menu */
+.profile-dropdown {
+  position: absolute;
+  top: 120px;
+  right: 0;
+  background-color: #eee8dc;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.75);
+  padding: 0.5rem 0;
+  width: 250px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Helvetica Neue', sans-serif;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  font-size: 2rem;
+  color: #104057;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #333;
+}
+
+/* Optional: for icon + text layout like Netflix */
+.dropdown-item .icon {
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+.dropdown-divider {
+  height: 1px;
+  background-color: #333;
+  margin: 0.5rem 0;
+}
+
+.cine-logo-img {
+  height: 120px; /* ✅ Set desired size */
+  width: auto; /* ✅ Keeps natural width */
+  display: block;
+  object-fit: contain; /* just in case */
+}
+
+/* .nav-outer {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+} */

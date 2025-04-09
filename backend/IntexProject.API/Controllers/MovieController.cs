@@ -1,4 +1,5 @@
 using IntexProject.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -261,7 +262,9 @@ namespace IntexProject.API.Controllers
                     Rating = newMovie.Rating,
                     Duration = newMovie.Duration,
                     Description = newMovie.Description,
-                    Genre = genre
+                    Genre = genre,
+                    PosterUrl = newMovie.PosterUrl
+
                 };
 
                 _context.Titles.Add(newRow);
@@ -316,7 +319,7 @@ namespace IntexProject.API.Controllers
                     Duration = updatedMovie.Duration,
                     Description = updatedMovie.Description,
                     Genre = genre,
-                    // PosterUrl = updatedMovie.PosterUrl
+                    PosterUrl = updatedMovie.PosterUrl
                 };
                 _context.Titles.Add(newRow);
             }
