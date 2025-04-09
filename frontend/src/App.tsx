@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import './css/styles.css';
 import CreateAccount from './pages/CreateAccount';
 import MovieDetailsPages from './pages/MovieDetailsPages';
+import Headers from './components/Header';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import MoviesPage from './pages/MoviesPage';
 import BrowseGenres from './pages/BrowseGenres';
@@ -65,7 +66,7 @@ function App() {
         />
         <Route path="/register" element={<Register />} />
       </Routes>
-      {shouldShowHeader && <Header />}
+      {shouldShowHeader && <Headers />}
     </main>
   );
 }
