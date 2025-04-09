@@ -13,6 +13,7 @@ import LoginPage from './pages/LoginPage';
 import Register from './pages/RegisterPage';
 import { Routes, Route } from 'react-router-dom';
 import DefaultLayout from './components/DefaultLayout';
+import Header from './components/Header';
 
 function App() {
   const location = useLocation();
@@ -28,14 +29,7 @@ function App() {
       {shouldShowHeader && <NavBar />}
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route
-          path="/movies"
-          element={
-            <DefaultLayout>
-              <MoviesPage />
-            </DefaultLayout>
-          }
-        />
+        <Route path="/movies" element={<MoviesPage />} />
         <Route
           path="/createaccount"
           element={
