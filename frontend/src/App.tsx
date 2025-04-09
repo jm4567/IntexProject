@@ -1,6 +1,4 @@
-import NavBar from './components/NavBar';
 import Homepage from './pages/Homepage';
-import Footer from './components/Footer';
 import './css/styles.css';
 import { Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';

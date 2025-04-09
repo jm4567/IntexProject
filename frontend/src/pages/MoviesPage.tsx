@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Movie } from '../types/Movie';
-import { fetchMovies } from '../api/MoviesAPI';
+import { fetchAllMovies } from '../api/MoviesAPI';
 import MovieRow from '../components/MovieRow';
 
 const MoviesPage = () => {
@@ -10,7 +10,7 @@ const MoviesPage = () => {
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await fetchMovies([]); // get all movies
+        const data = await fetchAllMovies([]); // get all movies
         setAllMovies(data.movies);
       } catch (err) {
         setError((err as Error).message);
