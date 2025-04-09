@@ -1,0 +1,17 @@
+# Ignore build artifacts for .NET
+bin/
+obj/
+.vs/
+
+# Ignore IDE configs
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore node & frontend stuff
+node_modules/
+dist/
+.vscode/
+.DS_Store
+*.log
