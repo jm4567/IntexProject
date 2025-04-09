@@ -39,7 +39,7 @@ function App() {
         />
         <Route path="/login" element={<LoginPage />} />
         <Route
-          path="/movie/:show_id"
+          path="/movie/:showId"
           element={
             <DefaultLayout>
               <MovieDetailsPages />

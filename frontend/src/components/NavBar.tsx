@@ -4,11 +4,13 @@ import '../css/NavBar.css';
 import { useState } from 'react';
 import Logo from './logo';
 import { useLocation } from 'react-router-dom';
+import MovieSearch from './MovieSearch';
 
 const Navbar = () => {
   //toggle search
   const [showSearch, setShowSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMovies, setSelectedMovies] = useState<string[]>([]);
 
   //toggle profile so it shows menu
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -70,15 +72,12 @@ const Navbar = () => {
             >
               Search 🔍
             </div>
-            {showSearch && (
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Search movie titles..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+            <div className="col-md-12 mb-4 drop-down">
+              <MovieSearch
+                selectedMovies={selectedMovies}
+                setSelectedMovies={setSelectedMovies}
               />
-            )}
+            </div>
           </div>
         </div>
       </div>

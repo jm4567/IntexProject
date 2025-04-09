@@ -22,7 +22,13 @@ function BrowseGenres() {
       if (data.movies.length === 0) {
         setHasMore(false);
       } else {
-        setMovies((prev) => [...prev, ...data.movies]);
+        setMovies((prev) => {
+          const existingIds = new Set(prev.map((m) => m.showId));
+          const newUnique = data.movies.filter(
+            (m) => !existingIds.has(m.showId)
+          );
+          return [...prev, ...newUnique];
+        });
       }
     } catch (err) {
       setError((err as Error).message);
@@ -40,6 +46,7 @@ function BrowseGenres() {
     loadMovies();
   }, [loadMovies]);
 
+  //used for infinite scrolling
   useEffect(() => {
     if (!hasMore) return;
 

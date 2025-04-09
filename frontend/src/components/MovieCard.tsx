@@ -11,20 +11,7 @@ const MovieCard = ({ movie }: MovieCardProps) => {
 
   const handleClick = () => {
     navigate(`/movie/${movie.showId}`, {
-      state: {
-        id: movie.showId,
-        title: movie.title,
-        posterUrl: movie.posterUrl,
-        director: movie.director,
-        genres: movie.genres,
-        description: movie.description,
-        type: movie.type,
-        castList: movie.castList,
-        country: movie.country,
-        duration: movie.duration,
-        rating: movie.rating,
-        releaseYear: movie.releaseYear,
-      },
+      state: movie,
     });
   };
 
