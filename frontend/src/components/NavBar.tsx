@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import '../css/styles.css';
 import '../css/NavBar.css';
 import { useState } from 'react';
-import Logo from './logo';
+import Logo from './Logo';
 import { useLocation } from 'react-router-dom';
 import MovieSearch from './MovieSearch';
 
@@ -61,7 +61,7 @@ const Navbar = () => {
             )}
             {currentPath === '/movies' && (
               <Link to="/genres" className="nav-link active navbar-brand">
-                Genre <span className="arrow">▼</span>
+                Filter by Genre <span className="arrow">▼</span>
               </Link>
             )}
           </div>
