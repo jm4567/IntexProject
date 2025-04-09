@@ -1,31 +1,94 @@
 import { useLocation } from 'react-router-dom';
 import '../css/MovieDetail.css';
-import NavBar from '../components/NavBar';
-import Footer from '../components/Footer';
 import MovieRow from '../components/MovieRow';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Movie } from '../types/Movie';
 import { fetchAllMovies } from '../api/MoviesAPI';
-import { useEffect } from 'react';
+import axios from 'axios';
 
-function MovieDetailsPages() {
+function MovieDetailsPage() {
   const location = useLocation();
   const movieData = location.state;
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
+  const [collabMovies, setCollabMovies] = useState<Movie[]>([]);
+  const [contentMovies, setContentMovies] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const collabRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const loadAllMovies = async () => {
+    const loadData = async () => {
       try {
-        const data = await fetchAllMovies([]);
-        setAllMovies(data.movies);
+        const all = await fetchAllMovies([]);
+        setAllMovies(all.movies);
+
+        const showId = movieData?.showId || movieData?.show_id;
+        const title = movieData?.title;
+
+        const collabTitles: string[] = [];
+        const contentTitles: string[] = [];
+
+        if (showId) {
+          const res = await axios.get(
+            `https://localhost:5000/api/Recommendations/by-id/${showId}`
+          );
+          const rec = res.data;
+          collabTitles.push(
+            rec.collaborative?.recommendation_1,
+            rec.collaborative?.recommendation_2,
+            rec.collaborative?.recommendation_3,
+            rec.collaborative?.recommendation_4,
+            rec.collaborative?.recommendation_5
+          );
+        }
+
+        if (title) {
+          const res = await axios.get(
+            `https://localhost:5000/api/Recommendations/by-title/${encodeURIComponent(title)}`
+          );
+          const rec = res.data;
+          contentTitles.push(
+            rec.content?.recommendation_1_title,
+            rec.content?.recommendation_2_title,
+            rec.content?.recommendation_3_title,
+            rec.content?.recommendation_4_title,
+            rec.content?.recommendation_5_title
+          );
+        }
+
+        const normalize = (s: string) => s?.trim()?.toLowerCase();
+        const normalizedAll = all.movies.map((m) => ({
+          ...m,
+          normalizedTitle: normalize(m.title),
+        }));
+
+        setCollabMovies(
+          normalizedAll.filter((m) =>
+            collabTitles.map(normalize).includes(m.normalizedTitle)
+          )
+        );
+
+        setContentMovies(
+          normalizedAll.filter((m) =>
+            contentTitles.map(normalize).includes(m.normalizedTitle)
+          )
+        );
+
+        // Scroll to recommendations if either list exists
+        setTimeout(() => {
+          (collabMovies.length &&
+            collabRef.current?.scrollIntoView({ behavior: 'smooth' })) ||
+            (contentMovies.length &&
+              contentRef.current?.scrollIntoView({ behavior: 'smooth' }));
+        }, 100);
       } catch (err) {
         setError((err as Error).message);
+        console.error('❌ Recommendation error:', err);
       }
     };
 
-    loadAllMovies();
-  }, []);
+    loadData();
+  }, [movieData]);
 
   if (!movieData) {
     return <p className="text-center mt-5">No movie data available.</p>;
@@ -34,7 +97,7 @@ function MovieDetailsPages() {
   const {
     title,
     director,
-    genres,
+    genres = [],
     posterUrl,
     description,
     duration,
@@ -51,12 +114,17 @@ function MovieDetailsPages() {
       <div className="foreground-content">
         <div className="container-fluid movie-detail-container py-5 px-4">
           <div className="row justify-content-center align-items-start">
-            {/* Movie Poster */}
             <div className="col-lg-4 col-md-5 text-center mb-4 mb-md-0">
-              <img src={posterUrl} alt={title} className="movie-poster-img" />
+              <img
+                src={
+                  posterUrl ||
+                  'https://via.placeholder.com/150x220?text=No+Image'
+                }
+                alt={title}
+                className="movie-poster-img"
+              />
             </div>
 
-            {/* Movie Details */}
             <div className="col-lg-6 col-md-7">
               <div className="movie-detail ps-md-4">
                 <h1 className="fw-bold display-4">{title}</h1>
@@ -91,13 +159,29 @@ function MovieDetailsPages() {
                 </button>
               </div>
             </div>
-            <h1 className="mb-3">Movies like {title}:</h1>
-            <MovieRow title="" movies={allMovies} />
           </div>
+
+          <div className="mt-5" ref={collabRef}>
+            {collabMovies.length > 0 && (
+              <MovieRow title="Other users liked…" movies={collabMovies} />
+            )}
+          </div>
+
+          <div className="mt-5" ref={contentRef}>
+            {contentMovies.length > 0 && (
+              <MovieRow title="Similar content" movies={contentMovies} />
+            )}
+          </div>
+
+          {collabMovies.length === 0 && contentMovies.length === 0 && (
+            <div className="text-center mt-5">
+              <h4>No recommendations found for this title.</h4>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-export default MovieDetailsPages;
+export default MovieDetailsPage;

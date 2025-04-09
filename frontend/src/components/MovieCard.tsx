@@ -12,7 +12,7 @@ const MovieCard = ({ movie }: MovieCardProps) => {
   const handleClick = () => {
     navigate(`/movie/${movie.showId}`, {
       state: {
-        id: movie.showId,
+        showId: movie.showId,
         title: movie.title,
         posterUrl: movie.posterUrl,
         director: movie.director,
