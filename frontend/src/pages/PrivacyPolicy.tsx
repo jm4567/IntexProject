@@ -85,10 +85,6 @@ const PrivacyPolicy = () => {
         </li>
         <li>Recommend you movies or shows based on your recent activity</li>
       </ul>
-      <p>If you agree, CineNiche may share your data with partner companies:</p>
-      <ul>
-        <li>[List partner companies]</li>
-      </ul>
 
       <h2 id="data-storage">How do we store your data?</h2>
       <p>
@@ -144,7 +140,6 @@ const PrivacyPolicy = () => {
       <ul>
         <li>Keeping you signed in</li>
         <li>Understanding how you use our website</li>
-        <li>[Add your uses]</li>
       </ul>
 
       <h2 id="cookie-types">What types of cookies do we use?</h2>
@@ -153,11 +148,6 @@ const PrivacyPolicy = () => {
           <strong>Functionality</strong> – To recognize you and remember
           preferences.
         </li>
-        <li>
-          <strong>Advertising</strong> – To collect data about your visit and
-          share with partners.
-        </li>
-        <li>[Add any other types]</li>
       </ul>
 
       <h2 id="manage-cookies">How to manage cookies</h2>

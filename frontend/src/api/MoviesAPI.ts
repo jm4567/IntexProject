@@ -96,3 +96,28 @@ export const deleteMovie = async (showId: string): Promise<void> => {
     throw error;
   }
 };
+
+export const fetchAllMovies = async (
+  selectedGenres: string[]
+): Promise<FetchMoviesResponse> => {
+  try {
+    // Create genre filter string if there are selected genres
+    const genreParams = selectedGenres
+      .map((genre) => `movieCat=${encodeURIComponent(genre)}`)
+      .join('&');
+
+    // Build base URL with pagination and optional genre filters
+    const url = `${API_URL}/ShowMovies${selectedGenres.length ? `?${genreParams}` : ''}`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch movies');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching movies:', error);
+    throw error;
+  }
+};

@@ -1,24 +1,7 @@
-.full-screen-wrapper {
+.homepage-container {
   position: relative;
-  width: 100vw;
   height: 100vh;
   overflow: hidden;
-}
-
-.homepage-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  background-color: black;
-  transition: opacity 0.8s ease-in-out;
-}
-
-.homepage-container.visible {
-  opacity: 1;
 }
 
 .background-overlay {
@@ -63,52 +46,4 @@
 
 .cta-button.secondary {
   background-color: #1de9b6;
-}
-
-/* Curtain reveal */
-.video-split-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.video-half {
-  width: 100%;
-  height: 50%;
-  overflow: hidden;
-  position: relative;
-}
-
-.video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 200%;
-  object-fit: cover;
-}
-
-.top-half .video {
-  top: 0;
-}
-
-.bottom-half .video {
-  top: -100%;
-}
-
-.split .top-half {
-  transform: translateY(-100%);
-  transition: transform 1s ease-in-out;
-}
-
-.split .bottom-half {
-  transform: translateY(100%);
-  transition: transform 1s ease-in-out;
 }

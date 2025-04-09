@@ -1,16 +1,43 @@
 import { useEffect, useState } from 'react';
 import { Movie } from '../types/Movie';
-import { fetchMovies } from '../api/MoviesAPI';
+import { fetchAllMovies } from '../api/MoviesAPI';
 import MovieRow from '../components/MovieRow';
+import NavBar from '../components/NavBar';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import '../css/MoviePage.css';
 
 const MoviesPage = () => {
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [startSplit, setStartSplit] = useState(false);
+
+  const [showCurtain, setShowCurtain] = useState(true);
+  const handlePlay = () => {
+    const moviepage = document.querySelector('.movie-container');
+    if (moviepage) moviepage.classList.add('visible');
+
+    setTimeout(() => {
+      setStartSplit(true);
+    }, 3000);
+
+    setTimeout(() => {
+      setShowCurtain(false); // use state instead of querySelector
+    }, 4000);
+
+    // Step 3: Fully remove the curtain after animation
+    setTimeout(() => {
+      const curtain = document.querySelector(
+        '.video-split-container'
+      ) as HTMLElement;
+      if (curtain) curtain.style.display = 'none';
+    }, 4000); // matches curtain animation time
+  };
 
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await fetchMovies([]); // get all movies
+        const data = await fetchAllMovies([]); // get all movies
         setAllMovies(data.movies);
       } catch (err) {
         setError((err as Error).message);
@@ -20,13 +47,52 @@ const MoviesPage = () => {
   }, []);
 
   return (
-    <div className="container mt-4">
-      <div className="row">
-        <div className="col-md-12">
-          {error && <p className="text-danger">{error}</p>}
-          <MovieRow title="All Movies" movies={allMovies} />
+    <div className="full-screen-wrapper">
+      <div className="movie-container">
+        {/* Background image behind everything */}
+
+        <div className="background-overlay"></div>
+
+        {/* Movie content over the background */}
+        <div className="movie-content foreground-content">
+          <NavBar />
+          <Header />
+          <div className="container mt-4 foreground-content">
+            <div className="row">
+              <div className="col-md-12">
+                <h1 className="mb-3">All Movies</h1>
+                {error && <p className="text-danger">{error}</p>}
+                <MovieRow title="" movies={allMovies} />
+              </div>
+            </div>
+          </div>
         </div>
+        <Footer />
       </div>
+      {/* Curtain reveal over homepage */}
+      {showCurtain && (
+        <div className={`video-split-container ${startSplit ? 'split' : ''}`}>
+          <div className="video-half top-half">
+            <video
+              src="/videos/intro.mp4"
+              autoPlay
+              muted
+              playsInline
+              className="video"
+              onPlay={handlePlay}
+            />
+          </div>
+          <div className="video-half bottom-half">
+            <video
+              src="/videos/intro.mp4"
+              autoPlay
+              muted
+              playsInline
+              className="video"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

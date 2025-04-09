@@ -8,7 +8,6 @@ namespace IntexProject.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class MovieController : ControllerBase
     {
         private readonly MovieDbContext _context;
@@ -263,7 +262,9 @@ namespace IntexProject.API.Controllers
                     Rating = newMovie.Rating,
                     Duration = newMovie.Duration,
                     Description = newMovie.Description,
-                    Genre = genre
+                    Genre = genre,
+                    PosterUrl = newMovie.PosterUrl
+
                 };
 
                 _context.Titles.Add(newRow);
@@ -318,7 +319,7 @@ namespace IntexProject.API.Controllers
                     Duration = updatedMovie.Duration,
                     Description = updatedMovie.Description,
                     Genre = genre,
-                    // PosterUrl = updatedMovie.PosterUrl
+                    PosterUrl = updatedMovie.PosterUrl
                 };
                 _context.Titles.Add(newRow);
             }

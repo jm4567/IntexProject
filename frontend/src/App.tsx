@@ -1,7 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Homepage from './pages/Homepage';
-import Footer from './components/Footer';
 import './css/styles.css';
 import CreateAccount from './pages/CreateAccount';
 import MovieDetailsPages from './pages/MovieDetailsPages';
@@ -13,7 +12,7 @@ import LoginPage from './pages/LoginPage';
 import Register from './pages/RegisterPage';
 import { Routes, Route } from 'react-router-dom';
 import DefaultLayout from './components/DefaultLayout';
-import Header from './components/Header'
+import Header from './components/Header';
 
 function App() {
   const location = useLocation();
@@ -25,18 +24,11 @@ function App() {
 
   return (
     <main className="container-fluid px-0">
-      {shouldShowFooter && <Footer />}
-      {shouldShowHeader && <NavBar />}
+      {/* {shouldShowFooter && <Footer />}
+      {shouldShowHeader && <NavBar />} */}
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route
-          path="/movies"
-          element={
-            <DefaultLayout>
-              <MoviesPage />
-            </DefaultLayout>
-          }
-        />
+        <Route path="/movies" element={<MoviesPage />} />
         <Route
           path="/createaccount"
           element={
@@ -66,7 +58,7 @@ function App() {
         />
         <Route path="/register" element={<Register />} />
       </Routes>
-      {shouldShowHeader && <Header />}
+      {/* {shouldShowHeader && <Header />} */}
     </main>
   );
 }
