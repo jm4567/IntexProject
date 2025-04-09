@@ -154,3 +154,21 @@ export const fetchAllMovies = async (
     throw error;
   }
 };
+
+export const fetchMyMovies = async (): Promise<Movie[]> => {
+  const response = await fetch('https://localhost:5000/api/movie/MyMovies', {
+    method: 'GET', // ✅ Add this
+    credentials: 'include', // ✅ Sends auth cookie
+    headers: {
+      'Content-Type': 'application/json', // optional, but good practice
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user-specific movies');
+  }
+
+  const data = await response.json();
+  return data;
+};
+
