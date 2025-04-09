@@ -28,4 +28,6 @@ bin/
 *.dll
 *.pdb
 *.exe
+**/obj/
+**/bin/
 
