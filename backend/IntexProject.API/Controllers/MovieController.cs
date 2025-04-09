@@ -346,6 +346,53 @@ namespace IntexProject.API.Controllers
             return NoContent(); // Success
         }
 
+        [HttpGet("GetMovieById/{show_id}")]
+        public IActionResult GetMovieById(string show_id)
+        {
+            var movies = _context.Titles
+                .Where(m => m.ShowId == show_id)
+                .ToList();
+
+            if (!movies.Any())
+            {
+                return NotFound();
+            }
+
+            var grouped = movies
+                .GroupBy(m => new
+                {
+                    m.ShowId,
+                    m.Title,
+                    m.Type,
+                    m.Director,
+                    m.CastList,
+                    m.Country,
+                    m.ReleaseYear,
+                    m.Rating,
+                    m.Duration,
+                    m.Description,
+                    m.PosterUrl
+                })
+                .Select(g => new
+                {
+                    g.Key.ShowId,
+                    g.Key.Title,
+                    g.Key.Type,
+                    g.Key.Director,
+                    g.Key.CastList,
+                    g.Key.Country,
+                    g.Key.ReleaseYear,
+                    g.Key.Rating,
+                    g.Key.Duration,
+                    g.Key.Description,
+                    g.Key.PosterUrl,
+                    Genres = g.Select(x => x.Genre).Distinct().ToList()
+                })
+                .FirstOrDefault();
+
+            return Ok(grouped);
+        }
+
 
 
     }

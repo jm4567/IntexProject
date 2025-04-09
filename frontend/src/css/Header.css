@@ -1,0 +1,155 @@
+.hero-carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.hero-slide {
+  position: relative;
+  height: 80vh;
+}
+
+.hero-slide::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px; /* adjust as needed */
+  background: linear-gradient(
+    to bottom,
+    #f3debe 0%,
+    rgba(243, 222, 190, 0.6) 20%,
+    rgba(243, 222, 190, 0.3) 40%,
+    rgba(0, 0, 0, 0.05) 60%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  z-index: 2;
+}
+
+.hero-slide::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 130px;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.05) 15%,
+    rgba(0, 0, 0, 0.1) 30%,
+    rgba(0, 0, 0, 0.15) 45%,
+    rgba(243, 222, 190, 0.3) 60%,
+    rgba(243, 222, 190, 0.6) 80%,
+    rgba(243, 222, 190, 0.7) 85%,
+    rgba(243, 222, 190, 0.8) 90%,
+    #f3debe 100%
+  );
+  z-index: 2;
+}
+
+.hero-carousel {
+  background-color: #f3debe; /* same as your page background */
+}
+.hero-img {
+  width: 100%; /* fills the full width of the slide */
+  height: 100%; /* set desired height (e.g. 80% of screen) */
+  object-fit: cover; /* ✅ keeps aspect ratio and crops nicely */
+  object-position: center; /* centers the focus area */
+  filter: brightness(0.6); /* optional: darken for text contrast */
+  background-color: #f3debe; /* fallback in case image doesn’t fill space */
+}
+
+.hero-overlay {
+  position: absolute;
+  bottom: 20%;
+  left: 5%;
+  color: white;
+  max-width: 45%;
+}
+
+.hero-overlay h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.hero-overlay p {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.hero-buttons button:first-child {
+  background-color: white;
+  color: black;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.hero-buttons button:last-child {
+  background-color: rgba(255, 255, 255, 0.2); /* soft fill */
+  color: white;
+  backdrop-filter: blur(2px);
+}
+
+.hero-buttons button {
+  padding: 1rem 2rem; /* bigger buttons */
+  font-size: 1.1rem; /* larger text */
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hero-buttons button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+/* Hide default slick arrows */
+.slick-prev::before,
+.slick-next::before {
+  display: none;
+}
+.slick-prev,
+.slick-next {
+  background: none !important;
+  border: none !important;
+  padding: 0;
+}
+
+.custom-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.custom-arrow:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  scale: 1.1;
+}
+
+.custom-arrow.left {
+  left: 30px;
+}
+
+.custom-arrow.right {
+  right: 30px;
+}

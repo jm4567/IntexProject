@@ -1,14 +1,17 @@
-import { useLocation } from 'react-router-dom';
 import '../css/MovieDetail.css';
 import MovieRow from '../components/MovieRow';
 import { useState, useEffect, useRef } from 'react';
 import { Movie } from '../types/Movie';
-import { fetchAllMovies } from '../api/MoviesAPI';
 import axios from 'axios';
+import { useLocation, useParams } from 'react-router-dom';
+import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
+import { fetchAllMovies, fetchMovieById } from '../api/MoviesAPI';
 
 function MovieDetailsPage() {
   const location = useLocation();
-  const movieData = location.state;
+  const { showId } = useParams();
+  const [movieData, setMovieData] = useState<Movie | null>(location.state || null);
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [collabMovies, setCollabMovies] = useState<Movie[]>([]);
   const [contentMovies, setContentMovies] = useState<Movie[]>([]);
@@ -19,68 +22,79 @@ function MovieDetailsPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
+        // Always fetch the movie from the backend for freshest data
+        if (!movieData && showId) {
+          const fetchedMovie = await fetchMovieById(showId);
+          setMovieData(fetchedMovie);
+        }
+
+        // Load all movies (needed for matching titles)
         const all = await fetchAllMovies([]);
         setAllMovies(all.movies);
 
-        const showId = movieData?.showId || movieData?.show_id;
-        const title = movieData?.title;
+        // Fetch recommendations once movieData is ready
+        if (movieData) {
+          const showId = movieData.showId || movieData.show_id;
+          const title = movieData.title;
 
-        const collabTitles: string[] = [];
-        const contentTitles: string[] = [];
+          const collabTitles: string[] = [];
+          const contentTitles: string[] = [];
 
-        if (showId) {
-          const res = await axios.get(
-            `https://localhost:5000/api/Recommendations/by-id/${showId}`
+          if (showId) {
+            const res = await axios.get(
+              `https://localhost:5000/api/Recommendations/by-id/${showId}`
+            );
+            const rec = res.data;
+            collabTitles.push(
+              rec.collaborative?.recommendation_1,
+              rec.collaborative?.recommendation_2,
+              rec.collaborative?.recommendation_3,
+              rec.collaborative?.recommendation_4,
+              rec.collaborative?.recommendation_5
+            );
+          }
+
+          if (title) {
+            const res = await axios.get(
+              `https://localhost:5000/api/Recommendations/by-title/${encodeURIComponent(title)}`
+            );
+            const rec = res.data;
+            contentTitles.push(
+              rec.content?.recommendation_1_title,
+              rec.content?.recommendation_2_title,
+              rec.content?.recommendation_3_title,
+              rec.content?.recommendation_4_title,
+              rec.content?.recommendation_5_title
+            );
+          }
+
+          // Normalize and match
+          const normalize = (s: string) => s?.trim()?.toLowerCase();
+          const normalizedAll = all.movies.map((m) => ({
+            ...m,
+            normalizedTitle: normalize(m.title),
+          }));
+
+          setCollabMovies(
+            normalizedAll.filter((m) =>
+              collabTitles.map(normalize).includes(m.normalizedTitle)
+            )
           );
-          const rec = res.data;
-          collabTitles.push(
-            rec.collaborative?.recommendation_1,
-            rec.collaborative?.recommendation_2,
-            rec.collaborative?.recommendation_3,
-            rec.collaborative?.recommendation_4,
-            rec.collaborative?.recommendation_5
+
+          setContentMovies(
+            normalizedAll.filter((m) =>
+              contentTitles.map(normalize).includes(m.normalizedTitle)
+            )
           );
+
+          // Scroll to recommendations
+          setTimeout(() => {
+            (collabMovies.length &&
+              collabRef.current?.scrollIntoView({ behavior: 'smooth' })) ||
+              (contentMovies.length &&
+                contentRef.current?.scrollIntoView({ behavior: 'smooth' }));
+          }, 100);
         }
-
-        if (title) {
-          const res = await axios.get(
-            `https://localhost:5000/api/Recommendations/by-title/${encodeURIComponent(title)}`
-          );
-          const rec = res.data;
-          contentTitles.push(
-            rec.content?.recommendation_1_title,
-            rec.content?.recommendation_2_title,
-            rec.content?.recommendation_3_title,
-            rec.content?.recommendation_4_title,
-            rec.content?.recommendation_5_title
-          );
-        }
-
-        const normalize = (s: string) => s?.trim()?.toLowerCase();
-        const normalizedAll = all.movies.map((m) => ({
-          ...m,
-          normalizedTitle: normalize(m.title),
-        }));
-
-        setCollabMovies(
-          normalizedAll.filter((m) =>
-            collabTitles.map(normalize).includes(m.normalizedTitle)
-          )
-        );
-
-        setContentMovies(
-          normalizedAll.filter((m) =>
-            contentTitles.map(normalize).includes(m.normalizedTitle)
-          )
-        );
-
-        // Scroll to recommendations if either list exists
-        setTimeout(() => {
-          (collabMovies.length &&
-            collabRef.current?.scrollIntoView({ behavior: 'smooth' })) ||
-            (contentMovies.length &&
-              contentRef.current?.scrollIntoView({ behavior: 'smooth' }));
-        }, 100);
       } catch (err) {
         setError((err as Error).message);
         console.error('❌ Recommendation error:', err);
@@ -88,10 +102,10 @@ function MovieDetailsPage() {
     };
 
     loadData();
-  }, [movieData]);
+  }, [movieData, showId]);
 
   if (!movieData) {
-    return <p className="text-center mt-5">No movie data available.</p>;
+    return <p className="text-center mt-5">Loading movie details...</p>;
   }
 
   const {

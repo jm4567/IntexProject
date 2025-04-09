@@ -5,7 +5,6 @@ import GenreFilter from '../components/GenreFilter';
 import MovieCard from '../components/MovieCard';
 import '../css/MoviePage.css';
 import NavBar from '../components/NavBar';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 function BrowseGenres() {
@@ -23,7 +22,13 @@ function BrowseGenres() {
       if (data.movies.length === 0) {
         setHasMore(false);
       } else {
-        setMovies((prev) => [...prev, ...data.movies]);
+        setMovies((prev) => {
+          const existingIds = new Set(prev.map((m) => m.showId));
+          const newUnique = data.movies.filter(
+            (m) => !existingIds.has(m.showId)
+          );
+          return [...prev, ...newUnique];
+        });
       }
     } catch (err) {
       setError((err as Error).message);
@@ -41,6 +46,7 @@ function BrowseGenres() {
     loadMovies();
   }, [loadMovies]);
 
+  //used for infinite scrolling
   useEffect(() => {
     if (!hasMore) return;
 
@@ -70,7 +76,6 @@ function BrowseGenres() {
         {/* Foreground content */}
         <div className="container-fluid mt-4 foreground-content">
           <NavBar />
-          <Header />
           <div className="row">
             {/* Genre dropdown full width */}
             <div className="col-md-12 mb-4 drop-down">
