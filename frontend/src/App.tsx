@@ -22,7 +22,7 @@ function App() {
         <Route path="/movies" element={<MoviesPage />} />
         <Route path="/createaccount" element={<CreateAccount />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/movie/:title/:show_id" element={<MovieDetailsPages />} />
+        <Route path="/movie/:show_id" element={<MovieDetailsPages />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/genres" element={<BrowseGenres />} />
         <Route path="/managemovies" element={<ManageMovies />} />
