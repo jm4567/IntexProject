@@ -1,6 +1,8 @@
 import NavBar from '../components/NavBar';
 import '../css/Homepage.css';
 import { useState } from 'react';
+import AuthorizeView, { AuthorizedUser } from '../components/AuthorizeView';
+import Logout from '../components/Logout';
 
 function Homepage() {
   const [startSplit, setStartSplit] = useState(false);
@@ -25,6 +27,7 @@ function Homepage() {
   };
 
   return (
+    <AuthorizeView>
     <div className="full-screen-wrapper">
       {/* Homepage content always rendered */}
       <div className="homepage-container">
@@ -69,6 +72,7 @@ function Homepage() {
         </div>
       </div>
     </div>
+    </AuthorizeView>
   );
 }
 

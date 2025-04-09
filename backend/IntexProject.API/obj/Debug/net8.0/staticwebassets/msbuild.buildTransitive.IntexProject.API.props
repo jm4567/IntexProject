@@ -1,3 +1,11 @@
 ﻿<Project>
+<<<<<<< HEAD
   <Import Project="..\buildMultiTargeting\IntexProject.API.props" />
+=======
+<<<<<<< HEAD
+  <Import Project="..\buildMultiTargeting\IntexProject.API.props" />
+=======
+  <Import Project="../buildMultiTargeting/IntexProject.API.props" />
+>>>>>>> origin
+>>>>>>> kate
 </Project>
