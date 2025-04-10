@@ -183,11 +183,16 @@ function MovieDetailsPage() {
           <div className="row justify-content-center align-items-start">
             <div className="col-lg-4 col-md-5 text-center mb-4 mb-md-0">
               <img
-                src={getPosterUrl(title)}
+                src={posterUrl || getPosterUrl(title)}
                 alt={title}
                 onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = '/images/Image_coming_soon.png';
+                  // If backend URL fails, fall back to getPosterUrl
+                  if (e.currentTarget.src !== getPosterUrl(title)) {
+                    e.currentTarget.src = getPosterUrl(title);
+                  } else {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/images/Image_coming_soon.png';
+                  }
                 }}
                 className="movie-poster-img"
               />
