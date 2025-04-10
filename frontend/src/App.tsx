@@ -14,6 +14,7 @@ import { Routes, Route } from 'react-router-dom';
 import DefaultLayout from './components/DefaultLayout';
 import Header from './components/Header';
 import AuthorizeView from './components/AuthorizeView';
+import ScrollToTop from './utils/ScrollToTop';
 
 function App() {
   const location = useLocation();
@@ -27,6 +28,7 @@ function App() {
     <main className="container-fluid px-0">
       {/* {shouldShowFooter && <Footer />}
       {shouldShowHeader && <NavBar />} */}
+      <ScrollToTop />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Homepage />} />
