@@ -5,7 +5,7 @@ import { Movie } from '../types/Movie';
 import axios from 'axios';
 import { useLocation, useParams } from 'react-router-dom';
 import { fetchAllMovies, fetchMovieById } from '../api/MoviesAPI';
-import { getPosterUrl } from '../utils/getPosterUrl';
+import { getBestPosterUrl } from '../utils/getBestPosterUrl';
 
 function MovieDetailsPage() {
   const location = useLocation();
@@ -66,10 +66,14 @@ function MovieDetailsPage() {
 
         let currentMovie = location.state as Movie;
         if (!currentMovie || currentMovie.showId !== routeShowId) {
-          currentMovie = await fetchMovieById(routeShowId!);
+          try {
+            currentMovie = await fetchMovieById(routeShowId!);
+          } catch (err) {
+            setError('Movie not found.');
+            return;
+          }
         }
         setMovieData(currentMovie);
-
         window.scrollTo({ top: 0 });
 
         const showId = currentMovie.showId;
@@ -111,7 +115,6 @@ function MovieDetailsPage() {
         const matchedCollab = all.movies.filter((m) =>
           collabTitles.map(trim).includes(trim(m.title))
         );
-
         const matchedContentInitial = all.movies.filter((m) =>
           contentTitles.map(trim).includes(trim(m.title))
         );
@@ -146,6 +149,11 @@ function MovieDetailsPage() {
           ...filteredFallbacks,
         ];
 
+        console.log('Matched Collab Movies:', matchedCollab);
+        console.log('Matched Content Movies:', matchedContentInitial);
+        console.log('Fallback Content Movies:', filteredFallbacks);
+        console.log('Final Recommendations:', finalContentMovies);
+
         setCollabMovies(matchedCollab);
         setContentMovies(finalContentMovies);
       } catch (err) {
@@ -155,7 +163,7 @@ function MovieDetailsPage() {
     };
 
     loadData();
-  }, [routeShowId]);
+  }, [routeShowId, location.key]);
 
   if (!movieData) {
     return <p className="text-center mt-5">Loading movie details...</p>;
@@ -175,6 +183,11 @@ function MovieDetailsPage() {
     castList,
   } = movieData;
 
+  const resolvePoster = () => {
+    if (posterUrl) return posterUrl;
+    return `https://postersintex29.blob.core.windows.net/posters/${title}.jpg`;
+  };
+
   return (
     <div className="full-screen-wrapper">
       <div className="background-overlay"></div>
@@ -183,18 +196,15 @@ function MovieDetailsPage() {
           <div className="row justify-content-center align-items-start">
             <div className="col-lg-4 col-md-5 text-center mb-4 mb-md-0">
               <img
-                src={posterUrl || getPosterUrl(title)}
+                src={resolvePoster()}
                 alt={title}
-                onError={(e) => {
-                  // If backend URL fails, fall back to getPosterUrl
-                  if (e.currentTarget.src !== getPosterUrl(title)) {
-                    e.currentTarget.src = getPosterUrl(title);
-                  } else {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = '/images/Image_coming_soon.png';
-                  }
-                }}
                 className="movie-poster-img"
+                key={resolvePoster()}
+                onError={(e) => {
+                  console.warn('❌ Image failed:', e.currentTarget.src);
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/images/Image_coming_soon.png';
+                }}
               />
             </div>
 
@@ -252,12 +262,6 @@ function MovieDetailsPage() {
               </div>
             </div>
           </div>
-
-          {loadingRecs && (
-            <div className="text-center mt-5">
-              <p>Loading recommendations...</p>
-            </div>
-          )}
 
           {!loadingRecs && collabMovies.length > 0 && (
             <div className="mt-5" ref={collabRef}>
