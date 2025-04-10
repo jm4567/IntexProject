@@ -2,7 +2,6 @@ import { useLocation } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Homepage from './pages/Homepage';
 import './css/styles.css';
-import CreateAccount from './pages/CreateAccount';
 import MovieDetailsPages from './pages/MovieDetailsPages';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import MoviesPage from './pages/MoviesPage';
