@@ -75,7 +75,6 @@ function BrowseGenres() {
 
         {/* Foreground content */}
         <div className="container-fluid mt-4 foreground-content">
-          <NavBar />
           <div className="row">
             {/* Genre dropdown full width */}
             <div className="col-md-12 mb-4 drop-down">

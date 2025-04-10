@@ -5,7 +5,6 @@ import MovieRow from '../components/MovieRow';
 import NavBar from '../components/NavBar';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import GenreFilter from '../components/GenreFilter';
 import MovieCard from '../components/MovieCard';
 import '../css/MoviePage.css';
 
@@ -67,17 +66,20 @@ const MoviesPage = () => {
         <div className="background-overlay"></div>
 
         <div className="movie-content foreground-content">
-          <NavBar />
+          <NavBar
+            selectedGenres={selectedGenres}
+            setSelectedGenres={setSelectedGenres}
+          />
           {selectedGenres.length === 0 && <Header movies={topBannerMovies} />}
 
           <div className="container-fluid mt-4 foreground-content">
             <div className="row">
-              <div className="col-md-12 mb-4 drop-down">
+              {/* <div className="col-md-12 mb-4 drop-down">
                 <GenreFilter
                   selectedGenres={selectedGenres}
                   setSelectedGenres={setSelectedGenres}
                 />
-              </div>
+              </div> */}
 
               <div className="col-md-12">
                 {error && <p className="text-danger">{error}</p>}
