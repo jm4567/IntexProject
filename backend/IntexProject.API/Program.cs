@@ -34,6 +34,10 @@ builder.Services.AddDbContext<MovieDbContext>(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration["ConnectionStrings:IdentityConnection"]));
 
+builder.Services.AddDbContext<RecommenderDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("RecommenderConnection")));
+
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
