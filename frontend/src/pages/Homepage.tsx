@@ -72,7 +72,7 @@ const Homepage = () => {
             onSubmit={(e) => {
               e.preventDefault();
               const email = (e.target as HTMLFormElement).email.value;
-              console.log('Email submitted:', email);
+              navigate(`/register?email=${encodeURIComponent(email)}`);
             }}
           >
             <input
@@ -83,7 +83,7 @@ const Homepage = () => {
               required
             />
             <button
-              onClick={() => navigate('/createaccount')}
+              onClick={() => navigate('/register')}
               type="submit"
               className="email-button"
             >

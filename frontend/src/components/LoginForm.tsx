@@ -11,6 +11,7 @@ const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberme, setRememberme] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // state variable for error messages
   const [error, setError] = useState<string>('');
@@ -22,7 +23,6 @@ const LoginForm = () => {
   };
 
   // Dynamically load the retro Google Font (for the welcome text)
-  
 
   // useEffect(() => {
   //   const script = document.createElement('script');
@@ -134,13 +134,19 @@ const LoginForm = () => {
 
       <InputWrapper>
         <FormInput
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           name="password" // Added name
           id="password" // Changed id to password
           placeholder="Password"
           value={password}
           onChange={handleChange}
         />
+        <ToggleButton
+          type="button"
+          onClick={() => setShowPassword((prev) => !prev)}
+        >
+          {showPassword ? 'Hide' : 'Show'}
+        </ToggleButton>
       </InputWrapper>
 
       <CheckboxWrapper>
@@ -199,8 +205,9 @@ const InputWrapper = styled.div`
   width: 90%;
   display: flex;
   flex-direction: column;
-  gap: 0px; /* space between fields */
+  gap: 0px;
   margin-bottom: 20px;
+  position: relative; /* ⬅️ This is the key */
 `;
 
 const CheckboxWrapper = styled.div`
@@ -240,4 +247,15 @@ const ForgotPasswordLink = styled.a`
   &:hover {
     color: #d48830;
   }
+`;
+const ToggleButton = styled.button`
+  position: absolute;
+  right: 10px;
+  top: 30%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: #555;
+  cursor: pointer;
 `;
