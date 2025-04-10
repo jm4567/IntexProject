@@ -1,12 +1,11 @@
-import { Link } from 'react-router-dom';
-// import '../css/styles.css';
+import { Link, useLocation } from 'react-router-dom';
 import '../css/NavBar.css';
 import { useState } from 'react';
 import Logo from './Logo';
-import { useLocation } from 'react-router-dom';
 import MovieSearch from './MovieSearch';
 import { logoutUser } from '../api/logoutUser';
 import GenreFilter from './GenreFilter';
+import { useUser } from './AuthorizeView';
 
 interface NavBarProps {
   selectedGenres: string[];
@@ -14,33 +13,24 @@ interface NavBarProps {
 }
 
 const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
-  //toggle search
   const [showSearch, setShowSearch] = useState(false);
   const [selectedMovies, setSelectedMovies] = useState<string[]>([]);
   const [showGenreDropdown, setShowGenreDropdown] = useState(false);
-
-  //toggle profile so it shows menu
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-  const toggleProfileMenu = () => {
-    setShowProfileMenu((prev) => !prev);
-  };
+  const user = useUser();
+  const toggleProfileMenu = () => setShowProfileMenu((prev) => !prev);
+  const toggleSearch = () => setShowSearch((prev) => !prev);
 
-  const toggleSearch = () => {
-    setShowSearch((prev) => !prev);
-  };
-
-  //use location so navigation pill changes depending on the page we are on
   const location = useLocation();
   const currentPath = location.pathname;
 
   return (
     <div className="nav-wrapper">
-      {/* Horizontal row: logo - pill - avatar */}
       <div className="nav-row">
         <Logo />
 
-        {/* Center pill nav */}
+        {/* Center nav links */}
         <div className="nav-main">
           <div className="nav-inner">
             <div className="nav-left">
@@ -49,12 +39,7 @@ const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
                   Go Back
                 </Link>
               )}
-              {currentPath === '/managemovies' && (
-                <Link to="/" className="navbar-brand">
-                  Home
-                </Link>
-              )}
-              {currentPath === '/movies' && (
+              {['/managemovies', '/movies'].includes(currentPath) && (
                 <Link to="/" className="navbar-brand">
                   Home
                 </Link>
@@ -104,17 +89,21 @@ const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
           </div>
         </div>
 
-        {/* Avatar on right side */}
-        <div className="nav-avatar">
-          <img
-            src="/images/person.png"
-            onClick={toggleProfileMenu}
-            className="avatar-img"
-            width="120"
-            height="120"
-          />
+        {/* Avatar and email side-by-side */}
+        <div className="nav-avatar" onClick={toggleProfileMenu}>
+          <div className="user-info-wrapper-horizontal ">
+            {user?.email && (
+              <span className="user-name text-black">{user.email}</span>
+            )}
+            <img
+              src="/images/person.png"
+              className="avatar-img"
+              alt="Profile"
+            />
+          </div>
+
           {showProfileMenu && (
-            <div className="profile-dropdown">
+            <div className="profile-dropdown text-black">
               <Link to="/profile" className="dropdown-item">
                 <span className="icon">👤</span> View Profile
               </Link>

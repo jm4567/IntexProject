@@ -332,3 +332,37 @@
   z-index: 10;
   position: relative;
 }
+
+.user-info-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.user-name {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #333;
+}
+
+.avatar-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 70%;
+  border: 2px solid #f19c3d;
+  background-color: white;
+}
+
+.user-info-wrapper-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-name {
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  white-space: nowrap;
+}
