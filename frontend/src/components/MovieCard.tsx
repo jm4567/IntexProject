@@ -1,5 +1,6 @@
 import { Movie } from '../types/Movie';
 import { useNavigate } from 'react-router-dom';
+import { getBestPosterUrl } from '../utils/getBestPosterUrl';
 import '../css/MovieRow.css';
 
 interface MovieCardProps {
@@ -14,10 +15,11 @@ const MovieCard = ({ movie }: MovieCardProps) => {
       console.warn('No showId provided for movie:', movie);
       return;
     }
-
-    // Just navigate using showId — let the details page fetch all info
     navigate(`/movie/${movie.showId}`);
   };
+
+  const fallback = '/images/Image_coming_soon.png';
+  const initialSrc = getBestPosterUrl(movie.title, movie.posterUrl);
 
   return (
     <div
@@ -25,11 +27,31 @@ const MovieCard = ({ movie }: MovieCardProps) => {
       onClick={handleClick}
       style={{ cursor: 'pointer' }}
     >
-      <img
-        src={movie.posterUrl || '/images/Image_coming_soon.png'}
-        alt={movie.title}
-        className="movie-poster"
-      />
+      {initialSrc ? (
+        <img
+          src={initialSrc}
+          alt={movie.title}
+          onError={(e) => {
+            const current = e.currentTarget;
+            if (!current.src.includes(fallback)) {
+              current.onerror = null;
+              current.src = fallback;
+            }
+          }}
+          onLoad={(e) => {
+            if (e.currentTarget.naturalWidth === 0) {
+              e.currentTarget.src = fallback;
+            }
+          }}
+          className="movie-poster"
+        />
+      ) : (
+        <img
+          src={fallback}
+          alt="Poster not available"
+          className="movie-poster"
+        />
+      )}
       <p className="movie-title">{movie.title}</p>
     </div>
   );
