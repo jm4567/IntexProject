@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Movie } from '../types/Movie';
-import { fetchAllMovies } from '../api/MoviesAPI';
-import MovieRow from '../components/MovieRow';
+import { fetchMoreMovies } from '../api/MoviesAPI';
 import NavBar from '../components/NavBar';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import MovieCard from '../components/MovieCard';
 import { useUser } from '../components/AuthorizeView';
+import MovieRow from '../components/MovieRow';
 import '../css/MoviePage.css';
 
 const MoviesPage = () => {
@@ -18,20 +18,27 @@ const MoviesPage = () => {
   const [recommendedMovies, setRecommendedMovies] = useState<Movie[]>([]);
   const [contentBasedMovies, setContentBasedMovies] = useState<Movie[]>([]);
   const [genreBasedMovies, setGenreBasedMovies] = useState<Movie[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const observer = useRef<IntersectionObserver | null>(null);
+  const loader = useRef<HTMLDivElement | null>(null);
   const user = useUser();
+
+  const handleScroll = () => {
+    setShowScrollTop(window.scrollY > 400);
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handlePlay = () => {
     const moviepage = document.querySelector('.movie-container');
     if (moviepage) moviepage.classList.add('visible');
 
-    setTimeout(() => {
-      setStartSplit(true);
-    }, 3000);
-
-    setTimeout(() => {
-      setShowCurtain(false);
-    }, 4000);
-
+    setTimeout(() => setStartSplit(true), 3000);
+    setTimeout(() => setShowCurtain(false), 4000);
     setTimeout(() => {
       const curtain = document.querySelector(
         '.video-split-container'
@@ -40,19 +47,65 @@ const MoviesPage = () => {
     }, 4000);
   };
 
+  const loadMovies = useCallback(async () => {
+    try {
+      const data = await fetchMoreMovies([], page, 10);
+      if (data.movies.length === 0) {
+        setHasMore(false);
+      } else {
+        setAllMovies((prev) => {
+          const existingIds = new Set(prev.map((m) => m.showId));
+          const newUnique = data.movies.filter(
+            (m) => !existingIds.has(m.showId)
+          );
+          return [...prev, ...newUnique];
+        });
+      }
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  }, [page]);
+
   useEffect(() => {
-    const loadMovies = async () => {
-      try {
-        const data = await fetchAllMovies([]);
-        setAllMovies(data.movies);
-      } catch (err) {
-        setError((err as Error).message);
+    if (selectedGenres.length === 0) {
+      setPage(1);
+      setAllMovies([]);
+      setHasMore(true);
+    }
+  }, [selectedGenres]);
+
+  useEffect(() => {
+    if (selectedGenres.length === 0) {
+      loadMovies();
+    }
+  }, [loadMovies, selectedGenres]);
+
+  useEffect(() => {
+    if (!hasMore) return;
+
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    });
+
+    if (loader.current) {
+      observer.current.observe(loader.current);
+    }
+
+    return () => {
+      if (loader.current && observer.current) {
+        observer.current.unobserve(loader.current);
       }
     };
-    loadMovies();
+  }, [hasMore]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // ✅ Fixed Recommendation Fetch
   useEffect(() => {
     const fetchRecs = async () => {
       try {
@@ -105,13 +158,6 @@ const MoviesPage = () => {
           {selectedGenres.length === 0 && <Header movies={topBannerMovies} />}
           <div className="container-fluid mt-4 ">
             <div className="row">
-              {/* <div className="col-md-12 mb-4 drop-down">
-                <GenreFilter
-                  selectedGenres={selectedGenres}
-                  setSelectedGenres={setSelectedGenres}
-                />
-              </div> */}
-
               <div className="col-md-12">
                 {error && <p className="text-danger">{error}</p>}
 
@@ -138,7 +184,51 @@ const MoviesPage = () => {
                     <MovieRow title="" movies={genreBasedMovies} />
 
                     <h1 className="mb-3">All Movies</h1>
-                    <MovieRow title="" movies={allMovies} />
+                    <div className="row">
+                      {allMovies.map((movie) => (
+                        <div className="col-md-2 mb-4" key={movie.showId}>
+                          <MovieCard movie={movie} />
+                        </div>
+                      ))}
+                    </div>
+
+                    {hasMore && (
+                      <div
+                        ref={loader}
+                        className="text-center py-4"
+                        style={{
+                          fontWeight: 'bold',
+                          letterSpacing: '1.2px',
+                          fontSize: '1.1rem',
+                          fontFamily: `'Segoe UI', sans-serif`,
+                          textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+                          color: '#3a2c1d',
+                          background:
+                            'linear-gradient(to right, #f7e6cd, #fdf6ec)',
+                          padding: '12px 24px',
+                          borderRadius: '10px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          maxWidth: 'fit-content',
+                          margin: '30px auto',
+                          boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+                        }}
+                      >
+                        <img
+                          src="/images/cleaned_logo_transparent copy.png"
+                          alt="logo"
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            marginRight: '12px',
+                            verticalAlign: 'middle',
+                            filter: 'sepia(40%) contrast(1.1)',
+                          }}
+                        />
+                        Rolling in more movies for you...
+                      </div>
+                    )}
                   </>
                 )}
               </div>
@@ -147,6 +237,12 @@ const MoviesPage = () => {
         </div>
         <Footer />
       </div>
+
+      {showScrollTop && (
+        <button className="back-to-top-btn" onClick={scrollToTop}>
+          ⬆ Back to Top
+        </button>
+      )}
 
       {showCurtain && (
         <div className={`video-split-container ${startSplit ? 'split' : ''}`}>
