@@ -178,4 +178,3 @@ export const fetchMovieById = async (showId: string): Promise<Movie> => {
     throw error;
   }
 };
-
