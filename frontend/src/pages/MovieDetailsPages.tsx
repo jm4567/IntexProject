@@ -6,11 +6,16 @@ import axios from 'axios';
 import { useLocation, useParams } from 'react-router-dom';
 import { fetchAllMovies, fetchMovieById } from '../api/MoviesAPI';
 import { getBestPosterUrl } from '../utils/getBestPosterUrl';
+import { getPosterUrl } from '../utils/getPosterUrl';
+import StarRating from '../components/StarRating';
+import { getCurrentUserEmail } from '../api/UserAPI';
 
 function MovieDetailsPage() {
   const location = useLocation();
   const { showId: routeShowId } = useParams();
-  const [movieData, setMovieData] = useState<Movie | null>(null);
+  const [movieData, setMovieData] = useState<Movie | null>(
+    (location.state as Movie) ?? null
+  );
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [collabMovies, setCollabMovies] = useState<Movie[]>([]);
   const [contentMovies, setContentMovies] = useState<Movie[]>([]);
@@ -18,6 +23,9 @@ function MovieDetailsPage() {
   const [error, setError] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const collabRef = useRef<HTMLDivElement | null>(null);
+
+  const [userRating, setUserRating] = useState<number>(0);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   const extractGenres = (movie: any): string[] => {
     const genreKeys = [
@@ -158,12 +166,33 @@ function MovieDetailsPage() {
         setContentMovies(finalContentMovies);
       } catch (err) {
         setError((err as Error).message);
+      } finally {
+        setLoadingRecs(false);
       }
-      setLoadingRecs(false);
     };
-
     loadData();
   }, [routeShowId, location.key]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const email = await getCurrentUserEmail();
+        setUserEmail(email);
+        if (email && movieData?.showId) {
+          const res = await axios.get(
+            `https://localhost:5000/api/ratings/get?userEmail=${encodeURIComponent(email)}&showId=${movieData.showId}`,
+            { withCredentials: true }
+          );
+          if (res.data?.rating !== undefined) {
+            setUserRating(res.data.rating);
+          }
+        }
+      } catch (err) {
+        console.error('❌ Failed to fetch user data or rating:', err);
+      }
+    };
+    fetchUserData();
+  }, [movieData]);
 
   if (!movieData) {
     return <p className="text-center mt-5">Loading movie details...</p>;
@@ -207,7 +236,6 @@ function MovieDetailsPage() {
                 }}
               />
             </div>
-
             <div className="col-lg-6 col-md-7">
               <div className="movie-detail ps-md-4">
                 <h1 className="fw-bold display-4">{title}</h1>
@@ -256,6 +284,24 @@ function MovieDetailsPage() {
                     <strong>Cast:</strong> {castList}
                   </p>
                 )}
+                <div className="mt-3">
+                  <strong>Your Rating:</strong>
+                  <StarRating
+                    value={userRating}
+                    onChange={async (newRating: number) => {
+                      setUserRating(newRating);
+                      await axios.post(
+                        'https://localhost:5000/api/ratings/rate',
+                        {
+                          userEmail,
+                          showId: movieData?.showId,
+                          rating: newRating,
+                        },
+                        { withCredentials: true }
+                      );
+                    }}
+                  />
+                </div>
                 <button className="btn btn-outline-dark mt-3">
                   <i className="bi bi-play-fill me-2"></i> Watch Now
                 </button>

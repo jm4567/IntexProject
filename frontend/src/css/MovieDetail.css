@@ -24,3 +24,38 @@
   overflow-x: hidden;
   overflow-y: auto;
 }
+
+.react-stars svg {
+  fill: red !important; /* try bold red to test */
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+}
+
+.react-stars svg:hover {
+  fill: #ffb400; /* Hover color */
+}
+
+.rating-stars-wrapper {
+  background-color: transparent;
+  padding: 10px 0;
+  margin-top: 5px;
+}
+
+.react-stars {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-start;
+}
+
+.react-stars svg {
+  fill: #ffd700; /* Gold stars */
+  stroke: #aaa; /* Soft outline */
+  width: 32px;
+  height: 32px;
+  transition: fill 0.2s ease;
+}
+
+.react-stars svg:hover {
+  fill: #ffc107; /* Brighter gold on hover */
+}
