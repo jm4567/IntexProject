@@ -8,8 +8,10 @@ import { fetchAllMovies, fetchMovieById } from '../api/MoviesAPI';
 
 function MovieDetailsPage() {
   const location = useLocation();
-  const { showId: routeShowId } = useParams();
-  const [movieData, setMovieData] = useState<Movie | null>(null);
+  const { showId } = useParams(); // ✅ standardized param name
+  const [movieData, setMovieData] = useState<Movie | null>(
+    (location.state as Movie) || null
+  );
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [collabMovies, setCollabMovies] = useState<Movie[]>([]);
   const [contentMovies, setContentMovies] = useState<Movie[]>([]);
@@ -25,23 +27,24 @@ function MovieDetailsPage() {
         const all = await fetchAllMovies([]);
         setAllMovies(all.movies);
 
-        let currentMovie = location.state as Movie;
-        if (!currentMovie || currentMovie.showId !== routeShowId) {
-          currentMovie = await fetchMovieById(routeShowId!);
+        let currentMovie = movieData;
+
+        if (!currentMovie || currentMovie.showId !== showId) {
+          currentMovie = await fetchMovieById(showId!);
+          setMovieData(currentMovie);
         }
-        setMovieData(currentMovie);
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        const showId = currentMovie.showId;
+        const showIdForRecs = currentMovie.showId;
         const title = currentMovie.title;
 
         let collabTitles: string[] = [];
         let contentTitles: string[] = [];
 
-        if (showId) {
+        if (showIdForRecs) {
           const res = await axios.get(
-            `https://localhost:5000/api/Recommendations/by-id/${showId}`
+            `https://localhost:5000/api/Recommendations/by-id/${showIdForRecs}`
           );
           const rec = res.data;
           collabTitles = [
@@ -69,23 +72,9 @@ function MovieDetailsPage() {
 
         const trim = (str: string) => str?.trim();
 
-        // Debug logs
-        console.log('🧠 Content Titles:', contentTitles);
-        console.log(
-          '🎞️ All Movie Titles:',
-          all.movies.map((m) => m.title)
-        );
-        contentTitles.forEach((ct) => {
-          const found = all.movies.find((m) => trim(m.title) === trim(ct));
-          if (!found) {
-            console.warn(`❌ Missing match for content rec: "${ct}"`);
-          }
-        });
-
         const matchedCollab = all.movies.filter((m) =>
           collabTitles.map(trim).includes(trim(m.title))
         );
-
         const matchedContent = all.movies.filter((m) =>
           contentTitles.map(trim).includes(trim(m.title))
         );
@@ -109,7 +98,7 @@ function MovieDetailsPage() {
     };
 
     loadData();
-  }, [routeShowId]);
+  }, [showId]);
 
   if (!movieData) {
     return <p className="text-center mt-5">Loading movie details...</p>;

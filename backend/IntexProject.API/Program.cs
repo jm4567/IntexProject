@@ -7,6 +7,7 @@ using IntexProject.API.Models.Recommender;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add CORS
 // CORS for React frontend
 builder.Services.AddCors(options =>
 {
@@ -19,29 +20,24 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Add services to the container.
+
 // Add services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add SQLite Databases
+// Add databases
 builder.Services.AddDbContext<MovieDbContext>(options =>
-{
-    options.UseSqlite(builder.Configuration["ConnectionStrings:MoviesConnection"]);
-});
+    options.UseSqlite(builder.Configuration["ConnectionStrings:MoviesConnection"]));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlite(builder.Configuration["ConnectionStrings:IdentityConnection"]);
-});
+    options.UseSqlite(builder.Configuration["ConnectionStrings:IdentityConnection"]));
 
-// Add SQL Server Recommender Database
 builder.Services.AddDbContext<RecommenderDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RecommenderConnection")));
 
 
-
-// Identity and Auth
 builder.Services.AddAuthorization();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
@@ -52,6 +48,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 {
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
     options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
+    options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
 });
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, CustomUserClaimsPrincipalFactory>();
@@ -61,6 +58,33 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.Name = ".AspNetCore.Identity.Application";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.None;
+    // For dev, if you're not using HTTPS, use None:
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;  // Use Always for production with HTTPS
+
+    // Override redirection events for API calls
+    options.Events.OnRedirectToLogin = context =>
+    {
+        if (context.Request.Path.StartsWithSegments("/api"))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        }
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    };
+
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        if (context.Request.Path.StartsWithSegments("/api"))
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            return Task.CompletedTask;
+        }
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    };
     options.LoginPath = "/login";
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
@@ -92,8 +116,9 @@ app.MapPost("/logout", async (HttpContext context, SignInManager<IdentityUser> s
     context.Response.Cookies.Delete(".AspNetCore.Identity.Application", new CookieOptions
     {
         HttpOnly = true,
-        Secure = false,
-        SameSite = SameSiteMode.None
+        Secure = true, // Set to true if you're using HTTPS
+        SameSite = SameSiteMode.None,
+        Path = "/" // CRITICAL: must match the Path where the cookie was set
     });
 
     return Results.Ok(new { message = "Logout successful" });
@@ -102,15 +127,15 @@ app.MapPost("/logout", async (HttpContext context, SignInManager<IdentityUser> s
 app.MapGet("/pingauth", (HttpContext context, ClaimsPrincipal user) =>
 {
     Console.WriteLine($"User authenticated? {user.Identity?.IsAuthenticated}");
-
     if (!user.Identity?.IsAuthenticated ?? false)
     {
         Console.WriteLine("Unauthorized request to /pingauth");
         return Results.Unauthorized();
     }
-
     var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com";
     return Results.Json(new { email = email });
 }).RequireAuthorization();
 
 app.Run();
+
+

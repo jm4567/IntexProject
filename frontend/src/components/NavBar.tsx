@@ -2,9 +2,10 @@ import { Link } from 'react-router-dom';
 import '../css/styles.css';
 import '../css/NavBar.css';
 import { useState } from 'react';
-import Logo from './logo';
+import Logo from './Logo';
 import { useLocation } from 'react-router-dom';
 import MovieSearch from './MovieSearch';
+import { logoutUser } from '../api/logoutUser';
 
 const Navbar = () => {
   //toggle search
@@ -61,7 +62,7 @@ const Navbar = () => {
             )}
             {currentPath === '/movies' && (
               <Link to="/genres" className="nav-link active navbar-brand">
-                Genre <span className="arrow">▼</span>
+                Filter by Genre <span className="arrow">▼</span>
               </Link>
             )}
           </div>
@@ -99,7 +100,20 @@ const Navbar = () => {
             <Link to="/setting" className="dropdown-item">
               <span className="icon">⚙️</span> Settings
             </Link>
-            <button className="dropdown-item">Sign Out</button>
+            <button
+              className="dropdown-item"
+              onClick={async () => {
+                const success = await logoutUser();
+                if (success) {
+                  document.cookie = ".AspNetCore.Identity.Application=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;"
+                  window.location.href = '/login'; // ✅ Full reload to clear state
+                } else {
+                  console.error('Logout failed');
+                }
+              }}
+            >
+              Sign Out
+            </button>
           </div>
         )}
       </div>
