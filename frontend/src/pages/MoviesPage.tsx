@@ -6,6 +6,7 @@ import NavBar from '../components/NavBar';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import MovieCard from '../components/MovieCard';
+import { useUser } from '../components/AuthorizeView';
 import '../css/MoviePage.css';
 
 const MoviesPage = () => {
@@ -14,6 +15,10 @@ const MoviesPage = () => {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [startSplit, setStartSplit] = useState(false);
   const [showCurtain, setShowCurtain] = useState(true);
+  const [recommendedMovies, setRecommendedMovies] = useState<Movie[]>([]);
+  const [contentBasedMovies, setContentBasedMovies] = useState<Movie[]>([]);
+  const [genreBasedMovies, setGenreBasedMovies] = useState<Movie[]>([]);
+  const user = useUser();
 
   const handlePlay = () => {
     const moviepage = document.querySelector('.movie-container');
@@ -47,7 +52,35 @@ const MoviesPage = () => {
     loadMovies();
   }, []);
 
-  //for header
+  // ✅ Fixed Recommendation Fetch
+  useEffect(() => {
+    const fetchRecs = async () => {
+      try {
+        const res = await fetch(
+          'https://localhost:5000/api/personalizedrecommendations/by-user',
+          {
+            credentials: 'include',
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch recommendations');
+        }
+
+        const data = await res.json();
+        setRecommendedMovies(data.recommendations || []);
+        setContentBasedMovies(data.content || []);
+        setGenreBasedMovies(data.genre || []);
+      } catch (err) {
+        console.error('Failed to load recommendations:', err);
+      }
+    };
+
+    if (user?.email) {
+      fetchRecs();
+    }
+  }, [user]);
+
   const topBannerMovies = allMovies.filter((movie) =>
     ['s42', 's7073', 's603', 's6065', 's6891', 's6063', 's6152'].includes(
       movie.showId
@@ -64,14 +97,12 @@ const MoviesPage = () => {
     <div className="full-screen-wrapper">
       <div className="movie-container">
         <div className="background-overlay"></div>
-
         <div className="movie-content ">
           <NavBar
             selectedGenres={selectedGenres}
             setSelectedGenres={setSelectedGenres}
           />
           {selectedGenres.length === 0 && <Header movies={topBannerMovies} />}
-
           <div className="container-fluid mt-4 ">
             <div className="row">
               {/* <div className="col-md-12 mb-4 drop-down">
@@ -97,11 +128,16 @@ const MoviesPage = () => {
                   </div>
                 ) : (
                   <>
-                    <h1 className="mb-3">Recently Watched</h1>
-                    <MovieRow title="" movies={allMovies} />
+                    <h1 className="mb-3">Recommended for You</h1>
+                    <MovieRow title="" movies={recommendedMovies} />
+
+                    <h1 className="mb-3">Hidden Gems Based on Your Taste</h1>
+                    <MovieRow title="" movies={contentBasedMovies} />
+
+                    <h1 className="mb-3">Similar Genres You Might Like</h1>
+                    <MovieRow title="" movies={genreBasedMovies} />
+
                     <h1 className="mb-3">All Movies</h1>
-                    <MovieRow title="" movies={allMovies} />
-                    <h1 className="mb-3">Temp Title</h1>
                     <MovieRow title="" movies={allMovies} />
                   </>
                 )}
@@ -109,7 +145,6 @@ const MoviesPage = () => {
             </div>
           </div>
         </div>
-
         <Footer />
       </div>
 
