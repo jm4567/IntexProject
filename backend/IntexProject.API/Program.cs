@@ -4,6 +4,8 @@ using IntexProject.API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using IntexProject.API.Models.Recommender;
+using IntexProject.API.Models.Supplemental;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +38,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDbContext<RecommenderDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RecommenderConnection")));
+
+builder.Services.AddDbContext<SupplementalMoviesDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SupplementalMovieDb")));
+
 
 
 builder.Services.AddAuthorization();

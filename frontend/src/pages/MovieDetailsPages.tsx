@@ -5,13 +5,12 @@ import { Movie } from '../types/Movie';
 import axios from 'axios';
 import { useLocation, useParams } from 'react-router-dom';
 import { fetchAllMovies, fetchMovieById } from '../api/MoviesAPI';
+import { getPosterUrl } from '../utils/getPosterUrl';
 
 function MovieDetailsPage() {
   const location = useLocation();
-  const { showId } = useParams(); // ✅ standardized param name
-  const [movieData, setMovieData] = useState<Movie | null>(
-    (location.state as Movie) || null
-  );
+  const { showId: routeShowId } = useParams();
+  const [movieData, setMovieData] = useState<Movie | null>(null);
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [collabMovies, setCollabMovies] = useState<Movie[]>([]);
   const [contentMovies, setContentMovies] = useState<Movie[]>([]);
@@ -20,6 +19,44 @@ function MovieDetailsPage() {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const collabRef = useRef<HTMLDivElement | null>(null);
 
+  const extractGenres = (movie: any): string[] => {
+    const genreKeys = [
+      'action',
+      'adventure',
+      'animeSeriesInternationalTvShows',
+      'britishTvShowsDocuseriesInternationalTvShows',
+      'children',
+      'comedies',
+      'comediesDramasInternationalMovies',
+      'comediesInternationalMovies',
+      'comediesRomanticMovies',
+      'crimeTvShowsDocuseries',
+      'documentaries',
+      'documentariesInternationalMovies',
+      'docuseries',
+      'dramas',
+      'dramasInternationalMovies',
+      'dramasRomanticMovies',
+      'familyMovies',
+      'fantasy',
+      'horrorMovies',
+      'internationalMoviesThrillers',
+      'internationalTvShowsRomanticTvShowsTvDramas',
+      'kidsTv',
+      'languageTvShows',
+      'musicals',
+      'natureTv',
+      'realityTv',
+      'spirituality',
+      'tvAction',
+      'tvComedies',
+      'tvDramas',
+      'talkShowsTvComedies',
+      'thrillers',
+    ];
+    return genreKeys.filter((key) => movie[key] === 1);
+  };
+
   useEffect(() => {
     const loadData = async () => {
       setLoadingRecs(true);
@@ -27,24 +64,23 @@ function MovieDetailsPage() {
         const all = await fetchAllMovies([]);
         setAllMovies(all.movies);
 
-        let currentMovie = movieData;
-
-        if (!currentMovie || currentMovie.showId !== showId) {
-          currentMovie = await fetchMovieById(showId!);
-          setMovieData(currentMovie);
+        let currentMovie = location.state as Movie;
+        if (!currentMovie || currentMovie.showId !== routeShowId) {
+          currentMovie = await fetchMovieById(routeShowId!);
         }
+        setMovieData(currentMovie);
 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0 });
 
-        const showIdForRecs = currentMovie.showId;
+        const showId = currentMovie.showId;
         const title = currentMovie.title;
 
         let collabTitles: string[] = [];
         let contentTitles: string[] = [];
 
-        if (showIdForRecs) {
+        if (showId) {
           const res = await axios.get(
-            `https://localhost:5000/api/Recommendations/by-id/${showIdForRecs}`
+            `https://localhost:5000/api/Recommendations/by-id/${showId}`
           );
           const rec = res.data;
           collabTitles = [
@@ -75,30 +111,51 @@ function MovieDetailsPage() {
         const matchedCollab = all.movies.filter((m) =>
           collabTitles.map(trim).includes(trim(m.title))
         );
-        const matchedContent = all.movies.filter((m) =>
+
+        const matchedContentInitial = all.movies.filter((m) =>
           contentTitles.map(trim).includes(trim(m.title))
         );
 
-        setCollabMovies(matchedCollab);
-        setContentMovies(matchedContent);
+        const matchedContentTitles = matchedContentInitial.map((m) =>
+          trim(m.title)
+        );
+        const missingContentTitles = contentTitles.filter(
+          (t) => !matchedContentTitles.includes(trim(t))
+        );
 
-        setTimeout(() => {
-          if (matchedCollab.length) {
-            collabRef.current?.scrollIntoView({ behavior: 'smooth' });
-          } else if (matchedContent.length) {
-            contentRef.current?.scrollIntoView({ behavior: 'smooth' });
-          }
-        }, 100);
+        const fallbackMovies = await Promise.all(
+          missingContentTitles.map(async (t) => {
+            try {
+              const res = await axios.get(
+                `https://localhost:5000/api/SupplementalMovie/GetByTitle/${encodeURIComponent(t)}`
+              );
+              const fallback = res.data;
+              return {
+                ...fallback,
+                genres: extractGenres(fallback),
+              };
+            } catch {
+              return null;
+            }
+          })
+        );
+
+        const filteredFallbacks = fallbackMovies.filter(Boolean) as Movie[];
+        const finalContentMovies = [
+          ...matchedContentInitial,
+          ...filteredFallbacks,
+        ];
+
+        setCollabMovies(matchedCollab);
+        setContentMovies(finalContentMovies);
       } catch (err) {
         setError((err as Error).message);
-        console.error('❌ Recommendation error:', err);
       }
-
       setLoadingRecs(false);
     };
 
     loadData();
-  }, [showId]);
+  }, [routeShowId]);
 
   if (!movieData) {
     return <p className="text-center mt-5">Loading movie details...</p>;
@@ -126,8 +183,12 @@ function MovieDetailsPage() {
           <div className="row justify-content-center align-items-start">
             <div className="col-lg-4 col-md-5 text-center mb-4 mb-md-0">
               <img
-                src={posterUrl || '/images/Image_coming_soon.png'}
+                src={getPosterUrl(title)}
                 alt={title}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/images/Image_coming_soon.png';
+                }}
                 className="movie-poster-img"
               />
             </div>
@@ -140,30 +201,46 @@ function MovieDetailsPage() {
                     Directed by {director}
                   </h5>
                 )}
-                <p>
-                  <strong>Genres:</strong> {genres.join(', ')}
-                </p>
-                <p>
-                  <strong>Rating:</strong> {rating}
-                </p>
-                <p>
-                  <strong>Type:</strong> {type}
-                </p>
-                <p>
-                  <strong>Duration:</strong> {duration}
-                </p>
-                <p>
-                  <strong>Release Year:</strong> {releaseYear}
-                </p>
-                <p>
-                  <strong>Country:</strong> {country}
-                </p>
-                <p className="mt-3">
-                  <strong>Description:</strong> {description}
-                </p>
-                <p>
-                  <strong>Cast:</strong> {castList}
-                </p>
+                {genres.length > 0 && (
+                  <p>
+                    <strong>Genres:</strong> {genres.join(', ')}
+                  </p>
+                )}
+                {rating && (
+                  <p>
+                    <strong>Rating:</strong> {rating}
+                  </p>
+                )}
+                {type && (
+                  <p>
+                    <strong>Type:</strong> {type}
+                  </p>
+                )}
+                {duration && (
+                  <p>
+                    <strong>Duration:</strong> {duration}
+                  </p>
+                )}
+                {releaseYear && (
+                  <p>
+                    <strong>Release Year:</strong> {releaseYear}
+                  </p>
+                )}
+                {country && (
+                  <p>
+                    <strong>Country:</strong> {country}
+                  </p>
+                )}
+                {description && (
+                  <p className="mt-3">
+                    <strong>Description:</strong> {description}
+                  </p>
+                )}
+                {castList && (
+                  <p>
+                    <strong>Cast:</strong> {castList}
+                  </p>
+                )}
                 <button className="btn btn-outline-dark mt-3">
                   <i className="bi bi-play-fill me-2"></i> Watch Now
                 </button>
