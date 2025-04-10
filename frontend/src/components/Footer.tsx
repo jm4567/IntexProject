@@ -1,8 +1,16 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import '../css/Footer.css';
 
 const Footer = () => {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
   return (
-    <footer className="text-center mt-5 py-4 border-top">
+    <footer
+      className={`text-center ${
+        isHomePage ? 'homepage-footer' : 'default-footer'
+      }`}
+    >
       <p className="mb-0">
         &copy; 2025 CineNiche. All rights reserved.{' '}
         <Link to="/privacy" className="text-decoration-underline">
