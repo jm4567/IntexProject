@@ -1,52 +1,74 @@
-"use client";
-import React, { useState } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+'use client';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterForm = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLoginClick = () => navigate("/login");
+  const handleLoginClick = () => navigate('/login');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === "email") setEmail(value);
-    if (name === "password") setPassword(value);
-    if (name === "confirmPassword") setConfirmPassword(value);
+    if (name === 'email') setEmail(value);
+    if (name === 'password') setPassword(value);
+    if (name === 'confirmPassword') setConfirmPassword(value);
   };
+
+  useEffect(() => {
+      const link = document.createElement('link');
+      link.href =
+        'https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap';
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (!email || !password || !confirmPassword) {
-      setError("Please fill in all fields.");
+      setError('Please fill in all fields.');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Please enter a valid email address.");
+      setError('Please enter a valid email address.');
     } else if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError('Passwords do not match.');
     } else {
-      setError("");
+      setError('');
       try {
-        const response = await fetch("https://localhost:5000/register", {
-          method: "POST",
+        const response = await fetch('https://localhost:5000/register', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({ email, password }),
         });
 
         if (response.ok) {
-          setError("Successful registration. Please log in.");
-          navigate("/login");
+          setError(''); // Clear any old error
+          navigate('/login');
         } else {
-          setError("Error registering.");
+          const data = await response.json();
+          console.log('Register error response:', data);
+          let messages = 'Error registering.';
+          if (data.errors) {
+            if (Array.isArray(data.errors)) {
+              messages = data.errors.map((e: any) => e.description).join(' ');
+            } else {
+              // Handle dictionary-style errors like { Password: [ "too short", "must include..." ] }
+              messages = Object.values(data.errors).flat().join(' ');
+            }
+          }
+          setError(messages);
+
+          setError(messages);
         }
       } catch (error) {
         console.error(error);
-        setError("Error registering.");
+        setError('Something went wrong. Please try again.');
       }
     }
   };
@@ -55,12 +77,32 @@ const RegisterForm = () => {
     <FormContainer onSubmit={handleSubmit}>
       <WelcomeText>CREATE ACCOUNT</WelcomeText>
 
-      <Input type="email" name="email" placeholder="Email address" value={email} onChange={handleChange} />
-      <Input type="password" name="password" placeholder="Password" value={password} onChange={handleChange} />
-      <Input type="password" name="confirmPassword" placeholder="Confirm Password" value={confirmPassword} onChange={handleChange} />
+      <Input
+        type="email"
+        name="email"
+        placeholder="Email address"
+        value={email}
+        onChange={handleChange}
+      />
+      <Input
+        type="password"
+        name="password"
+        placeholder="Password"
+        value={password}
+        onChange={handleChange}
+      />
+      <Input
+        type="password"
+        name="confirmPassword"
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        onChange={handleChange}
+      />
 
       <Button type="submit">Register</Button>
-      <Button type="button" onClick={handleLoginClick}>Go to Login</Button>
+      <Button type="button" onClick={handleLoginClick}>
+        Go to Login
+      </Button>
 
       {error && <ErrorMessage>{error}</ErrorMessage>}
     </FormContainer>
@@ -94,7 +136,7 @@ const TicketWrapper = styled.div`
   position: relative;
   width: 700px;
   height: 650px;
-  background-image: url("https://cdn.builder.io/api/v1/image/assets/5c6b8122df8048069c23eb442ff67257/2523baa9f1d8b127976b6590ec89261114914812?placeholderIfAbsent=true");
+  background-image: url('https://cdn.builder.io/api/v1/image/assets/5c6b8122df8048069c23eb442ff67257/2523baa9f1d8b127976b6590ec89261114914812?placeholderIfAbsent=true');
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -131,13 +173,13 @@ const Input = styled.input`
 `;
 
 const Button = styled.button`
-  width: 100%;
+  width: 75%;
   background-color: rgba(234, 170, 54, 1);
   border: none;
   color: white;
   padding: 10px;
   margin-bottom: 10px;
-  font-size: 14px;
+  font-size: 15px;
   border-radius: 6px;
   cursor: pointer;
 
@@ -147,8 +189,7 @@ const Button = styled.button`
 `;
 
 const ErrorMessage = styled.p`
-  color: #d9534f;
-  font-size: 12px;
+  color: rgba(243, 222, 190, 1);
+  font-size: 10px;
   margin-top: 10px;
 `;
-

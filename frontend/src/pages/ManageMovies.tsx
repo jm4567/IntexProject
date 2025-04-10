@@ -6,6 +6,8 @@ import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
 import { confirmDelete } from '../utils/confirmDelete';
 import AdminTable from '../components/AdminTable';
+import { useUser } from '../components/AuthorizeView';
+import { useNavigate } from 'react-router-dom';
 
 function ManageMovies() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -16,6 +18,17 @@ function ManageMovies() {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
+  const user = useUser();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && user.role !== 'Administrator') {
+      navigate('/'); // Or use '/login' if you want to force login again
+    }
+  }, [user]);
+
+  if (!user || user.role !== 'Administrator') return null;
+
 
   // ✨ Scroll ref
   const topRef = useRef<HTMLDivElement>(null);
@@ -60,6 +73,7 @@ function ManageMovies() {
     );
   if (error)
     return <p className="text-center text-red-600 font-bold">Error: {error}</p>;
+
 
   return (
     <div

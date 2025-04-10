@@ -22,13 +22,7 @@ const LoginForm = () => {
   };
 
   // Dynamically load the retro Google Font (for the welcome text)
-  useEffect(() => {
-    const link = document.createElement('link');
-    link.href =
-      'https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
-  }, []);
+  
 
    // useEffect(() => {
   //   const script = document.createElement('script');
@@ -112,7 +106,7 @@ const LoginForm = () => {
         throw new Error(data?.message || 'Invalid email or password.');
       }
 
-      navigate('/');
+      navigate('/movies');
     } catch (error: any) {
       setError(error.message || 'Error logging in.');
       console.error('Fetch attempt failed:', error);
@@ -238,7 +232,7 @@ const ForgotPasswordLink = styled.a`
     sans-serif;
   font-size: 10px;
   color: rgba(243, 222, 191, 1);
-  margin-top: 8px;
+  margin-top: 5px;
   text-decoration: none;
 
   &:hover {

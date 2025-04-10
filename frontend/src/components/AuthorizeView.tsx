@@ -1,36 +1,50 @@
 import React, { useState, useEffect, createContext } from 'react';
 import { Navigate } from 'react-router-dom';
 
-const UserContext = createContext<User | null>(null);
-
 interface User {
   email: string;
+  role: string | null;
 }
 
+const UserContext = createContext<User | null>(null);
+
 function AuthorizeView(props: { children: React.ReactNode }) {
-  const [authorized, setAuthorized] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
-  const emptyuser: User = { email: '' };
-  const [user, setUser] = useState(emptyuser);
+  const [authorized, setAuthorized] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User>({ email: '', role: null });
 
   useEffect(() => {
-    async function fetchWithRetry(url: string, options: any) {
+    async function fetchUser() {
       try {
-        const response = await fetch(url, options);
-        const contentType = response.headers.get('content-type');
+        // Step 1: Ping the auth endpoint
+        const authRes = await fetch('https://localhost:5000/pingauth', {
+          method: 'GET',
+          credentials: 'include',
+        });
 
-        if (!contentType || !contentType.includes('application/json')) {
-          throw new Error('Invalid response format from server');
+        const authData = await authRes.json();
+        if (!authData.email) throw new Error('Invalid session');
+
+        // ✅ Only fetch role *after* confirming authentication
+        let role: string | null = null;
+        try {
+          const roleRes = await fetch(
+            'https://localhost:5000/api/Account/GetUserRole',
+            {
+              credentials: 'include',
+            }
+          );
+          if (roleRes.ok) {
+            const roleData = await roleRes.json();
+            role = roleData.roles?.[0] ?? null;
+          }
+        } catch (roleErr) {
+          console.warn("Couldn't fetch role", roleErr);
+          // fallback to null role if role fetch fails
         }
 
-        const data = await response.json();
-
-        if (data.email) {
-          setUser({ email: data.email });
-          setAuthorized(true);
-        } else {
-          throw new Error('Invalid user session');
-        }
+        setUser({ email: authData.email, role });
+        setAuthorized(true);
       } catch (error) {
         setAuthorized(false);
       } finally {
@@ -38,33 +52,31 @@ function AuthorizeView(props: { children: React.ReactNode }) {
       }
     }
 
-    fetchWithRetry('https://localhost:5000/pingauth', {
-      method: 'GET',
-      credentials: 'include',
-    });
+    fetchUser();
   }, []);
 
-  // 🔁 NEW: Force a full page refresh to /login if not authorized
   useEffect(() => {
     if (!loading && !authorized) {
-      window.location.href = '/login'; // hard redirect to reset app
+      window.location.href = '/login';
     }
   }, [loading, authorized]);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  if (loading) return <p>Loading...</p>;
 
   return (
     <UserContext.Provider value={user}>{props.children}</UserContext.Provider>
   );
 }
 
-export function AuthorizedUser(props: { value: string }) {
+export function AuthorizedUser(props: { value: 'email' | 'role' }) {
   const user = React.useContext(UserContext);
-
   if (!user) return null;
-  return props.value === 'email' ? <>{user.email}</> : null;
+
+  return props.value === 'email' ? <>{user.email}</> : <>{user.role}</>;
+}
+
+export function useUser() {
+  return React.useContext(UserContext);
 }
 
 export default AuthorizeView;
