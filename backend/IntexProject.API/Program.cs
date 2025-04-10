@@ -1,10 +1,12 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using IntexProject.API.Models;
 using IntexProject.API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using IntexProject.API.Models.Recommender;
 using IntexProject.API.Models.Supplemental;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpsPolicy;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,15 +48,27 @@ builder.Services.AddDbContext<SupplementalMoviesDbContext>(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 15;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders()
+.AddErrorDescriber<CustomIdentityErrorDescriber>(); // Add this
+
+
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
     options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
     options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
+
 });
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, CustomUserClaimsPrincipalFactory>();
@@ -107,6 +121,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowReactApp");
+
+app.UseHsts();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
@@ -141,6 +158,25 @@ app.MapGet("/pingauth", (HttpContext context, ClaimsPrincipal user) =>
     var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com";
     return Results.Json(new { email = email });
 }).RequireAuthorization();
+
+app.MapPost("/api/register", async (
+    HttpContext context,
+    UserManager<IdentityUser> userManager,
+    SignInManager<IdentityUser> signInManager,
+    RegisterDto dto
+) =>
+{
+    var user = new IdentityUser { UserName = dto.Email, Email = dto.Email };
+    var result = await userManager.CreateAsync(user, dto.Password);
+
+    if (!result.Succeeded)
+    {
+        return Results.BadRequest(result.Errors); // ✅ return detailed identity errors
+    }
+
+    await signInManager.SignInAsync(user, isPersistent: false);
+    return Results.Ok(new { message = "Registration successful" });
+});
 
 app.Run();
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
+import '../css/NavBar.css';
 
 function GenreFilter({
   selectedGenres,
@@ -35,7 +36,7 @@ function GenreFilter({
   };
 
   return (
-    <div className="genre-filter mb-4">
+    <div className="genre-dropdown mb-4">
       <label className="form-label fw-bold">Genres</label>
       <Select
         isMulti
@@ -44,6 +45,22 @@ function GenreFilter({
         onChange={handleChange}
         placeholder="Choose genres..."
         classNamePrefix="select"
+        menuPortalTarget={null} // ⬅ Keeps it inline in the DOM
+        menuPosition="absolute" // ⬅ Correctly anchored under the input
+        styles={{
+          menu: (base) => ({
+            ...base,
+            zIndex: 1000, // ⬅ Make sure it's above the grid
+            position: 'absolute',
+          }),
+          container: (base) => ({
+            ...base,
+            zIndex: 1000,
+          }),
+        }}
+        closeMenuOnSelect={false} // keeps menu open on multi-select
+        menuShouldBlockScroll={false} // ⬅ speeds up UX
+        blurInputOnSelect={false}
       />
     </div>
   );

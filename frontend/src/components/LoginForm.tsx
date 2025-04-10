@@ -22,15 +22,9 @@ const LoginForm = () => {
   };
 
   // Dynamically load the retro Google Font (for the welcome text)
-  useEffect(() => {
-    const link = document.createElement('link');
-    link.href =
-      'https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
-  }, []);
+  
 
-   // useEffect(() => {
+  // useEffect(() => {
   //   const script = document.createElement('script');
   //   script.src = 'https://accounts.google.com/gsi/client';
   //   script.async = true;
@@ -112,7 +106,7 @@ const LoginForm = () => {
         throw new Error(data?.message || 'Invalid email or password.');
       }
 
-      navigate('/');
+      navigate('/movies');
     } catch (error: any) {
       setError(error.message || 'Error logging in.');
       console.error('Fetch attempt failed:', error);
@@ -163,7 +157,9 @@ const LoginForm = () => {
       <Button type="submit">SIGN IN</Button>
 
       {error && <ErrorMessage>{error}</ErrorMessage>}
-      <ForgotPasswordLink onClick={handleRegisterClick}>Create Account</ForgotPasswordLink>
+      <ForgotPasswordLink onClick={handleRegisterClick}>
+        Create Account
+      </ForgotPasswordLink>
     </FormContainer>
   );
 };
@@ -220,13 +216,13 @@ const Checkbox = styled.input`
 
 const CheckboxLabel = styled.label`
   font-size: 12px;
-  color:rgba(243, 222, 190, 1);
+  color: rgba(243, 222, 190, 1);
 `;
 
 const ErrorMessage = styled.p`
   color: rgba(234, 170, 54, 1);
   font-size: 12px;
-  text-align: cent
+  text-align: cent;
 `;
 
 const ForgotPasswordLink = styled.a`
@@ -238,10 +234,10 @@ const ForgotPasswordLink = styled.a`
     sans-serif;
   font-size: 10px;
   color: rgba(243, 222, 191, 1);
-  margin-top: 8px;
+  margin-top: 5px;
   text-decoration: none;
 
   &:hover {
-    color: #d48830
+    color: #d48830;
   }
 `;
