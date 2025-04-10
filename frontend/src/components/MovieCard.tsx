@@ -10,22 +10,13 @@ const MovieCard = ({ movie }: MovieCardProps) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/movie/${movie.showId}`, {
-      state: {
-        showId: movie.showId,
-        title: movie.title,
-        posterUrl: movie.posterUrl,
-        director: movie.director,
-        genres: movie.genres,
-        description: movie.description,
-        type: movie.type,
-        castList: movie.castList,
-        country: movie.country,
-        duration: movie.duration,
-        rating: movie.rating,
-        releaseYear: movie.releaseYear,
-      },
-    });
+    if (!movie.showId) {
+      console.warn('No showId provided for movie:', movie);
+      return;
+    }
+
+    // Just navigate using showId — let the details page fetch all info
+    navigate(`/movie/${movie.showId}`);
   };
 
   return (
@@ -35,7 +26,7 @@ const MovieCard = ({ movie }: MovieCardProps) => {
       style={{ cursor: 'pointer' }}
     >
       <img
-        src={movie.posterUrl || 'https://via.placeholder.com/150x220'}
+        src={movie.posterUrl || '/images/Image_coming_soon.png'}
         alt={movie.title}
         className="movie-poster"
       />
