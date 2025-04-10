@@ -30,7 +30,7 @@ const StyledButton = styled.button`
   font-size: 20px;
   color: rgba(243, 222, 191, 1);
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 
   /* Let the button size to its content naturally */
   width: auto;
