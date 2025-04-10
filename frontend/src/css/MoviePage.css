@@ -17,19 +17,13 @@
   overflow: visible; /* <--- this is critical! */
 }
 
-.movie-content {
-  position: relative;
-  z-index: 2;
-  overflow: visible; /* <--- allow the nav's dropdown to overflow */
-}
-
 .movie-container,
 .movie-content,
-.foreground-content,
 .container-fluid {
   position: relative;
-  z-index: 1; /* ⬅ keeps it below dropdown */
+  z-index: 2; /* ⬅ keeps it below dropdown */
   overflow: visible; /* ⬅ critical to allow things to spill out */
+  background-color: #f3debe !important;
 }
 
 .movie-container.visible {
@@ -72,12 +66,13 @@
   filter: blur(2px);
 }
 
-.foreground-content {
+/* .foreground-content {
   position: relative;
   z-index: 2;
   color: white;
   text-align: center;
-}
+  background-color: red !important;
+} */
 
 .button-group {
   margin-top: 20px;

@@ -4,7 +4,6 @@ import { fetchMoreMovies } from '../api/MoviesAPI';
 import GenreFilter from '../components/GenreFilter';
 import MovieCard from '../components/MovieCard';
 import '../css/MoviePage.css';
-import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 
 function BrowseGenres() {

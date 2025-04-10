@@ -65,14 +65,14 @@ const MoviesPage = () => {
       <div className="movie-container">
         <div className="background-overlay"></div>
 
-        <div className="movie-content foreground-content">
+        <div className="movie-content ">
           <NavBar
             selectedGenres={selectedGenres}
             setSelectedGenres={setSelectedGenres}
           />
           {selectedGenres.length === 0 && <Header movies={topBannerMovies} />}
 
-          <div className="container-fluid mt-4 foreground-content">
+          <div className="container-fluid mt-4 ">
             <div className="row">
               {/* <div className="col-md-12 mb-4 drop-down">
                 <GenreFilter
