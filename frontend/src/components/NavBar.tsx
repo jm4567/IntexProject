@@ -39,8 +39,14 @@ const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
                   Go Back
                 </Link>
               )}
-              {['/managemovies', '/movies'].includes(currentPath) && (
+              {currentPath === '/managemovies' && (
                 <Link to="/" className="navbar-brand">
+                  Landing Page
+                </Link>
+              )}
+              {(['/movies'].includes(currentPath) ||
+                currentPath.startsWith('/movie/')) && (
+                <Link to="/movies" className="navbar-brand">
                   Home
                 </Link>
               )}
@@ -74,24 +80,31 @@ const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
             </div>
 
             <div className="nav-right">
-              <div className="search-icon navbar-brand" onClick={toggleSearch}>
-                Search 🔍
-              </div>
-              {showSearch && (
-                <div className="col-md-12 mb-4 drop-down">
-                  <MovieSearch
-                    selectedMovies={selectedMovies}
-                    setSelectedMovies={setSelectedMovies}
-                  />
-                </div>
+              {['/movies', '/managemovies'].includes(currentPath) && (
+                <>
+                  <div
+                    className="search-icon navbar-brand"
+                    onClick={toggleSearch}
+                  >
+                    Search 🔍
+                  </div>
+                  {showSearch && (
+                    <div className="col-md-12 mb-4 drop-down">
+                      <MovieSearch
+                        selectedMovies={selectedMovies}
+                        setSelectedMovies={setSelectedMovies}
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
         </div>
 
-        {/* Avatar and email side-by-side */}
+        {/* Avatar + Email (Muriel version) */}
         <div className="nav-avatar" onClick={toggleProfileMenu}>
-          <div className="user-info-wrapper-horizontal ">
+          <div className="user-info-wrapper-horizontal">
             {user?.email && (
               <span className="user-name text-black">{user.email}</span>
             )}

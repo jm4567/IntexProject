@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -19,6 +18,7 @@ export default defineConfig({
         "base-uri 'self'; " +
         "form-action 'self'; " +
         "frame-src 'self' https://accounts.google.com https://oauth2.googleapis.com;",
+
     },
     cors: {
       origin: 'http://localhost:3000',
