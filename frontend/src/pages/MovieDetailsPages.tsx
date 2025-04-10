@@ -5,12 +5,17 @@ import { Movie } from '../types/Movie';
 import axios from 'axios';
 import { useLocation, useParams } from 'react-router-dom';
 import { fetchAllMovies, fetchMovieById } from '../api/MoviesAPI';
+import { getBestPosterUrl } from '../utils/getBestPosterUrl';
 import { getPosterUrl } from '../utils/getPosterUrl';
+import StarRating from '../components/StarRating';
+import { getCurrentUserEmail } from '../api/UserAPI';
 
 function MovieDetailsPage() {
   const location = useLocation();
   const { showId: routeShowId } = useParams();
-  const [movieData, setMovieData] = useState<Movie | null>(null);
+  const [movieData, setMovieData] = useState<Movie | null>(
+    (location.state as Movie) ?? null
+  );
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [collabMovies, setCollabMovies] = useState<Movie[]>([]);
   const [contentMovies, setContentMovies] = useState<Movie[]>([]);
@@ -18,6 +23,9 @@ function MovieDetailsPage() {
   const [error, setError] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const collabRef = useRef<HTMLDivElement | null>(null);
+
+  const [userRating, setUserRating] = useState<number>(0);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   const extractGenres = (movie: any): string[] => {
     const genreKeys = [
@@ -66,10 +74,14 @@ function MovieDetailsPage() {
 
         let currentMovie = location.state as Movie;
         if (!currentMovie || currentMovie.showId !== routeShowId) {
-          currentMovie = await fetchMovieById(routeShowId!);
+          try {
+            currentMovie = await fetchMovieById(routeShowId!);
+          } catch (err) {
+            setError('Movie not found.');
+            return;
+          }
         }
         setMovieData(currentMovie);
-
         window.scrollTo({ top: 0 });
 
         const showId = currentMovie.showId;
@@ -111,7 +123,6 @@ function MovieDetailsPage() {
         const matchedCollab = all.movies.filter((m) =>
           collabTitles.map(trim).includes(trim(m.title))
         );
-
         const matchedContentInitial = all.movies.filter((m) =>
           contentTitles.map(trim).includes(trim(m.title))
         );
@@ -146,16 +157,42 @@ function MovieDetailsPage() {
           ...filteredFallbacks,
         ];
 
+        console.log('Matched Collab Movies:', matchedCollab);
+        console.log('Matched Content Movies:', matchedContentInitial);
+        console.log('Fallback Content Movies:', filteredFallbacks);
+        console.log('Final Recommendations:', finalContentMovies);
+
         setCollabMovies(matchedCollab);
         setContentMovies(finalContentMovies);
       } catch (err) {
         setError((err as Error).message);
+      } finally {
+        setLoadingRecs(false);
       }
-      setLoadingRecs(false);
     };
-
     loadData();
-  }, [routeShowId]);
+  }, [routeShowId, location.key]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const email = await getCurrentUserEmail();
+        setUserEmail(email);
+        if (email && movieData?.showId) {
+          const res = await axios.get(
+            `https://localhost:5000/api/ratings/get?userEmail=${encodeURIComponent(email)}&showId=${movieData.showId}`,
+            { withCredentials: true }
+          );
+          if (res.data?.rating !== undefined) {
+            setUserRating(res.data.rating);
+          }
+        }
+      } catch (err) {
+        console.error('❌ Failed to fetch user data or rating:', err);
+      }
+    };
+    fetchUserData();
+  }, [movieData]);
 
   if (!movieData) {
     return <p className="text-center mt-5">Loading movie details...</p>;
@@ -175,6 +212,11 @@ function MovieDetailsPage() {
     castList,
   } = movieData;
 
+  const resolvePoster = () => {
+    if (posterUrl) return posterUrl;
+    return `https://postersintex29.blob.core.windows.net/posters/${title}.jpg`;
+  };
+
   return (
     <div className="full-screen-wrapper">
       <div className="background-overlay"></div>
@@ -183,21 +225,17 @@ function MovieDetailsPage() {
           <div className="row justify-content-center align-items-start">
             <div className="col-lg-4 col-md-5 text-center mb-4 mb-md-0">
               <img
-                src={posterUrl || getPosterUrl(title)}
+                src={resolvePoster()}
                 alt={title}
-                onError={(e) => {
-                  // If backend URL fails, fall back to getPosterUrl
-                  if (e.currentTarget.src !== getPosterUrl(title)) {
-                    e.currentTarget.src = getPosterUrl(title);
-                  } else {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = '/images/Image_coming_soon.png';
-                  }
-                }}
                 className="movie-poster-img"
+                key={resolvePoster()}
+                onError={(e) => {
+                  console.warn('❌ Image failed:', e.currentTarget.src);
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/images/Image_coming_soon.png';
+                }}
               />
             </div>
-
             <div className="col-lg-6 col-md-7">
               <div className="movie-detail ps-md-4">
                 <h1 className="fw-bold display-4">{title}</h1>
@@ -246,18 +284,30 @@ function MovieDetailsPage() {
                     <strong>Cast:</strong> {castList}
                   </p>
                 )}
+                <div className="mt-3">
+                  <strong>Your Rating:</strong>
+                  <StarRating
+                    value={userRating}
+                    onChange={async (newRating: number) => {
+                      setUserRating(newRating);
+                      await axios.post(
+                        'https://localhost:5000/api/ratings/rate',
+                        {
+                          userEmail,
+                          showId: movieData?.showId,
+                          rating: newRating,
+                        },
+                        { withCredentials: true }
+                      );
+                    }}
+                  />
+                </div>
                 <button className="btn btn-outline-dark mt-3">
                   <i className="bi bi-play-fill me-2"></i> Watch Now
                 </button>
               </div>
             </div>
           </div>
-
-          {loadingRecs && (
-            <div className="text-center mt-5">
-              <p>Loading recommendations...</p>
-            </div>
-          )}
 
           {!loadingRecs && collabMovies.length > 0 && (
             <div className="mt-5" ref={collabRef}>

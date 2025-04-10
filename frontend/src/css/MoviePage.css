@@ -17,19 +17,13 @@
   overflow: visible; /* <--- this is critical! */
 }
 
-.movie-content {
-  position: relative;
-  z-index: 2;
-  overflow: visible; /* <--- allow the nav's dropdown to overflow */
-}
-
 .movie-container,
 .movie-content,
-.foreground-content,
 .container-fluid {
   position: relative;
-  z-index: 1; /* ⬅ keeps it below dropdown */
+  z-index: 2; /* ⬅ keeps it below dropdown */
   overflow: visible; /* ⬅ critical to allow things to spill out */
+  background-color: #f3debe !important;
 }
 
 .movie-container.visible {
@@ -48,6 +42,10 @@
   overflow: hidden;
   transition: opacity 1s ease-in-out;
   opacity: 1;
+}
+.video-split-container.hidden {
+  pointer-events: none;
+  opacity: 0;
 }
 
 .video-split-container.fade-out {
@@ -72,12 +70,13 @@
   filter: blur(2px);
 }
 
-.foreground-content {
+/* .foreground-content {
   position: relative;
   z-index: 2;
   color: white;
   text-align: center;
-}
+  background-color: red !important;
+} */
 
 .button-group {
   margin-top: 20px;
@@ -141,4 +140,57 @@
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 1.5rem;
   padding: 0 2rem;
+}
+
+.back-to-top-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #264653;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s ease;
+}
+.back-to-top-btn:hover {
+  background-color: #e76f51;
+}
+
+/* VHSLoader.css */
+.vhs-loader {
+  position: fixed;
+  inset: 0;
+  background: black;
+  background-image: url('/images/ede93105-e438-4f2f-8f1f-e7ac7701b106.png');
+  background-repeat: repeat;
+  background-size: cover;
+  z-index: 9999;
+  animation: vhsFlicker 0.5s infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #f8f8f8;
+  font-family: monospace;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+}
+
+@keyframes vhsFlicker {
+  0% {
+    opacity: 0.95;
+    transform: scaleY(1.01);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scaleY(0.99);
+  }
+  100% {
+    opacity: 0.95;
+    transform: scaleY(1.01);
+  }
 }
