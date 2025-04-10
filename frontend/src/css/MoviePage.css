@@ -43,6 +43,10 @@
   transition: opacity 1s ease-in-out;
   opacity: 1;
 }
+.video-split-container.hidden {
+  pointer-events: none;
+  opacity: 0;
+}
 
 .video-split-container.fade-out {
   opacity: 0;
