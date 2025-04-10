@@ -8,6 +8,7 @@ import Footer from '../components/Footer';
 import MovieCard from '../components/MovieCard';
 import { useUser } from '../components/AuthorizeView';
 import '../css/MoviePage.css';
+import AltMovieCard from '../components/AltMovieCard';
 
 const MoviesPage = () => {
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
@@ -19,6 +20,9 @@ const MoviesPage = () => {
   const [contentBasedMovies, setContentBasedMovies] = useState<Movie[]>([]);
   const [genreBasedMovies, setGenreBasedMovies] = useState<Movie[]>([]);
   const user = useUser();
+  const [genreSections, setGenreSections] = useState<
+    { title: string; movies: Movie[] }[]
+  >([]);
 
   const handlePlay = () => {
     const moviepage = document.querySelector('.movie-container');
@@ -26,7 +30,9 @@ const MoviesPage = () => {
     setTimeout(() => setStartSplit(true), 3000);
     setTimeout(() => setShowCurtain(false), 4000);
     setTimeout(() => {
-      const curtain = document.querySelector('.video-split-container') as HTMLElement;
+      const curtain = document.querySelector(
+        '.video-split-container'
+      ) as HTMLElement;
       if (curtain) curtain.style.display = 'none';
     }, 4000);
   };
@@ -43,34 +49,35 @@ const MoviesPage = () => {
     loadMovies();
   }, []);
 
-  // ✅ Fixed Recommendation Fetch
   useEffect(() => {
     const fetchRecs = async () => {
       try {
-        const res = await fetch('https://localhost:5000/api/personalizedrecommendations/by-user', {
-          credentials: 'include',
-        });
+        const res = await fetch(
+          'https://localhost:5000/api/personalized-recommendations/by-user',
+          {
+            credentials: 'include',
+          }
+        );
 
-        if (!res.ok) {
-          throw new Error('Failed to fetch recommendations');
-        }
+        if (!res.ok) throw new Error('Failed to fetch recommendations');
 
         const data = await res.json();
-        setRecommendedMovies(data.recommendations || []);
+        setRecommendedMovies(data.recommended || []);
         setContentBasedMovies(data.content || []);
         setGenreBasedMovies(data.genre || []);
+        setGenreSections(data.genreSections || []);
       } catch (err) {
         console.error('Failed to load recommendations:', err);
       }
     };
 
-    if (user?.email) {
-      fetchRecs();
-    }
+    if (user?.email) fetchRecs();
   }, [user]);
 
   const topBannerMovies = allMovies.filter((movie) =>
-    ['s42', 's7073', 's603', 's6065', 's6891', 's6063', 's6152'].includes(movie.showId)
+    ['s42', 's7073', 's603', 's6065', 's6891', 's6063', 's6152'].includes(
+      movie.showId
+    )
   );
 
   const filteredMovies = selectedGenres.length
@@ -84,7 +91,10 @@ const MoviesPage = () => {
       <div className="movie-container">
         <div className="background-overlay"></div>
         <div className="movie-content foreground-content">
-          <NavBar selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} />
+          <NavBar
+            selectedGenres={selectedGenres}
+            setSelectedGenres={setSelectedGenres}
+          />
           {selectedGenres.length === 0 && <Header movies={topBannerMovies} />}
           <div className="container-fluid mt-4 foreground-content">
             <div className="row">
@@ -98,19 +108,21 @@ const MoviesPage = () => {
                         <MovieCard movie={movie} />
                       </div>
                     ))}
-                    {filteredMovies.length === 0 && <p className="text-light">No movies found.</p>}
+                    {filteredMovies.length === 0 && (
+                      <p className="text-light">No movies found.</p>
+                    )}
                   </div>
                 ) : (
                   <>
                     <h1 className="mb-3">Recommended for You</h1>
-                    <MovieRow title="" movies={recommendedMovies} />
+                    <MovieRow title="" movies={recommendedMovies} useAltCard/>
 
-                    <h1 className="mb-3">Hidden Gems Based on Your Taste</h1>
-                    <MovieRow title="" movies={contentBasedMovies} />
-
-                    <h1 className="mb-3">Similar Genres You Might Like</h1>
-                    <MovieRow title="" movies={genreBasedMovies} />
-
+                    {genreSections.map((section, idx) => (
+                      <div key={idx}>
+                        <h2 className="mb-3">{section.title}</h2>
+                        <MovieRow title="" movies={section.movies} useAltCard />
+                      </div>
+                    ))}
                     <h1 className="mb-3">All Movies</h1>
                     <MovieRow title="" movies={allMovies} />
                   </>
@@ -135,7 +147,13 @@ const MoviesPage = () => {
             />
           </div>
           <div className="video-half bottom-half">
-            <video src="/videos/intro.mp4" autoPlay muted playsInline className="video" />
+            <video
+              src="/videos/intro.mp4"
+              autoPlay
+              muted
+              playsInline
+              className="video"
+            />
           </div>
         </div>
       )}
