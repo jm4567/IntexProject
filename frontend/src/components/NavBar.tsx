@@ -51,11 +51,12 @@ const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
               )}
               {currentPath === '/managemovies' && (
                 <Link to="/" className="navbar-brand">
-                  Home
+                  Landing Page
                 </Link>
               )}
-              {currentPath === '/movies' && (
-                <Link to="/" className="navbar-brand">
+              {(['/movies'].includes(currentPath) ||
+                currentPath.startsWith('/movie/')) && (
+                <Link to="/movies" className="navbar-brand">
                   Home
                 </Link>
               )}
@@ -89,16 +90,23 @@ const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
             </div>
 
             <div className="nav-right">
-              <div className="search-icon navbar-brand" onClick={toggleSearch}>
-                Search 🔍
-              </div>
-              {showSearch && (
-                <div className="col-md-12 mb-4 drop-down">
-                  <MovieSearch
-                    selectedMovies={selectedMovies}
-                    setSelectedMovies={setSelectedMovies}
-                  />
-                </div>
+              {['/movies', '/managemovies'].includes(currentPath) && (
+                <>
+                  <div
+                    className="search-icon navbar-brand"
+                    onClick={toggleSearch}
+                  >
+                    Search 🔍
+                  </div>
+                  {showSearch && (
+                    <div className="col-md-12 mb-4 drop-down">
+                      <MovieSearch
+                        selectedMovies={selectedMovies}
+                        setSelectedMovies={setSelectedMovies}
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -106,37 +114,42 @@ const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
 
         {/* Avatar on right side */}
         <div className="nav-avatar">
-          <img
-            src="/images/person.png"
-            onClick={toggleProfileMenu}
-            className="avatar-img"
-            width="120"
-            height="120"
-          />
-          {showProfileMenu && (
-            <div className="profile-dropdown">
-              <Link to="/profile" className="dropdown-item">
-                <span className="icon">👤</span> View Profile
-              </Link>
-              <Link to="/setting" className="dropdown-item">
-                <span className="icon">⚙️</span> Settings
-              </Link>
-              <button
-                className="dropdown-item"
-                onClick={async () => {
-                  const success = await logoutUser();
-                  if (success) {
-                    document.cookie =
-                      '.AspNetCore.Identity.Application=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-                    window.location.href = '/login';
-                  } else {
-                    console.error('Logout failed');
-                  }
-                }}
-              >
-                Sign Out
-              </button>
-            </div>
+          {(['/movies', '/managemovies'].includes(currentPath) ||
+            currentPath.startsWith('/movie/')) && (
+            <>
+              <img
+                src="/images/person.png"
+                onClick={toggleProfileMenu}
+                className="avatar-img"
+                width="120"
+                height="120"
+              />
+              {showProfileMenu && (
+                <div className="profile-dropdown">
+                  <Link to="/profile" className="dropdown-item">
+                    <span className="icon">👤</span> View Profile
+                  </Link>
+                  <Link to="/setting" className="dropdown-item">
+                    <span className="icon">⚙️</span> Settings
+                  </Link>
+                  <button
+                    className="dropdown-item"
+                    onClick={async () => {
+                      const success = await logoutUser();
+                      if (success) {
+                        document.cookie =
+                          '.AspNetCore.Identity.Application=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+                        window.location.href = '/login';
+                      } else {
+                        console.error('Logout failed');
+                      }
+                    }}
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
