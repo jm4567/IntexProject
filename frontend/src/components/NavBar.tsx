@@ -1,17 +1,23 @@
 import { Link } from 'react-router-dom';
-import '../css/styles.css';
+// import '../css/styles.css';
 import '../css/NavBar.css';
 import { useState } from 'react';
 import Logo from './Logo';
 import { useLocation } from 'react-router-dom';
 import MovieSearch from './MovieSearch';
 import { logoutUser } from '../api/logoutUser';
+import GenreFilter from './GenreFilter';
 
-const Navbar = () => {
+interface NavBarProps {
+  selectedGenres: string[];
+  setSelectedGenres: React.Dispatch<React.SetStateAction<string[]>>;
+}
+
+const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
   //toggle search
   const [showSearch, setShowSearch] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const [selectedMovies, setSelectedMovies] = useState<string[]>([]);
+  const [showGenreDropdown, setShowGenreDropdown] = useState(false);
 
   //toggle profile so it shows menu
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -30,95 +36,112 @@ const Navbar = () => {
 
   return (
     <div className="nav-wrapper">
-      {/* Left - Logo */}
+      {/* Horizontal row: logo - pill - avatar */}
+      <div className="nav-row">
+        <Logo />
 
-      <Logo />
-
-      {/* Center - Pill nav */}
-      <div className="nav-center">
-        <div className="nav-inner">
-          <div className="nav-left">
-            {currentPath === '/genres' && (
-              <Link to="/movies" className="nav-link active navbar-brand">
-                Go Back
-              </Link>
-            )}
-            {currentPath === '/managemovies' && (
-              <Link to="/" className="nav-link active navbar-brand">
-                Home
-              </Link>
-            )}
-            {currentPath === '/movies' && (
-              <Link to="/" className="nav-link active navbar-brand">
-                Home
-              </Link>
-            )}
-          </div>
-          <div className="nav-middle">
-            {currentPath === '/managemovies' && (
-              <Link to="/movies" className="nav-link active navbar-brand">
-                Access Movies
-              </Link>
-            )}
-            {currentPath === '/movies' && (
-              <Link to="/genres" className="nav-link active navbar-brand">
-                Filter by Genre <span className="arrow">▼</span>
-              </Link>
-            )}
-          </div>
-          <div className="nav-right">
-            <div
-              className="search-icon nav-link active navbar-brand"
-              onClick={toggleSearch}
-            >
-              Search 🔍
+        {/* Center pill nav */}
+        <div className="nav-main">
+          <div className="nav-inner">
+            <div className="nav-left">
+              {currentPath === '/genres' && (
+                <Link to="/movies" className="navbar-brand">
+                  Go Back
+                </Link>
+              )}
+              {currentPath === '/managemovies' && (
+                <Link to="/" className="navbar-brand">
+                  Home
+                </Link>
+              )}
+              {currentPath === '/movies' && (
+                <Link to="/" className="navbar-brand">
+                  Home
+                </Link>
+              )}
             </div>
-            <div className="col-md-12 mb-4 drop-down">
-              <MovieSearch
-                selectedMovies={selectedMovies}
-                setSelectedMovies={setSelectedMovies}
-              />
+
+            <div className="nav-middle">
+              {currentPath === '/managemovies' && (
+                <Link to="/movies" className="navbar-brand">
+                  Access Movies
+                </Link>
+              )}
+              {currentPath === '/movies' && (
+                <div className="genre-toggle-wrapper">
+                  <div
+                    className="navbar-brand genre-filter-toggle"
+                    onClick={() => setShowGenreDropdown((prev) => !prev)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    Filter by Genre <span className="arrow">▼</span>
+                  </div>
+                  {showGenreDropdown && (
+                    <div className="floating-genre-dropdown">
+                      <GenreFilter
+                        selectedGenres={selectedGenres}
+                        setSelectedGenres={setSelectedGenres}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="nav-right">
+              <div className="search-icon navbar-brand" onClick={toggleSearch}>
+                Search 🔍
+              </div>
+              {showSearch && (
+                <div className="col-md-12 mb-4 drop-down">
+                  <MovieSearch
+                    selectedMovies={selectedMovies}
+                    setSelectedMovies={setSelectedMovies}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Avatar with dropdown */}
-      <div className="nav-avatar">
-        <img
-          src="/images/person.png"
-          onClick={toggleProfileMenu}
-          className="avatar-img"
-          width="120"
-          height="120"
-        />
-        {showProfileMenu && (
-          <div className="profile-dropdown">
-            <Link to="/profile" className="dropdown-item">
-              <span className="icon">👤</span> View Profile
-            </Link>
-            <Link to="/setting" className="dropdown-item">
-              <span className="icon">⚙️</span> Settings
-            </Link>
-            <button
-              className="dropdown-item"
-              onClick={async () => {
-                const success = await logoutUser();
-                if (success) {
-                  document.cookie = ".AspNetCore.Identity.Application=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;"
-                  window.location.href = '/login'; // ✅ Full reload to clear state
-                } else {
-                  console.error('Logout failed');
-                }
-              }}
-            >
-              Sign Out
-            </button>
-          </div>
-        )}
+        {/* Avatar on right side */}
+        <div className="nav-avatar">
+          <img
+            src="/images/person.png"
+            onClick={toggleProfileMenu}
+            className="avatar-img"
+            width="120"
+            height="120"
+          />
+          {showProfileMenu && (
+            <div className="profile-dropdown">
+              <Link to="/profile" className="dropdown-item">
+                <span className="icon">👤</span> View Profile
+              </Link>
+              <Link to="/setting" className="dropdown-item">
+                <span className="icon">⚙️</span> Settings
+              </Link>
+              <button
+                className="dropdown-item"
+                onClick={async () => {
+                  const success = await logoutUser();
+                  if (success) {
+                    document.cookie =
+                      '.AspNetCore.Identity.Application=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+                    window.location.href = '/login';
+                  } else {
+                    console.error('Logout failed');
+                  }
+                }}
+              >
+                Sign Out
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default Navbar;
+export default NavBar;

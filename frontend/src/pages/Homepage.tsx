@@ -3,7 +3,7 @@ import '../css/Homepage.css';
 import '../css/NavBar.css';
 // import AuthorizeView, { AuthorizedUser } from '../components/AuthorizeView';
 // import Logout from '../components/Logout';
-import Logo from '../components/logo';
+import Logo from '../components/Logo';
 
 function Homepage() {
   const navigate = useNavigate();
