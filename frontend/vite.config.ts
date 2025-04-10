@@ -14,7 +14,7 @@ export default defineConfig({
         "img-src 'self' data: https://via.placeholder.com https://cdn.builder.io https://movieposters2025.blob.core.windows.net https://postersintex29.blob.core.windows.net; " +
         "frame-ancestors 'none'; " +
         "font-src 'self' https://fonts.gstatic.com data:; " +
-        "connect-src 'self' https://localhost:5000 https://accounts.google.com https://oauth2.googleapis.com; " +
+        "connect-src 'self' https://localhost:5000 https://accounts.google.com https://oauth2.googleapis.com https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net; " +
         "object-src 'none'; " +
         "base-uri 'self'; " +
         "form-action 'self'; " +

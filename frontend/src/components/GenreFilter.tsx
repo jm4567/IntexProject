@@ -15,7 +15,10 @@ function GenreFilter({
     const fetchGenres = async () => {
       try {
         const response = await fetch(
-          'https://localhost:5000/api/Movie/GetMovieGenres'
+          'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/api/Movie/GetMovieGenres',
+          {
+            credentials: 'include',
+          }
         );
         const data = await response.json();
         setGenres(data.sort());

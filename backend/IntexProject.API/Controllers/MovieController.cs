@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IntexProject.API.Controllers
 {
-    // [Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     
@@ -33,6 +33,7 @@ namespace IntexProject.API.Controllers
 
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
+
 
         [HttpGet("AllMovies")]
         public IActionResult GetMovies(

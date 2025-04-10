@@ -57,7 +57,7 @@ const MoviesPage = () => {
     const fetchRecs = async () => {
       try {
         const res = await fetch(
-          'https://localhost:5000/api/personalizedrecommendations/by-user',
+          'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/api/personalizedrecommendations/by-user',
           {
             credentials: 'include',
           }

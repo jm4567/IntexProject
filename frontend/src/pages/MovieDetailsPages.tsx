@@ -80,7 +80,7 @@ function MovieDetailsPage() {
 
         if (showId) {
           const res = await axios.get(
-            `https://localhost:5000/api/Recommendations/by-id/${showId}`
+            `https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/api/Recommendations/by-id/${showId}`
           );
           const rec = res.data;
           collabTitles = [
@@ -94,7 +94,7 @@ function MovieDetailsPage() {
 
         if (title) {
           const res = await axios.get(
-            `https://localhost:5000/api/Recommendations/by-title/${encodeURIComponent(title)}`
+            `https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/api/Recommendations/by-title/${encodeURIComponent(title)}`
           );
           const rec = res.data;
           contentTitles = [
@@ -127,7 +127,7 @@ function MovieDetailsPage() {
           missingContentTitles.map(async (t) => {
             try {
               const res = await axios.get(
-                `https://localhost:5000/api/SupplementalMovie/GetByTitle/${encodeURIComponent(t)}`
+                `https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/api/SupplementalMovie/GetByTitle/${encodeURIComponent(t)}`
               );
               const fallback = res.data;
               return {

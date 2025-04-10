@@ -9,7 +9,6 @@ namespace IntexProject.API.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        [Authorize]
         [HttpGet("GetUserRole")]
         public async Task<IActionResult> GetUserRole([FromServices] UserManager<IdentityUser> userManager)
         {

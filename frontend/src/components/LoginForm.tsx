@@ -19,7 +19,8 @@ const LoginForm = () => {
 
   const handleGoogleLogin = () => {
     // Redirect to the backend endpoint that initiates the Google challenge.
-    window.location.href = 'https://localhost:5000/external-login/google';
+    window.location.href =
+      'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/external-login/google';
   };
 
   // Dynamically load the retro Google Font (for the welcome text)
@@ -84,8 +85,8 @@ const LoginForm = () => {
 
     // Choose correct URL based on the rememberme toggle
     const loginUrl = rememberme
-      ? 'https://localhost:5000/login?useCookies=true&useSessionCookies=false'
-      : 'https://localhost:5000/login?useSessionCookies=true&useCookies=false';
+      ? 'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/login?useCookies=true&useSessionCookies=false'
+      : 'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/login?useSessionCookies=true&useCookies=false';
 
     try {
       const response = await fetch(loginUrl, {

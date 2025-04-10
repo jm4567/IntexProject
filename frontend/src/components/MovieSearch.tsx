@@ -18,7 +18,10 @@ function MovieSearch({
     const fetchMovies = async () => {
       try {
         const response = await fetch(
-          'https://localhost:5000/api/Movie/ShowMovies'
+          'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/api/Movie/ShowMovies',
+          {
+            credentials: 'include',
+          }
         );
         const data = await response.json();
         setMovies(

@@ -5,7 +5,8 @@ interface FetchMoviesResponse {
   totalNumMovies: number;
 }
 
-const API_URL = 'https://localhost:5000/api/Movie';
+const API_URL =
+  'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/api/Movie';
 
 export const fetchMovies = async (
   pageSize: number,
@@ -13,17 +14,17 @@ export const fetchMovies = async (
   selectedGenres: string[]
 ): Promise<FetchMoviesResponse> => {
   try {
-    // Create genre filter string if there are selected genres
     const genreParams = selectedGenres
       .map((genre) => `movieCat=${encodeURIComponent(genre)}`)
       .join('&');
 
-    // Build base URL with pagination and optional genre filters
     const url = `${API_URL}/AllMovies?pageSize=${pageSize}&pageNum=${pageNum}${
       selectedGenres.length ? `&${genreParams}` : ''
     }`;
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      credentials: 'include',
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch movies');
@@ -40,6 +41,7 @@ export const addMovie = async (newMovie: Movie): Promise<Movie> => {
   try {
     const response = await fetch(`${API_URL}/AddMovie`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -58,22 +60,19 @@ export const addMovie = async (newMovie: Movie): Promise<Movie> => {
 };
 
 export const updateMovie = async (id: string, movie: Movie) => {
-  const response = await fetch(
-    `https://localhost:5000/api/Movie/UpdateMovie/${id}`,
-    {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(movie),
-    }
-  );
+  const response = await fetch(`${API_URL}/UpdateMovie/${id}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(movie),
+  });
 
   if (!response.ok) {
     throw new Error(`Failed to update movie: ${response.status}`);
   }
 
-  // ✅ Only try to parse JSON if there's content
   const contentType = response.headers.get('Content-Type');
   if (contentType && contentType.includes('application/json')) {
     return response.json();
@@ -86,6 +85,7 @@ export const deleteMovie = async (showId: string): Promise<void> => {
   try {
     const response = await fetch(`${API_URL}/DeleteMovie/${showId}`, {
       method: 'DELETE',
+      credentials: 'include',
     });
 
     if (!response.ok) {
@@ -97,7 +97,7 @@ export const deleteMovie = async (showId: string): Promise<void> => {
   }
 };
 
-//used in the browse genres page only
+// Used in the browse genres page only
 export const fetchMoreMovies = async (
   selectedGenres: string[],
   pageNum = 1,
@@ -115,9 +115,11 @@ export const fetchMoreMovies = async (
 
     const url = `${API_URL}/ShowMovies?${queryParams}`;
 
-    console.log('Requesting URL:', url); // helpful for debugging
+    console.log('Requesting URL:', url);
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      credentials: 'include',
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch movies');
@@ -134,15 +136,15 @@ export const fetchAllMovies = async (
   selectedGenres: string[]
 ): Promise<FetchMoviesResponse> => {
   try {
-    // Create genre filter string if there are selected genres
     const genreParams = selectedGenres
       .map((genre) => `movieCat=${encodeURIComponent(genre)}`)
       .join('&');
 
-    // Build base URL with pagination and optional genre filters
     const url = `${API_URL}/ShowMovies${selectedGenres.length ? `?${genreParams}` : ''}`;
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      credentials: 'include',
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch movies');
@@ -157,16 +159,13 @@ export const fetchAllMovies = async (
 
 export const fetchMovieById = async (showId: string): Promise<Movie> => {
   try {
-    const response = await fetch(
-      `https://localhost:5000/api/Movie/GetMovieById/${showId}`,
-      {
-        method: 'GET',
-        credentials: 'include', // ✅ Sends auth cookie
-        headers: {
-          'Content-Type': 'application/json', // ✅ Best practice
-        },
-      }
-    );
+    const response = await fetch(`${API_URL}/GetMovieById/${showId}`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch movie with ID ${showId}`);

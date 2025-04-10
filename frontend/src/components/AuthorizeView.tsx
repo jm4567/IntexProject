@@ -1,6 +1,4 @@
 import React, { useState, useEffect, createContext } from 'react';
-import { Navigate } from 'react-router-dom';
-
 interface User {
   email: string;
   role: string | null;
@@ -17,10 +15,13 @@ function AuthorizeView(props: { children: React.ReactNode }) {
     async function fetchUser() {
       try {
         // Step 1: Ping the auth endpoint
-        const authRes = await fetch('https://localhost:5000/pingauth', {
-          method: 'GET',
-          credentials: 'include',
-        });
+        const authRes = await fetch(
+          'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/pingauth',
+          {
+            method: 'GET',
+            credentials: 'include',
+          }
+        );
 
         const authData = await authRes.json();
         if (!authData.email) throw new Error('Invalid session');
@@ -29,7 +30,7 @@ function AuthorizeView(props: { children: React.ReactNode }) {
         let role: string | null = null;
         try {
           const roleRes = await fetch(
-            'https://localhost:5000/api/Account/GetUserRole',
+            'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/api/Account/GetUserRole',
             {
               credentials: 'include',
             }
