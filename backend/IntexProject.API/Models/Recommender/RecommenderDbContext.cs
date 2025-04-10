@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using IntexProject.API.Controllers;
 using Microsoft.EntityFrameworkCore;
 
 namespace IntexProject.API.Models.Recommender;
@@ -1120,6 +1121,12 @@ public partial class RecommenderDbContext : DbContext
                 .HasColumnName("Recommendation 5");
             entity.Property(e => e.show_id).HasColumnType("text");
         });
+
+        modelBuilder.Entity<GenericRecommendation>(entity =>
+        {
+            entity.HasNoKey();
+        });
+
 
         OnModelCreatingPartial(modelBuilder);
     }
