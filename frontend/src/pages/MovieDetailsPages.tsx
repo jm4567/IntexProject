@@ -4,105 +4,112 @@ import { useState, useEffect, useRef } from 'react';
 import { Movie } from '../types/Movie';
 import axios from 'axios';
 import { useLocation, useParams } from 'react-router-dom';
-import NavBar from '../components/NavBar';
-import Footer from '../components/Footer';
 import { fetchAllMovies, fetchMovieById } from '../api/MoviesAPI';
 
 function MovieDetailsPage() {
   const location = useLocation();
-  const { showId } = useParams();
-  const [movieData, setMovieData] = useState<Movie | null>(location.state || null);
+  const { showId: routeShowId } = useParams();
+  const [movieData, setMovieData] = useState<Movie | null>(null);
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [collabMovies, setCollabMovies] = useState<Movie[]>([]);
   const [contentMovies, setContentMovies] = useState<Movie[]>([]);
+  const [loadingRecs, setLoadingRecs] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const collabRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
+      setLoadingRecs(true);
       try {
-        // Always fetch the movie from the backend for freshest data
-        if (!movieData && showId) {
-          const fetchedMovie = await fetchMovieById(showId);
-          setMovieData(fetchedMovie);
-        }
-
-        // Load all movies (needed for matching titles)
         const all = await fetchAllMovies([]);
         setAllMovies(all.movies);
 
-        // Fetch recommendations once movieData is ready
-        if (movieData) {
-          const showId = movieData.showId || movieData.show_id;
-          const title = movieData.title;
-
-          const collabTitles: string[] = [];
-          const contentTitles: string[] = [];
-
-          if (showId) {
-            const res = await axios.get(
-              `https://localhost:5000/api/Recommendations/by-id/${showId}`
-            );
-            const rec = res.data;
-            collabTitles.push(
-              rec.collaborative?.recommendation_1,
-              rec.collaborative?.recommendation_2,
-              rec.collaborative?.recommendation_3,
-              rec.collaborative?.recommendation_4,
-              rec.collaborative?.recommendation_5
-            );
-          }
-
-          if (title) {
-            const res = await axios.get(
-              `https://localhost:5000/api/Recommendations/by-title/${encodeURIComponent(title)}`
-            );
-            const rec = res.data;
-            contentTitles.push(
-              rec.content?.recommendation_1_title,
-              rec.content?.recommendation_2_title,
-              rec.content?.recommendation_3_title,
-              rec.content?.recommendation_4_title,
-              rec.content?.recommendation_5_title
-            );
-          }
-
-          // Normalize and match
-          const normalize = (s: string) => s?.trim()?.toLowerCase();
-          const normalizedAll = all.movies.map((m) => ({
-            ...m,
-            normalizedTitle: normalize(m.title),
-          }));
-
-          setCollabMovies(
-            normalizedAll.filter((m) =>
-              collabTitles.map(normalize).includes(m.normalizedTitle)
-            )
-          );
-
-          setContentMovies(
-            normalizedAll.filter((m) =>
-              contentTitles.map(normalize).includes(m.normalizedTitle)
-            )
-          );
-
-          // Scroll to recommendations
-          setTimeout(() => {
-            (collabMovies.length &&
-              collabRef.current?.scrollIntoView({ behavior: 'smooth' })) ||
-              (contentMovies.length &&
-                contentRef.current?.scrollIntoView({ behavior: 'smooth' }));
-          }, 100);
+        let currentMovie = location.state as Movie;
+        if (!currentMovie || currentMovie.showId !== routeShowId) {
+          currentMovie = await fetchMovieById(routeShowId!);
         }
+        setMovieData(currentMovie);
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        const showId = currentMovie.showId;
+        const title = currentMovie.title;
+
+        let collabTitles: string[] = [];
+        let contentTitles: string[] = [];
+
+        if (showId) {
+          const res = await axios.get(
+            `https://localhost:5000/api/Recommendations/by-id/${showId}`
+          );
+          const rec = res.data;
+          collabTitles = [
+            rec.collaborative?.recommendation_1,
+            rec.collaborative?.recommendation_2,
+            rec.collaborative?.recommendation_3,
+            rec.collaborative?.recommendation_4,
+            rec.collaborative?.recommendation_5,
+          ].filter(Boolean);
+        }
+
+        if (title) {
+          const res = await axios.get(
+            `https://localhost:5000/api/Recommendations/by-title/${encodeURIComponent(title)}`
+          );
+          const rec = res.data;
+          contentTitles = [
+            rec.content?.recommendation_1_title,
+            rec.content?.recommendation_2_title,
+            rec.content?.recommendation_3_title,
+            rec.content?.recommendation_4_title,
+            rec.content?.recommendation_5_title,
+          ].filter(Boolean);
+        }
+
+        const trim = (str: string) => str?.trim();
+
+        // Debug logs
+        console.log('🧠 Content Titles:', contentTitles);
+        console.log(
+          '🎞️ All Movie Titles:',
+          all.movies.map((m) => m.title)
+        );
+        contentTitles.forEach((ct) => {
+          const found = all.movies.find((m) => trim(m.title) === trim(ct));
+          if (!found) {
+            console.warn(`❌ Missing match for content rec: "${ct}"`);
+          }
+        });
+
+        const matchedCollab = all.movies.filter((m) =>
+          collabTitles.map(trim).includes(trim(m.title))
+        );
+
+        const matchedContent = all.movies.filter((m) =>
+          contentTitles.map(trim).includes(trim(m.title))
+        );
+
+        setCollabMovies(matchedCollab);
+        setContentMovies(matchedContent);
+
+        setTimeout(() => {
+          if (matchedCollab.length) {
+            collabRef.current?.scrollIntoView({ behavior: 'smooth' });
+          } else if (matchedContent.length) {
+            contentRef.current?.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
       } catch (err) {
         setError((err as Error).message);
         console.error('❌ Recommendation error:', err);
       }
+
+      setLoadingRecs(false);
     };
 
     loadData();
-  }, [movieData, showId]);
+  }, [routeShowId]);
 
   if (!movieData) {
     return <p className="text-center mt-5">Loading movie details...</p>;
@@ -130,10 +137,7 @@ function MovieDetailsPage() {
           <div className="row justify-content-center align-items-start">
             <div className="col-lg-4 col-md-5 text-center mb-4 mb-md-0">
               <img
-                src={
-                  posterUrl ||
-                  'https://via.placeholder.com/150x220?text=No+Image'
-                }
+                src={posterUrl || '/images/Image_coming_soon.png'}
                 alt={title}
                 className="movie-poster-img"
               />
@@ -142,7 +146,11 @@ function MovieDetailsPage() {
             <div className="col-lg-6 col-md-7">
               <div className="movie-detail ps-md-4">
                 <h1 className="fw-bold display-4">{title}</h1>
-                <h5 className="text-secondary mb-3">Directed by {director}</h5>
+                {director && (
+                  <h5 className="text-secondary mb-3">
+                    Directed by {director}
+                  </h5>
+                )}
                 <p>
                   <strong>Genres:</strong> {genres.join(', ')}
                 </p>
@@ -167,7 +175,6 @@ function MovieDetailsPage() {
                 <p>
                   <strong>Cast:</strong> {castList}
                 </p>
-
                 <button className="btn btn-outline-dark mt-3">
                   <i className="bi bi-play-fill me-2"></i> Watch Now
                 </button>
@@ -175,23 +182,34 @@ function MovieDetailsPage() {
             </div>
           </div>
 
-          <div className="mt-5" ref={collabRef}>
-            {collabMovies.length > 0 && (
-              <MovieRow title="Other users liked…" movies={collabMovies} />
-            )}
-          </div>
-
-          <div className="mt-5" ref={contentRef}>
-            {contentMovies.length > 0 && (
-              <MovieRow title="Similar content" movies={contentMovies} />
-            )}
-          </div>
-
-          {collabMovies.length === 0 && contentMovies.length === 0 && (
+          {loadingRecs && (
             <div className="text-center mt-5">
-              <h4>No recommendations found for this title.</h4>
+              <p>Loading recommendations...</p>
             </div>
           )}
+
+          {!loadingRecs && collabMovies.length > 0 && (
+            <div className="mt-5" ref={collabRef}>
+              <MovieRow title="Other users liked…" movies={collabMovies} />
+            </div>
+          )}
+
+          {!loadingRecs && contentMovies.length > 0 && (
+            <div className="mt-5" ref={contentRef}>
+              <MovieRow
+                title={`Recommendations Based on "${title}"`}
+                movies={contentMovies}
+              />
+            </div>
+          )}
+
+          {!loadingRecs &&
+            collabMovies.length === 0 &&
+            contentMovies.length === 0 && (
+              <div className="text-center mt-5">
+                <h4>No recommendations found for this title.</h4>
+              </div>
+            )}
         </div>
       </div>
     </div>
