@@ -1,5 +1,4 @@
 'use client';
-import React from 'react';
 import styled from 'styled-components';
 import LoginForm from '../components/LoginForm';
 import { useNavigate } from 'react-router-dom';

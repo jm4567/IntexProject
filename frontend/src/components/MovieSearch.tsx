@@ -3,13 +3,7 @@ import Select from 'react-select';
 import { Movie } from '../types/Movie';
 import { useNavigate } from 'react-router-dom';
 
-function MovieSearch({
-  selectedMovies,
-  setSelectedMovies,
-}: {
-  selectedMovies: string[];
-  setSelectedMovies: (movies: string[]) => void;
-}) {
+function MovieSearch() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [inputValue, setInputValue] = useState('');
   const navigate = useNavigate();
@@ -41,15 +35,10 @@ function MovieSearch({
     label: movie.title,
   }));
 
-  const handleChange = (selected: any) => {
-    setSelectedMovies(selected ? selected.map((opt: any) => opt.value) : []);
-  };
-
   return (
     <div className="movie-filter mb-4">
       <Select
         options={options}
-        value={options.find((opt) => opt.value === selectedMovies[0])}
         onChange={(selected) => {
           if (selected) {
             navigate(`/movie/${selected.value}`);

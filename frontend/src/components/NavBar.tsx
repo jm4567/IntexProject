@@ -16,7 +16,7 @@ interface NavBarProps {
 const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
   //toggle search
   const [showSearch, setShowSearch] = useState(false);
-  const [selectedMovies, setSelectedMovies] = useState<string[]>([]);
+  // const [selectedMovies, setSelectedMovies] = useState<string[]>([]);
   const [showGenreDropdown, setShowGenreDropdown] = useState(false);
 
   //toggle profile so it shows menu
@@ -76,6 +76,7 @@ const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
                   >
                     Filter by Genre <span className="arrow">▼</span>
                   </div>
+
                   {showGenreDropdown && (
                     <div className="floating-genre-dropdown">
                       <GenreFilter
@@ -95,8 +96,8 @@ const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
               {showSearch && (
                 <div className="col-md-12 mb-4 drop-down">
                   <MovieSearch
-                    selectedMovies={selectedMovies}
-                    setSelectedMovies={setSelectedMovies}
+                  // selectedMovies={selectedMovies}
+                  // setSelectedMovies={setSelectedMovies}
                   />
                 </div>
               )}
