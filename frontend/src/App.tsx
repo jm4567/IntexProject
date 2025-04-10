@@ -33,14 +33,6 @@ function App() {
         {/* Public Routes */}
         <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/createaccount"
-          element={
-            <DefaultLayout>
-              <CreateAccount />
-            </DefaultLayout>
-          }
-        />
         <Route path="/register" element={<Register />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route

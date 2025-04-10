@@ -1,14 +1,17 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom'; // ✅ include useLocation
 
 const RegisterForm = () => {
+  const navigate = useNavigate();
+  const location = useLocation(); // ✅ read query params
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLoginClick = () => navigate('/login');
 
@@ -20,12 +23,20 @@ const RegisterForm = () => {
   };
 
   useEffect(() => {
-      const link = document.createElement('link');
-      link.href =
-        'https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap';
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
-    }, []);
+    // Load Google font
+    const link = document.createElement('link');
+    link.href =
+      'https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+
+    // ✅ Read email from query params
+    const params = new URLSearchParams(location.search);
+    const emailFromQuery = params.get('email');
+    if (emailFromQuery) {
+      setEmail(emailFromQuery);
+    }
+  }, [location]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,22 +59,18 @@ const RegisterForm = () => {
         });
 
         if (response.ok) {
-          setError(''); // Clear any old error
+          setError('');
           navigate('/login');
         } else {
           const data = await response.json();
-          console.log('Register error response:', data);
           let messages = 'Error registering.';
           if (data.errors) {
             if (Array.isArray(data.errors)) {
               messages = data.errors.map((e: any) => e.description).join(' ');
             } else {
-              // Handle dictionary-style errors like { Password: [ "too short", "must include..." ] }
               messages = Object.values(data.errors).flat().join(' ');
             }
           }
-          setError(messages);
-
           setError(messages);
         }
       } catch (error) {
@@ -83,21 +90,34 @@ const RegisterForm = () => {
         placeholder="Email address"
         value={email}
         onChange={handleChange}
+        disabled={!!email} // disables input if email is pre-filled
       />
-      <Input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={password}
-        onChange={handleChange}
-      />
-      <Input
-        type="password"
-        name="confirmPassword"
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChange={handleChange}
-      />
+
+      <InputWrapper>
+        <Input
+          type={showPassword ? 'text' : 'password'}
+          name="password"
+          placeholder="Password"
+          value={password}
+          onChange={handleChange}
+        />
+        <ToggleButton
+          type="button"
+          onClick={() => setShowPassword((prev) => !prev)}
+        >
+          {showPassword ? 'Hide' : 'Show'}
+        </ToggleButton>
+      </InputWrapper>
+
+      <InputWrapper>
+        <Input
+          type={showPassword ? 'text' : 'password'}
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={handleChange}
+        />
+      </InputWrapper>
 
       <Button type="submit">Register</Button>
       <Button type="button" onClick={handleLoginClick}>
@@ -110,8 +130,10 @@ const RegisterForm = () => {
 };
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
   return (
     <LoginContainer>
+      <GoHomeButton onClick={() => navigate('/')}>Go Back to Home</GoHomeButton>
       <TicketWrapper>
         <RegisterForm />
       </TicketWrapper>
@@ -165,7 +187,7 @@ const WelcomeText = styled.h1`
 
 const Input = styled.input`
   width: 100%;
-  padding: 10px;
+  padding: 10px 40px 10px 10px; /* space for the toggle button */
   margin-bottom: 12px;
   font-size: 14px;
   border-radius: 6px;
@@ -192,4 +214,51 @@ const ErrorMessage = styled.p`
   color: rgba(243, 222, 190, 1);
   font-size: 10px;
   margin-top: 10px;
+`;
+const InputWrapper = styled.div`
+  width: 100%;
+  position: relative;
+  margin-bottom: 12px;
+`;
+
+const ToggleButton = styled.button`
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 0.85rem;
+  cursor: pointer;
+
+  &:hover {
+    color: #000;
+  }
+`;
+const GoHomeButton = styled.button`
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  padding: 10px 16px;
+  background-color: #eaaa36;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+  z-index: 999;
+
+  &:hover {
+    background-color: #d48830;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
 `;
