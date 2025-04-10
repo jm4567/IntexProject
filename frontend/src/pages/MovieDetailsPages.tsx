@@ -11,7 +11,9 @@ import { fetchAllMovies, fetchMovieById } from '../api/MoviesAPI';
 function MovieDetailsPage() {
   const location = useLocation();
   const { showId } = useParams();
-  const [movieData, setMovieData] = useState<Movie | null>(location.state || null);
+  const [movieData, setMovieData] = useState<Movie | null>(
+    location.state || null
+  );
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [collabMovies, setCollabMovies] = useState<Movie[]>([]);
   const [contentMovies, setContentMovies] = useState<Movie[]>([]);
@@ -34,7 +36,7 @@ function MovieDetailsPage() {
 
         // Fetch recommendations once movieData is ready
         if (movieData) {
-          const showId = movieData.showId || movieData.show_id;
+          const showId = movieData.showId || movieData.showId;
           const title = movieData.title;
 
           const collabTitles: string[] = [];
