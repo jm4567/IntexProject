@@ -22,6 +22,13 @@ const LoginForm = () => {
     window.location.href = 'https://localhost:5000/external-login/google';
   };
 
+  const link = document.createElement('link');
+    link.href =
+      'https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+
+
   // Dynamically load the retro Google Font (for the welcome text)
 
   // useEffect(() => {
@@ -206,16 +213,21 @@ const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0px;
+<<<<<<< HEAD
   margin-bottom: 20px;
   position: relative; /* ⬅️ This is the key */
   font-family: 'Roboto', sans-serif;
+=======
+  margin-bottom: 5px;
+  position: relative; /* This is the key */
+>>>>>>> e4a192eab09a1e7c70e96ab6e9313ee2df9991ea
 `;
 
 const CheckboxWrapper = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 `;
 
 const Checkbox = styled.input`
@@ -245,7 +257,7 @@ const ForgotPasswordLink = styled.a`
   font-size: 12px;
   font-family: 'Roboto', sans-serif;
   color: rgba(243, 222, 191, 1);
-  margin-top: 5px;
+  margin-top: 0px;
   text-decoration: none;
 
   &:hover {

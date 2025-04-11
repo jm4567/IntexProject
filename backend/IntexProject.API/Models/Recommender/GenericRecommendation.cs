@@ -15,6 +15,12 @@ namespace IntexProject.API.Models.Recommender
 
         [Column("Recommendation 3")]
         public string Recommendation3 { get; set; }
+
+        [Column("Recommendation 4")]
+        public string Recommendation4 { get; set; }
+
+        [Column("Recommendation 5")]
+        public string Recommendation5 { get; set; }
     }
 }
 

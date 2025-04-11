@@ -1,6 +1,5 @@
-// File: components/AdminTable.tsx
 import React from 'react';
-import styles from './AdminTable.module.css';
+import styles from './AdminTable.module.css'; // ✅ Don't forget this!
 import { Movie } from '../types/Movie';
 
 interface Props {
@@ -8,6 +7,12 @@ interface Props {
   onEdit: (movie: Movie) => void;
   onDelete: (showId: string) => void;
 }
+
+// Fallback logic if image fails to load
+const getFallbackPosterUrl = (title?: string): string => {
+  if (!title) return '/images/Image_coming_soon.png';
+  return `https://postersintex29.blob.core.windows.net/posters/${title}.jpg`;
+};
 
 const AdminTable: React.FC<Props> = ({ movies, onEdit, onDelete }) => {
   return (
@@ -34,7 +39,6 @@ const AdminTable: React.FC<Props> = ({ movies, onEdit, onDelete }) => {
           {movies.map((movie) => (
             <tr key={movie.showId} className={styles.row}>
               <td>{movie.showId}</td>
-
               <td>
                 <div
                   style={{
@@ -62,10 +66,16 @@ const AdminTable: React.FC<Props> = ({ movies, onEdit, onDelete }) => {
                       ((e.target as HTMLImageElement).style.transform =
                         'scale(1)')
                     }
+                    onError={(e) => {
+                      const fallback = getFallbackPosterUrl(movie.title);
+                      if (e.currentTarget.src !== fallback) {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = fallback;
+                      }
+                    }}
                   />
                 </div>
               </td>
-
               <td>{movie.title}</td>
               <td>{movie.type}</td>
               <td>{movie.director}</td>

@@ -8,7 +8,7 @@ import MovieCard from '../components/MovieCard';
 import { useUser } from '../components/AuthorizeView';
 import MovieRow from '../components/MovieRow';
 import '../css/MoviePage.css';
-import { useMemo } from 'react';
+import AltMovieCard from '../components/AltMovieCard';
 
 const MoviesPage = () => {
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
@@ -27,6 +27,9 @@ const MoviesPage = () => {
   const user = useUser();
   //for header
   const [topBannerMovies, setTopBannerMovies] = useState<Movie[]>([]);
+  const [genreSections, setGenreSections] = useState<
+    { title: string; movies: Movie[] }[]
+  >([]);
 
   const handleScroll = () => {
     setShowScrollTop(window.scrollY > 400);
@@ -131,28 +134,25 @@ const MoviesPage = () => {
     const fetchRecs = async () => {
       try {
         const res = await fetch(
-          'https://localhost:5000/api/personalizedrecommendations/by-user',
+          'https://localhost:5000/api/personalized-recommendations/by-user',
           {
             credentials: 'include',
           }
         );
 
-        if (!res.ok) {
-          throw new Error('Failed to fetch recommendations');
-        }
+        if (!res.ok) throw new Error('Failed to fetch recommendations');
 
         const data = await res.json();
-        setRecommendedMovies(data.recommendations || []);
+        setRecommendedMovies(data.recommended || []);
         setContentBasedMovies(data.content || []);
         setGenreBasedMovies(data.genre || []);
+        setGenreSections(data.genreSections || []);
       } catch (err) {
         console.error('Failed to load recommendations:', err);
       }
     };
 
-    if (user?.email) {
-      fetchRecs();
-    }
+    if (user?.email) fetchRecs();
   }, [user]);
 
   // const topBannerMovies = useMemo(() => {
@@ -211,14 +211,14 @@ const MoviesPage = () => {
                 ) : (
                   <>
                     <h1 className="mb-3">Recommended for You</h1>
-                    <MovieRow title="" movies={recommendedMovies} />
+                    <MovieRow title="" movies={recommendedMovies} useAltCard />
 
-                    <h1 className="mb-3">Hidden Gems Based on Your Taste</h1>
-                    <MovieRow title="" movies={contentBasedMovies} />
-
-                    <h1 className="mb-3">Similar Genres You Might Like</h1>
-                    <MovieRow title="" movies={genreBasedMovies} />
-
+                    {genreSections.map((section, idx) => (
+                      <div key={idx}>
+                        <h2 className="mb-3">{section.title}</h2>
+                        <MovieRow title="" movies={section.movies} useAltCard />
+                      </div>
+                    ))}
                     <h1 className="mb-3">All Movies</h1>
                     <div className="row">
                       {allMovies.map((movie) => (
