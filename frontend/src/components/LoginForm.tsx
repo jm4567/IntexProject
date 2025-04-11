@@ -19,9 +19,14 @@ const LoginForm = () => {
 
   // const handleGoogleLogin = () => {
   //   // Redirect to the backend endpoint that initiates the Google challenge.
-  //   window.location.href =
-  //     'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/external-login/google';
+  //   window.location.href = 'https://localhost:5000/external-login/google';
   // };
+
+  const link = document.createElement('link');
+  link.href =
+    'https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap';
+  link.rel = 'stylesheet';
+  document.head.appendChild(link);
 
   // Dynamically load the retro Google Font (for the welcome text)
 
@@ -89,28 +94,39 @@ const LoginForm = () => {
       : 'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/login?useSessionCookies=true&useCookies=false';
 
     try {
-      const response = await fetch(loginUrl, {
+      const loginResponse = await fetch(loginUrl, {
         method: 'POST',
-        credentials: 'include', // ✅ Ensures cookies are sent & received
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
-      // Parse JSON only if content exists
-      let data = null;
-      const contentLength = response.headers.get('content-length');
-      if (contentLength && parseInt(contentLength, 10) > 0) {
-        data = await response.json();
+      if (!loginResponse.ok) {
+        throw new Error('Login failed');
       }
 
-      if (!response.ok) {
-        throw new Error(data?.message || 'Invalid email or password.');
-      }
+      // 🔄 NEW: Fetch user info from /me
+      const userRes = await fetch('https://localhost:5000/me', {
+        method: 'GET',
+        credentials: 'include',
+      });
 
-      navigate('/movies');
-    } catch (error: any) {
-      setError(error.message || 'Error logging in.');
-      console.error('Fetch attempt failed:', error);
+      const userData = await userRes.json();
+      console.log('User data from /me:', userData);
+
+      if (userData.email === 'adminuser1@gmail.com') {
+        navigate('/managemovies');
+      } else {
+        sessionStorage.setItem('justLoggedIn', 'true');
+        navigate('/movies');
+      }
+      // if (userData.email === 'adminuser1@gmail.com') {
+      //   navigate('/managemovies');
+      // } else {
+      //   navigate('/movies');
+      // }
+    } catch (err: any) {
+      setError(err.message || 'Error logging in.');
     }
   };
 
@@ -190,7 +206,7 @@ const WelcomeText = styled.h1`
   margin-bottom: 20px;
   color: rgba(243, 222, 190, 1);
   text-align: center;
-  font-family: 'Press Start 2P', cursive;
+  font-family: 'Roboto', cursive;
   font-size: 24px;
   line-height: 1.5;
 `;
@@ -209,13 +225,14 @@ const InputWrapper = styled.div`
   gap: 0px;
   margin-bottom: 20px;
   position: relative; /* ⬅️ This is the key */
+  font-family: 'Roboto', sans-serif;
 `;
 
 const CheckboxWrapper = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 `;
 
 const Checkbox = styled.input`
@@ -223,14 +240,16 @@ const Checkbox = styled.input`
 `;
 
 const CheckboxLabel = styled.label`
-  font-size: 12px;
+  font-size: 13px;
   color: rgba(243, 222, 190, 1);
+  font-family: 'Roboto', sans-serif;
 `;
 
 const ErrorMessage = styled.p`
   color: rgba(234, 170, 54, 1);
-  font-size: 12px;
+  font-size: 13px;
   text-align: cent;
+  font-family: 'Roboto', sans-serif;
 `;
 
 const ForgotPasswordLink = styled.a`
@@ -240,9 +259,10 @@ const ForgotPasswordLink = styled.a`
     Roboto,
     Helvetica,
     sans-serif;
-  font-size: 10px;
+  font-size: 12px;
+  font-family: 'Roboto', sans-serif;
   color: rgba(243, 222, 191, 1);
-  margin-top: 5px;
+  margin-top: 0px;
   text-decoration: none;
 
   &:hover {
@@ -257,6 +277,7 @@ const ToggleButton = styled.button`
   background: none;
   border: none;
   font-size: 12px;
+  font-family: 'Roboto', sans-serif;
   color: #555;
   cursor: pointer;
 `;

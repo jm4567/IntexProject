@@ -1,14 +1,21 @@
-// File: components/AdminTable.tsx
 import React from 'react';
-import styles from './AdminTable.module.css';
+import styles from './AdminTable.module.css'; // ✅ Import scoped CSS module for table styling
 import { Movie } from '../types/Movie';
 
+// Define props for AdminTable component
 interface Props {
-  movies: Movie[];
-  onEdit: (movie: Movie) => void;
-  onDelete: (showId: string) => void;
+  movies: Movie[]; // List of movies to display
+  onEdit: (movie: Movie) => void; // Function to trigger edit form
+  onDelete: (showId: string) => void; // Function to delete a movie
 }
 
+// Helper function to return fallback poster if original fails
+const getFallbackPosterUrl = (title?: string): string => {
+  if (!title) return '/images/Image_coming_soon.png'; // Default placeholder
+  return `https://postersintex29.blob.core.windows.net/posters/${title}.jpg`;
+};
+
+// AdminTable component renders movie data in a styled table
 const AdminTable: React.FC<Props> = ({ movies, onEdit, onDelete }) => {
   return (
     <div className={styles.tableContainer}>
@@ -31,10 +38,12 @@ const AdminTable: React.FC<Props> = ({ movies, onEdit, onDelete }) => {
           </tr>
         </thead>
         <tbody>
+          {/* Render each movie as a table row */}
           {movies.map((movie) => (
             <tr key={movie.showId} className={styles.row}>
               <td>{movie.showId}</td>
 
+              {/* Poster image cell with fallback handling and hover zoom */}
               <td>
                 <div
                   style={{
@@ -44,7 +53,7 @@ const AdminTable: React.FC<Props> = ({ movies, onEdit, onDelete }) => {
                   }}
                 >
                   <img
-                    src={movie.posterUrl || '/images/Image_coming_soon.png'}
+                    src={movie.posterUrl || '/images/Image_coming_soon.png'} // Use provided or default poster
                     alt={movie.title || 'Poster Coming Soon'}
                     style={{
                       width: '80px',
@@ -62,10 +71,19 @@ const AdminTable: React.FC<Props> = ({ movies, onEdit, onDelete }) => {
                       ((e.target as HTMLImageElement).style.transform =
                         'scale(1)')
                     }
+                    onError={(e) => {
+                      // Fallback to secondary blob URL if image fails
+                      const fallback = getFallbackPosterUrl(movie.title);
+                      if (e.currentTarget.src !== fallback) {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = fallback;
+                      }
+                    }}
                   />
                 </div>
               </td>
 
+              {/* Other metadata fields */}
               <td>{movie.title}</td>
               <td>{movie.type}</td>
               <td>{movie.director}</td>
@@ -76,6 +94,8 @@ const AdminTable: React.FC<Props> = ({ movies, onEdit, onDelete }) => {
               <td>{movie.duration}</td>
               <td>{movie.description}</td>
               <td>{movie.genres.join(', ')}</td>
+
+              {/* Action buttons: Edit + Delete */}
               <td>
                 <button
                   className={styles.btnEdit}

@@ -5,12 +5,16 @@ import { Movie } from '../types/Movie';
 import axios from 'axios';
 import { useLocation, useParams } from 'react-router-dom';
 import { fetchAllMovies, fetchMovieById } from '../api/MoviesAPI';
-import { getPosterUrl } from '../utils/getPosterUrl';
+import StarRating from '../components/StarRating';
+import { getCurrentUserEmail } from '../api/UserAPI';
 
 function MovieDetailsPage() {
   const location = useLocation();
   const { showId: routeShowId } = useParams();
-  const [movieData, setMovieData] = useState<Movie | null>(null);
+
+  const [movieData, setMovieData] = useState<Movie | null>(
+    (location.state as Movie) ?? null
+  );
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [collabMovies, setCollabMovies] = useState<Movie[]>([]);
   const [contentMovies, setContentMovies] = useState<Movie[]>([]);
@@ -18,6 +22,15 @@ function MovieDetailsPage() {
   const [error, setError] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const collabRef = useRef<HTMLDivElement | null>(null);
+
+  const [userRating, setUserRating] = useState<number>(0);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  const [showVideo, setShowVideo] = useState(false);
+
+  const handleWatchClick = () => {
+    setShowVideo((prev) => !prev); // Toggles it on/off
+  };
 
   const extractGenres = (movie: any): string[] => {
     const genreKeys = [
@@ -66,10 +79,15 @@ function MovieDetailsPage() {
 
         let currentMovie = location.state as Movie;
         if (!currentMovie || currentMovie.showId !== routeShowId) {
-          currentMovie = await fetchMovieById(routeShowId!);
+          try {
+            currentMovie = await fetchMovieById(routeShowId!);
+          } catch {
+            setError('Movie not found.');
+            return;
+          }
         }
-        setMovieData(currentMovie);
 
+        setMovieData(currentMovie);
         window.scrollTo({ top: 0 });
 
         const showId = currentMovie.showId;
@@ -148,14 +166,39 @@ function MovieDetailsPage() {
 
         setCollabMovies(matchedCollab);
         setContentMovies(finalContentMovies);
-      } catch (err) {
-        setError((err as Error).message);
+      } catch {
+        setError('Error loading data');
+      } finally {
+        setLoadingRecs(false);
       }
-      setLoadingRecs(false);
+    };
+    loadData();
+  }, [routeShowId, location.key]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const email = await getCurrentUserEmail();
+        setUserEmail(email);
+        setUserRating(0);
+
+        if (email && movieData?.showId) {
+          const res = await axios.get(
+            `https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/api/ratings/get?userEmail=${encodeURIComponent(email)}&showId=${movieData.showId}`,
+            { withCredentials: true }
+          );
+
+          if (res.data?.rating !== undefined) {
+            setUserRating(res.data.rating);
+          }
+        }
+      } catch {
+        setUserRating(0);
+      }
     };
 
-    loadData();
-  }, [routeShowId]);
+    fetchUserData();
+  }, [movieData]);
 
   if (!movieData) {
     return (
@@ -186,120 +229,164 @@ function MovieDetailsPage() {
     castList,
   } = movieData;
 
+  const resolvePoster = () => {
+    if (posterUrl) return posterUrl;
+    return `https://postersintex29.blob.core.windows.net/posters/${title}.jpg`;
+  };
   {
-    error && (
-      <div className="alert alert-danger text-center">
-        <strong>Error:</strong> {error}
-      </div>
-    );
+    /*display all of the details */
   }
   return (
-    <div className="full-screen-wrapper">
-      <div className="background-overlay"></div>
-      <div className="foreground-content">
-        <div className="container-fluid movie-detail-container py-5 px-4">
-          <div className="row justify-content-center align-items-start">
-            <div className="col-lg-4 col-md-5 text-center mb-4 mb-md-0">
-              <img
-                src={posterUrl || getPosterUrl(title)}
-                alt={title}
-                onError={(e) => {
-                  // If backend URL fails, fall back to getPosterUrl
-                  if (e.currentTarget.src !== getPosterUrl(title)) {
-                    e.currentTarget.src = getPosterUrl(title);
-                  } else {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = '/images/Image_coming_soon.png';
-                  }
-                }}
-                className="movie-poster-img"
-              />
-            </div>
-
-            <div className="col-lg-6 col-md-7">
-              <div className="movie-detail ps-md-4">
-                <h1 className="fw-bold display-4">{title}</h1>
-                {director && (
-                  <h5 className="text-secondary mb-3">
-                    Directed by {director}
-                  </h5>
-                )}
-                {genres.length > 0 && (
-                  <p>
-                    <strong>Genres:</strong> {genres.join(', ')}
-                  </p>
-                )}
-                {rating && (
-                  <p>
-                    <strong>Rating:</strong> {rating}
-                  </p>
-                )}
-                {type && (
-                  <p>
-                    <strong>Type:</strong> {type}
-                  </p>
-                )}
-                {duration && (
-                  <p>
-                    <strong>Duration:</strong> {duration}
-                  </p>
-                )}
-                {releaseYear && (
-                  <p>
-                    <strong>Release Year:</strong> {releaseYear}
-                  </p>
-                )}
-                {country && (
-                  <p>
-                    <strong>Country:</strong> {country}
-                  </p>
-                )}
-                {description && (
-                  <p className="mt-3">
-                    <strong>Description:</strong> {description}
-                  </p>
-                )}
-                {castList && (
-                  <p>
-                    <strong>Cast:</strong> {castList}
-                  </p>
-                )}
-                <button className="btn btn-outline-dark mt-3">
-                  <i className="bi bi-play-fill me-2"></i> Watch Now
-                </button>
+    <div style={{ background: '#1F3B3C', minHeight: '100vh' }}>
+      <div className="container-fluid py-5 px-4">
+        <div className="row justify-content-center align-items-start">
+          <div className="col-lg-4 col-md-5 text-center mb-4 mb-md-0">
+            <img
+              src={resolvePoster()}
+              alt={title}
+              className="movie-poster-img"
+              key={resolvePoster()}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/images/Image_coming_soon.png';
+              }}
+            />
+          </div>
+          <div className="col-lg-6 col-md-7">
+            <h1 className="fw-bold display-4" style={{ color: 'white' }}>
+              {title}
+            </h1>
+            <div className="star-rating-container mt-2">
+              <div className="custom-star-wrapper">
+                {/**allow user to rate movie - can rerate or add new rating */}
+                <StarRating
+                  value={userRating}
+                  onChange={async (newRating: number) => {
+                    setUserRating(newRating);
+                    await axios.post(
+                      'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/api/ratings/rate',
+                      {
+                        userEmail,
+                        showId: movieData?.showId,
+                        rating: newRating,
+                      },
+                      { withCredentials: true }
+                    );
+                  }}
+                />
               </div>
             </div>
-          </div>
-
-          {loadingRecs && (
-            <div className="text-center mt-5">
-              <p>Loading recommendations...</p>
+            <div className="description-style">
+              {director && (
+                <h5
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: '500',
+                    marginTop: '8px',
+                    color: 'white',
+                  }}
+                >
+                  Directed by {director}
+                </h5>
+              )}
+              {genres.length > 0 && (
+                <p>
+                  <strong>Genres:</strong> {genres.join(' • ')}
+                </p>
+              )}
+              {rating && (
+                <p>
+                  <strong>Rating:</strong> {rating}
+                </p>
+              )}
+              {type && (
+                <p>
+                  <strong>Type:</strong> {type}
+                </p>
+              )}
+              {duration && (
+                <p>
+                  <strong>Duration:</strong> {duration}
+                </p>
+              )}
+              {releaseYear && (
+                <p>
+                  <strong>Release Year:</strong> {releaseYear}
+                </p>
+              )}
+              {country && (
+                <p>
+                  <strong>Country:</strong> {country}
+                </p>
+              )}
+              {description && (
+                <p className="mt-3">
+                  <strong>Summary:</strong> {description}
+                </p>
+              )}
+              {castList && (
+                <p>
+                  <strong>Cast:</strong>{' '}
+                  {castList
+                    .split(' ')
+                    .reduce((acc, name, idx, arr) => {
+                      acc += name;
+                      if ((idx + 1) % 2 === 0 && idx !== arr.length - 1) {
+                        acc += ', ';
+                      } else {
+                        acc += ' ';
+                      }
+                      return acc;
+                    }, '')
+                    .trim()}
+                </p>
+              )}
             </div>
-          )}
+            <button
+              className="btn btn-outline-dark mt-3 button-style"
+              onClick={handleWatchClick}
+            >
+              {showVideo ? '⏹ Hide Video' : '► Watch Now'}
+            </button>
 
-          {!loadingRecs && collabMovies.length > 0 && (
-            <div className="mt-5" ref={collabRef}>
-              <MovieRow title="Other users liked…" movies={collabMovies} />
-            </div>
-          )}
-
-          {!loadingRecs && contentMovies.length > 0 && (
-            <div className="mt-5" ref={contentRef}>
-              <MovieRow
-                title={`Recommendations Based on "${title}"`}
-                movies={contentMovies}
-              />
-            </div>
-          )}
-
-          {!loadingRecs &&
-            collabMovies.length === 0 &&
-            contentMovies.length === 0 && (
-              <div className="text-center mt-5">
-                <h4>No recommendations found for this title.</h4>
+            {showVideo && (
+              <div className="video-container mt-4">
+                <iframe
+                  width="560"
+                  height="315"
+                  src="https://www.youtube.com/embed/BU_j7fyBF-A?si=zhNbvG4f-TulkdLy&autoplay=1"
+                  title="YouTube video player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                ></iframe>
               </div>
             )}
+          </div>
         </div>
+
+        {!loadingRecs && collabMovies.length > 0 && (
+          <div className="mt-5" ref={collabRef}>
+            <MovieRow title="Other users liked…" movies={collabMovies} />
+          </div>
+        )}
+
+        {!loadingRecs && contentMovies.length > 0 && (
+          <div className="mt-5" ref={contentRef}>
+            <MovieRow
+              title={`Recommendations Based on "${title}"`}
+              movies={contentMovies}
+            />
+          </div>
+        )}
+
+        {!loadingRecs &&
+          collabMovies.length === 0 &&
+          contentMovies.length === 0 && (
+            <div className="text-center mt-5">
+              <h4>No recommendations found for this title.</h4>
+            </div>
+          )}
       </div>
     </div>
   );

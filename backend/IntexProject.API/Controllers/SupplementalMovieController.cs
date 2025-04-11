@@ -1,26 +1,31 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IntexProject.API.Models.Supplemental;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IntexProject.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SupplementalMovieController : ControllerBase
     {
         private readonly SupplementalMoviesDbContext _context;
 
+        // Constructor injects the supplemental movie database context
         public SupplementalMovieController(SupplementalMoviesDbContext context)
         {
             _context = context;
         }
 
+        // GET: api/SupplementalMovie/GetByTitle/{title}
         [HttpGet("GetByTitle/{title}")]
         public IActionResult GetMovieByTitle(string title)
         {
             if (string.IsNullOrWhiteSpace(title))
                 return BadRequest("Title cannot be empty.");
 
+            // Find the movie by title, ignoring case and whitespace
             var movie = _context.RecommendationMoviesTitles
                 .AsEnumerable()
                 .FirstOrDefault(m => m.Title?.Trim().ToLower() == title.Trim().ToLower());
@@ -28,7 +33,7 @@ namespace IntexProject.API.Controllers
             if (movie == null)
                 return NotFound(new { message = $"Movie titled '{title}' not found in supplemental database." });
 
-            // Create a genre dictionary to map flags to genre names
+            // Manually collect genres where flags are set to 1
             var genres = new List<string>();
             if (movie.Action == 1) genres.Add("Action");
             if (movie.Adventure == 1) genres.Add("Adventure");
@@ -63,6 +68,7 @@ namespace IntexProject.API.Controllers
             if (movie.TalkShowsTvComedies == 1) genres.Add("Talk Shows TV Comedies");
             if (movie.Thrillers == 1) genres.Add("Thrillers");
 
+            // Return a simplified movie object
             var formatted = new
             {
                 showId = movie.ShowId,
@@ -81,47 +87,44 @@ namespace IntexProject.API.Controllers
             return Ok(formatted);
         }
 
-       [HttpGet("GetById/{showId}")]
-public IActionResult GetMovieById(string showId)
-{
-    if (string.IsNullOrWhiteSpace(showId))
-    {
-        return BadRequest("ShowId cannot be empty");
-    }
+        // GET: api/SupplementalMovie/GetById/{showId}
+        [HttpGet("GetById/{showId}")]
+        public IActionResult GetMovieById(string showId)
+        {
+            if (string.IsNullOrWhiteSpace(showId))
+                return BadRequest("ShowId cannot be empty");
 
-    var movie = _context.RecommendationMoviesTitles
-        .AsEnumerable()
-        .FirstOrDefault(m => m.ShowId?.Trim().ToLower() == showId.Trim().ToLower());
+            // Find the movie by ID, ignoring case and whitespace
+            var movie = _context.RecommendationMoviesTitles
+                .AsEnumerable()
+                .FirstOrDefault(m => m.ShowId?.Trim().ToLower() == showId.Trim().ToLower());
 
-    if (movie == null)
-    {
-        return NotFound(new { message = $"Movie with ID '{showId}' not found in supplemental database." });
-    }
+            if (movie == null)
+                return NotFound(new { message = $"Movie with ID '{showId}' not found in supplemental database." });
 
-    // 🧠 Reflectively extract genres where the column value == 1
-    var genreProperties = typeof(RecommendationMoviesTitle).GetProperties()
-        .Where(p => p.PropertyType == typeof(long) && Convert.ToInt64(p.GetValue(movie)) == 1)
-        .Select(p => p.Name)
-        .ToList();
+            // Dynamically find genre flags set to 1 using reflection
+            var genreProperties = typeof(RecommendationMoviesTitle).GetProperties()
+                .Where(p => p.PropertyType == typeof(long) && Convert.ToInt64(p.GetValue(movie)) == 1)
+                .Select(p => p.Name)
+                .ToList();
 
-    var fallbackDto = new FallbackMovieDto
-    {
-        ShowId = movie.ShowId,
-        Title = movie.Title,
-        Type = movie.Type,
-        Director = movie.Director,
-        CastList = movie.Cast,
-        Country = movie.Country,
-        ReleaseYear = movie.ReleaseYear,
-        Rating = movie.Rating,
-        Duration = movie.Duration,
-        Description = movie.Description,
-        Genres = genreProperties
-    };
+            // Build and return the movie DTO with dynamic genre detection
+            var fallbackDto = new FallbackMovieDto
+            {
+                ShowId = movie.ShowId,
+                Title = movie.Title,
+                Type = movie.Type,
+                Director = movie.Director,
+                CastList = movie.Cast,
+                Country = movie.Country,
+                ReleaseYear = movie.ReleaseYear,
+                Rating = movie.Rating,
+                Duration = movie.Duration,
+                Description = movie.Description,
+                Genres = genreProperties
+            };
 
-    return Ok(fallbackDto);
-}
-
-
+            return Ok(fallbackDto);
+        }
     }
 }

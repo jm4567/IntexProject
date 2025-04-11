@@ -2,68 +2,75 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
-  // state variables for email and passwords
+  // State variables for user credentials and "remember me" toggle
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [rememberme, setRememberme] = useState<boolean>(false);
 
-  // state variable for error messages
+  // State to track error messages
   const [error, setError] = useState<string>('');
+
   const navigate = useNavigate();
 
-  // handle change events for input fields
+  // Handler for changes in form inputs
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, checked, value } = e.target;
     if (type === 'checkbox') {
-      setRememberme(checked);
+      setRememberme(checked); // Update checkbox state
     } else if (name === 'email') {
-      setEmail(value);
+      setEmail(value); // Update email state
     } else if (name === 'password') {
-      setPassword(value);
+      setPassword(value); // Update password state
     }
   };
 
+  // Navigate to registration page
   const handleRegisterClick = () => {
     navigate('/createaccount');
   };
 
-  // handle submit event for the form
+  // Handler for form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(''); // Clear any previous errors
+    e.preventDefault(); // Prevent default form behavior
+    setError(''); // Clear previous errors
 
+    // Simple validation
     if (!email || !password) {
       setError('Please fill in all fields.');
       return;
     }
 
+    // Set login URL based on "remember me"
     const loginUrl = rememberme
       ? 'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/login?useCookies=true'
       : 'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/login?useSessionCookies=true';
 
     try {
+      // Send POST request to login endpoint
       const response = await fetch(loginUrl, {
         method: 'POST',
-        credentials: 'include', // ✅ Ensures cookies are sent & received
+        credentials: 'include', // Send and receive cookies
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
-      // Ensure we only parse JSON if there is content
+      // Parse response body only if content exists
       let data = null;
       const contentLength = response.headers.get('content-length');
       if (contentLength && parseInt(contentLength, 10) > 0) {
         data = await response.json();
       }
 
+      // If login fails, throw an error with message
       if (!response.ok) {
         throw new Error(data?.message || 'Invalid email or password.');
       }
 
+      // Redirect to authenticated page on success
       navigate('/competition');
     } catch (error: any) {
+      // Show login failure message
       setError(error.message || 'Error logging in.');
-      console.error('Fetch attempt failed:', error);
     }
   };
 
@@ -75,6 +82,7 @@ function Login() {
             <h5 className="card-title text-center mb-5 fw-light fs-5">
               Sign In
             </h5>
+            {/* Login Form */}
             <form onSubmit={handleSubmit}>
               <div className="form-floating mb-3">
                 <input
@@ -99,11 +107,11 @@ function Login() {
                 <label htmlFor="password">Password</label>
               </div>
 
+              {/* Remember me checkbox */}
               <div className="form-check mb-3">
                 <input
                   className="form-check-input"
                   type="checkbox"
-                  value=""
                   id="rememberme"
                   name="rememberme"
                   checked={rememberme}
@@ -113,6 +121,8 @@ function Login() {
                   Remember password
                 </label>
               </div>
+
+              {/* Submit login button */}
               <div className="d-grid mb-2">
                 <button
                   className="btn btn-primary btn-login text-uppercase fw-bold"
@@ -121,6 +131,8 @@ function Login() {
                   Sign in
                 </button>
               </div>
+
+              {/* Create account button */}
               <div className="d-grid mb-2">
                 <button
                   className="btn btn-primary btn-login text-uppercase fw-bold"
@@ -129,7 +141,10 @@ function Login() {
                   Create Account
                 </button>
               </div>
+
               <hr className="my-4" />
+
+              {/* Placeholder buttons for social auth */}
               <div className="d-grid mb-2">
                 <button
                   className="btn btn-google btn-login text-uppercase fw-bold"
@@ -149,6 +164,8 @@ function Login() {
                 </button>
               </div>
             </form>
+
+            {/* Show error if exists */}
             {error && <p className="error">{error}</p>}
           </div>
         </div>

@@ -7,10 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IntexProject.API.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    
     public class MovieController : ControllerBase
     {
         private readonly MovieDbContext _context;
@@ -22,7 +20,7 @@ namespace IntexProject.API.Controllers
             _userManager = userManager;
         }
 
-        // Helper method to check logins 
+        // Helper to get custom user from Identity email
         private async Task<MoviesUser?> GetMovieUserFromIdentityAsync()
         {
             var identityUser = await _userManager.GetUserAsync(User);
@@ -34,25 +32,19 @@ namespace IntexProject.API.Controllers
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-
+        // Return all movies with filtering, grouping, and paging
         [HttpGet("AllMovies")]
-        public IActionResult GetMovies(
-            int pageSize = 10,
-            int pageNum = 1,
-            [FromQuery] List<string>? movieCat = null,
-            bool ascending = true)
+        public IActionResult GetMovies(int pageSize = 10, int pageNum = 1, [FromQuery] List<string>? movieCat = null, bool ascending = true)
         {
             var baseQuery = _context.Titles.AsQueryable();
 
-            // Filter by genre
             if (movieCat != null && movieCat.Any())
             {
                 baseQuery = baseQuery.Where(m => movieCat.Contains(m.Genre));
             }
 
-            // Group by ShowId to get one movie with a list of genres
             var groupedQuery = baseQuery
-                .AsEnumerable() // ⬅️ Switch to in-memory LINQ
+                .AsEnumerable()
                 .GroupBy(m => new
                 {
                     m.ShowId,
@@ -64,23 +56,15 @@ namespace IntexProject.API.Controllers
                     m.ReleaseYear,
                     m.Rating,
                     m.Duration,
-                    m.Description, 
-                    m.PosterUrl
+                    m.Description
                 });
 
             var totalNumMovies = groupedQuery.Count();
 
-            // Sort
-            if (ascending)
-            {
-                groupedQuery = groupedQuery.OrderBy(g => g.Key.Title);
-            }
-            else
-            {
-                groupedQuery = groupedQuery.OrderByDescending(g => g.Key.Title);
-            }
+            groupedQuery = ascending
+                ? groupedQuery.OrderBy(g => g.Key.Title)
+                : groupedQuery.OrderByDescending(g => g.Key.Title);
 
-            // Paging + Project
             var movies = groupedQuery
                 .Skip((pageNum - 1) * pageSize)
                 .Take(pageSize)
@@ -96,48 +80,33 @@ namespace IntexProject.API.Controllers
                     g.Key.Rating,
                     g.Key.Duration,
                     g.Key.Description,
-                    PosterUrl = g.FirstOrDefault()?.PosterUrl,  // 👈 Add this
                     Genres = g.Select(x => x.Genre).Distinct().ToList()
                 })
                 .ToList();
 
-            return Ok(new
-            {
-                Movies = movies,
-                TotalNumMovies = totalNumMovies
-            });
+            return Ok(new { Movies = movies, TotalNumMovies = totalNumMovies });
         }
-        
+
+        // Return movies with poster thumbnails
         [HttpGet("ShowMovies")]
-        public IActionResult ShowMovies(
-            int? pageSize = null,
-            int pageNum = 1,
-            [FromQuery] List<string>? movieCat = null,
-            bool ascending = true)
+        public IActionResult ShowMovies(int? pageSize = null, int pageNum = 1, [FromQuery] List<string>? movieCat = null, bool ascending = true)
         {
             var baseQuery = _context.Titles.AsQueryable();
 
-            // Filter by genre (optional)
             if (movieCat != null && movieCat.Any())
             {
                 baseQuery = baseQuery.Where(m => movieCat.Contains(m.Genre));
             }
 
-            // Bring into memory to flatten genres per movie
             var grouped = baseQuery
                 .AsEnumerable()
-                .GroupBy(m => new
-                {
-                    m.ShowId,
-                    m.Title,
-                    m.PosterUrl
-                });
+                .GroupBy(m => new { m.ShowId, m.Title, m.PosterUrl });
 
             int total = grouped.Count();
             int size = pageSize ?? total;
 
             var movies = grouped
-                .OrderBy(g => ascending ? g.Key.Title : "") // crude order
+                .OrderBy(g => ascending ? g.Key.Title : "")
                 .ThenByDescending(g => ascending ? "" : g.Key.Title)
                 .Skip((pageNum - 1) * size)
                 .Take(size)
@@ -150,13 +119,10 @@ namespace IntexProject.API.Controllers
                 })
                 .ToList();
 
-            return Ok(new
-            {
-                Movies = movies,
-                TotalNumMovies = total
-            });
+            return Ok(new { Movies = movies, TotalNumMovies = total });
         }
-        
+
+        // Return list of distinct genres
         [HttpGet("GetMovieGenres")]
         public IActionResult GetMovieGenres()
         {
@@ -165,17 +131,16 @@ namespace IntexProject.API.Controllers
                 .Distinct()
                 .OrderBy(g => g)
                 .ToList();
+
             return Ok(genres);
         }
 
+        // Return users with grouped subscriptions
         [HttpGet("AllUsers")]
         public IActionResult GetUsers()
         {
-            // Step 1: Get all users into memory
-            var allUsers = _context.Users
-                .AsEnumerable(); // prevents SQL issues with GroupBy
+            var allUsers = _context.Users.AsEnumerable();
 
-            // Step 2: Group by UserId and flatten subscriptions
             var result = allUsers
                 .GroupBy(u => new
                 {
@@ -206,42 +171,36 @@ namespace IntexProject.API.Controllers
 
             return Ok(result);
         }
-        
+
+        // Return all ratings
         [HttpGet("GetRatings")]
         public IActionResult GetRatings()
         {
             var ratings = _context.Ratings
-                .AsEnumerable()  // Helps prevent SQLite translation issues
+                .AsEnumerable()
                 .Select(r => new
                 {
                     r.UserId,
                     r.ShowId,
                     r.Rating
-                    // Optionally, include related info:
-                    // UserName = r.MovieUser?.Name,
-                    // MovieTitle = r.MovieTitle?.Title
                 })
                 .ToList();
 
             return Ok(ratings);
         }
 
-        //action related to adding data
+        // Add a movie with multiple genres
         [HttpPost("AddMovie")]
         public IActionResult AddMovies([FromBody] MovieDto newMovie)
         {
             if (newMovie.Genres == null || !newMovie.Genres.Any())
-            {
                 return BadRequest("At least one genre is required.");
-            }
 
-            // ✅ Auto-generate ShowId: "s" + next available number
             if (string.IsNullOrWhiteSpace(newMovie.ShowId))
             {
-                // Pull only the showIds we care about into memory
                 var maxId = _context.Titles
                     .Where(m => m.ShowId.StartsWith("s") && m.ShowId.Length > 1)
-                    .AsEnumerable() // Switch to LINQ-to-Objects
+                    .AsEnumerable()
                     .Select(m =>
                     {
                         var numPart = m.ShowId.Substring(1);
@@ -254,7 +213,6 @@ namespace IntexProject.API.Controllers
                 newMovie.ShowId = $"s{nextId}";
             }
 
-
             var createdMovies = new List<MoviesTitle>();
 
             foreach (var genre in newMovie.Genres.Distinct())
@@ -264,9 +222,7 @@ namespace IntexProject.API.Controllers
                     m.Genre.ToLower() == genre.ToLower());
 
                 if (alreadyExists)
-                {
                     continue;
-                }
 
                 var newRow = new MoviesTitle
                 {
@@ -282,7 +238,6 @@ namespace IntexProject.API.Controllers
                     Description = newMovie.Description,
                     Genre = genre,
                     PosterUrl = newMovie.PosterUrl
-
                 };
 
                 _context.Titles.Add(newRow);
@@ -293,30 +248,23 @@ namespace IntexProject.API.Controllers
             {
                 _context.SaveChanges();
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine("Error during SaveChanges: " + ex.Message);
                 return StatusCode(500, "An error occurred while saving the movie.");
             }
 
             return Ok(createdMovies);
         }
 
-
-
+        // Update a movie by ShowId
         [HttpPut("UpdateMovie/{show_id}")]
         public IActionResult UpdateMovie(string show_id, [FromBody] MovieDto updatedMovie)
         {
-            Console.WriteLine("Received PUT request");
-            Console.WriteLine($"Route ShowId: {show_id}");
-            Console.WriteLine($"Payload ShowId: {updatedMovie.ShowId}");
-
             var existing = _context.Titles
                 .Where(m => m.ShowId.ToLower() == show_id.ToLower());
 
             if (!existing.Any())
             {
-                Console.WriteLine($"No match found in DB for: {show_id}");
                 return NotFound(new { message = $"No movie found with ShowId = {show_id}" });
             }
 
@@ -346,24 +294,22 @@ namespace IntexProject.API.Controllers
             return Ok();
         }
 
-        //action to delete movie
-
+        // Delete a movie by ShowId
         [HttpDelete("DeleteMovie/{show_id}")]
         public IActionResult DeleteMovie(string show_id)
         {
             var moviesToDelete = _context.Titles.Where(m => m.ShowId == show_id).ToList();
 
             if (!moviesToDelete.Any())
-            {
                 return NotFound(new { message = "Movie not found" });
-            }
 
             _context.Titles.RemoveRange(moviesToDelete);
             _context.SaveChanges();
 
-            return NoContent(); // Success
+            return NoContent();
         }
 
+        // Get a single movie with its genres by ShowId
         [HttpGet("GetMovieById/{show_id}")]
         public IActionResult GetMovieById(string show_id)
         {
@@ -372,9 +318,7 @@ namespace IntexProject.API.Controllers
                 .ToList();
 
             if (!movies.Any())
-            {
                 return NotFound();
-            }
 
             var grouped = movies
                 .GroupBy(m => new
@@ -410,8 +354,5 @@ namespace IntexProject.API.Controllers
 
             return Ok(grouped);
         }
-
-
-
     }
 }

@@ -1,18 +1,30 @@
-namespace IntexProject.API.Models;
-
-public class MovieDto
+namespace IntexProject.API.Models
 {
-    public string ShowId { get; set; }
-    public string Title { get; set; }
-    public string Type { get; set; }
-    public string? Director { get; set; }
-    public string? CastList { get; set; }
-    public string? Country { get; set; }
-    public int ReleaseYear { get; set; }
-    public string? Rating { get; set; }
-    public string? Duration { get; set; }
-    public string Description { get; set; }
-    public string? PosterUrl { get; set; }
+    // Data Transfer Object (DTO) for sending/receiving movie data from frontend
+    public class MovieDto
+    {
+        public string ShowId { get; set; } // Unique identifier, e.g., "s123"
 
-    public List<string> Genres { get; set; } = new(); // ✅ array from frontend
+        public string Title { get; set; } // Movie or show title
+
+        public string Type { get; set; } // e.g., "Movie", "TV Show"
+
+        public string? Director { get; set; } // Optional director name
+
+        public string? CastList { get; set; } // Optional cast members (string list)
+
+        public string? Country { get; set; } // Optional country of origin
+
+        public int ReleaseYear { get; set; } // Year the movie/show was released
+
+        public string? Rating { get; set; } // e.g., "PG-13", "R"
+
+        public string? Duration { get; set; } // Duration as string, e.g., "1h 45m"
+
+        public string Description { get; set; } // Description or synopsis
+
+        public string? PosterUrl { get; set; } // Optional image/poster URL
+
+        public List<string> Genres { get; set; } = new(); // ✅ Genre list from frontend (multi-genre support)
+    }
 }

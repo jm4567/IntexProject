@@ -93,17 +93,20 @@
   transform: scale(1.05);
   opacity: 0.9;
 }
+
 .foreground-content h1 {
   font-size: 4rem; /* 🔥 bold headline */
-  font-weight: 700;
+  font-weight: 1000;
   margin-bottom: 1rem;
   color: #f0f0f0;
+  font-family: 'Roboto', sans-serif;
 }
 
 .foreground-content p {
   font-size: 1.6rem;
   margin-bottom: 2rem;
   color: #f0f0f0; /* softer white */
+  font-family: 'Roboto', sans-serif;
 }
 .email-form {
   display: flex;
@@ -122,10 +125,11 @@
   border: none;
   border-radius: 4px 0 0 4px;
   outline: none;
+  font-family: 'Roboto', sans-serif;
 }
 
 .email-button {
-  background-color: #407568; /* Netflix red */
+  background-color: rgba(31, 59, 60, 0.85); /* Netflix red */
   color: white;
   font-size: 1.1rem;
   padding: 1rem 2rem;
@@ -133,6 +137,7 @@
   border-radius: 0 4px 4px 0;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  font-family: 'Roboto', sans-serif !important;
 }
 
 .email-button:hover {
@@ -143,6 +148,7 @@
   top: 1.5rem;
   right: 2rem;
   z-index: 2; /* ✅ On top of overlay */
+  font-family: 'Roboto', sans-serif;
 }
 .homepage-footer {
   width: 100%;
@@ -154,10 +160,11 @@
   margin-top: 0;
 }
 .trending-now-section {
-  margin-top: 4rem;
+  margin-top: 5rem !important;
   color: white;
   text-align: left;
-  padding: 0 2rem;
+  padding: 0 3rem !important;
+  font-family: 'Roboto', sans-serif;
 }
 
 .scroll-row {
@@ -187,9 +194,9 @@
   height: auto;
 }
 .trending-section {
-  background-color: rgba(64, 117, 104, 0.85); /* 85% opacity */
+  background-color: rgba(31, 59, 60, 0.85); /* 85% opacity */
   color: white;
-  padding: 3rem 2rem;
+  padding: 4rem 2rem;
   margin-top: -3rem; /* try negative margin to pull it closer */
 }
 
@@ -198,6 +205,7 @@
   margin-bottom: 1.5rem;
   text-align: left;
   color: white;
+  font-family: 'Roboto', sans-serif !important;
 }
 
 .trending-carousel {
@@ -236,6 +244,7 @@
   background-color: #f3debe;
   border-top: 4px solid #d8c5a1; /* soft divider */
   margin-bottom: 0; /* or try 0 to test */
+  font-family: 'Roboto', sans-serif;
 }
 
 .reasons-section h2 {
@@ -243,6 +252,7 @@
   font-weight: 600;
   color: #104057;
   margin-bottom: 2rem;
+  font-family: 'Roboto', sans-serif;
 }
 
 .reasons-grid {
@@ -250,6 +260,7 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 2rem;
+  font-family: 'Roboto', sans-serif;
 }
 
 .reason-card {
@@ -263,6 +274,7 @@
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
+  font-family: 'Roboto', sans-serif;
 }
 
 .reason-card:hover {
@@ -274,6 +286,7 @@
   font-size: 1.3rem;
   color: #104057;
   margin-bottom: 0.75rem;
+  font-family: 'Roboto', sans-serif !important;
 }
 
 .reason-card p {

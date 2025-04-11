@@ -2,61 +2,48 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 0.5rem 1rem;
   background-color: #f3debe;
   position: relative;
   flex-wrap: wrap;
 }
 
+@font-face {
+  font-family: 'RetroCool';
+  src: url('/fonts/RetroCool.ttff') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Cooper';
+  src: url('/fonts/Cooper.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
 .nav-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0 1.5rem;
+  gap: 1rem;
   width: 100%;
-  gap: 2rem;
-  padding: 0 2rem;
 }
-
-/* Optional fix for layout */
-.nav-main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 1;
-  flex: none;
-}
-
-/* Left - Logo */
-.nav-logo {
-  margin-right: 1rem;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  width: 100px;
-  gap: 0.5rem; /* 🧠 decrease this to reduce spacing */
-}
-
-/* Center - Pill nav */
-.nav-center {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  z-index: 1;
-}
-
 .nav-inner {
+  flex-grow: 1;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 3rem;
-  background-color: #eee8dc;
-  border-radius: 9999px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  width: auto;
-  max-width: 900px; /* adjust to taste */
+  justify-content: flex-start;
+  gap: 1rem !important;
+  margin-left: 1rem;
+  padding: 0;
+  background-color: transparent;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem; /* space between image and svg text */
 }
 
 /* Pill content layout */
@@ -67,15 +54,68 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6rem !important; /* try 2rem, 3rem, 4rem… */
-  padding: 0 2.5rem !important;
+  gap: 0.5rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
+.nav-right {
+  display: flex;
+  align-items: center !important;
+  gap: 0.5rem;
+  height: 100%;
+}
+.nav-inner .navbar-brand {
+  margin-right: 0.25rem !important;
+  font-size: 1.2rem !important;
+  font-family: 'Roboto', sans-serif;
+  color: #104057;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+.navbar-brand:hover {
+  text-decoration: underline;
+
+  color: white;
+}
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.cine-logo-svg {
+  display: block;
+  height: 60px;
+}
+
+.navbar-name {
+  display: flex;
+  align-items: flex-end;
+  text-decoration: none;
+  margin-top: -4px;
+}
+
+.cine-logo-img {
+  height: 80px; /* ✅ Set desired size */
+  width: auto; /* ✅ Keeps natural width */
+  display: block;
+  object-fit: contain; /* just in case */
+}
+.cine-logo-curve {
+  width: 120px;
+  height: auto;
+  display: block;
+  z-index: 20;
+}
+
+/* 
 .genre-link {
   display: flex;
   align-items: center;
   gap: 0.3rem;
-}
+} */
 
 .arrow {
   font-size: 0.8rem;
@@ -88,23 +128,6 @@
   color: #1a1a1a;
   cursor: pointer;
 }
-
-.nav-inner .navbar-brand {
-  margin-right: 1rem;
-  font-size: 2rem;
-  color: #104057;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-}
-/* .navbar-brand {
-  margin-right: 1rem !important;
-  font-size: 2rem !important;
-  color: #104057 !important;
-  text-decoration: none !important;
-  display: flex !important;
-  align-items: center !important;
-} */
 
 /* Search */
 .search-icon {
@@ -120,71 +143,60 @@
 }
 
 .nav-avatar {
-  position: relative;
+  position: relative; /* ✅ this anchors the dropdown */
   display: flex;
   align-items: center;
   cursor: pointer;
 }
 
-@font-face {
-  font-family: 'RetroCool';
-  src: url('/fonts/RetroCool.ttff') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-.navbar-name {
-  font-family: 'RetroCool', cursive;
-  font-size: 3.5rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-right: 1rem;
-  color: #104057;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  transform: scaleY(1.1); /* stretches upward */
-}
-
 .avatar-img {
   border-radius: 50%;
-  width: 120px;
-  height: 120px;
+  width: 70px;
+  height: 70px;
   object-fit: cover;
 }
 
-/* Dropdown menu */
 .profile-dropdown {
   position: absolute;
-  top: 120px;
+  top: 100%; /* ✅ directly below the avatar image */
   right: 0;
   background-color: #eee8dc;
   border-radius: 4px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.75);
   padding: 0.5rem 0;
-  width: 250px;
+  width: 150px;
   z-index: 999;
   display: flex;
   flex-direction: column;
-  font-family: 'Helvetica Neue', sans-serif;
+  font-family: 'Roboto', sans-serif;
+  flex-direction: column;
+  align-items: center; /* Center child items horizontally */
+  text-align: center; /* Ensure text is centered */
 }
 
 .dropdown-item {
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
   padding: 0.75rem 1rem;
-  font-size: 2rem;
+  font-size: 1rem;
   color: #104057;
-  background: none;
+  background-color: transparent;
   border: none;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+  border-radius: 6px;
 }
 
 .dropdown-item:hover {
-  background-color: #333;
+  background-color: #104057 !important; /* Dark background on hover */
+  color: #fff !important; /* Light text */
 }
-
 /* Optional: for icon + text layout like Netflix */
 .dropdown-item .icon {
   margin-right: 10px;
@@ -196,13 +208,7 @@
   margin: 0.5rem 0;
 }
 
-.cine-logo-img {
-  height: 120px; /* ✅ Set desired size */
-  width: auto; /* ✅ Keeps natural width */
-  display: block;
-  object-fit: contain; /* just in case */
-}
-/*responsive design*/
+/* responsive design */
 @media (max-width: 768px) {
   .nav-wrapper {
     flex-direction: column;
@@ -213,6 +219,7 @@
     margin-bottom: 1rem;
     justify-content: center;
     width: 100%;
+    gap: 0.2rem;
   }
 
   .nav-center {
@@ -263,6 +270,8 @@
 
   .cine-logo-img {
     height: 60px;
+    object-fit: contain;
+    vertical-align: middle;
   }
 
   .nav-center {
@@ -325,10 +334,116 @@
 }
 
 .genre-dropdown {
-  background-color: #111;
+  background-color: #1f3b3c;
   padding: 12px;
   border-radius: 8px;
-  color: black;
+  color: #1f3b3c;
   z-index: 10;
   position: relative;
+}
+
+.user-info-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.user-name {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #333;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* .avatar-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 70%;
+  border: 2px solid #f19c3d;
+  background-color: white;
+} */
+
+.user-info-wrapper-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-name {
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.nav-search-wrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.select__value-container {
+  display: flex;
+  align-items: center;
+}
+
+.search-dropdown {
+  display: flex;
+  align-items: center !important;
+  height: 100% !important; /* inherits height from nav */
+}
+
+.movie-filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%; /* This aligns it with the nav height */
+  margin-top: 0; /* remove manual nudging if any */
+}
+.movie-filter .select__control {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  height: 36px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  margin-top: 45px;
+}
+.privacy-buttons {
+  align-items: left;
+  justify-content: space-between;
+  display: flex;
+  /* margin-right: 20px !important; */
+  margin-left: auto !important;
+  color: #1f3b3c;
+}
+
+.privButt {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  border-radius: 9999px;
+  border: none;
+  margin: 0.5rem;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  color: #fff !important;
+  background-color: #1f3b3c !important;
+}
+
+.privButt.primary {
+  background-color: #2ecc71;
+  color: #1f3b3c !important;
+}
+
+.privButt.secondary {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+}
+
+.privButt:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
 }

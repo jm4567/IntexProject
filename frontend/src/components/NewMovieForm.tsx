@@ -1,14 +1,19 @@
 // File: components/NewMovieForm.tsx
+
+// Import necessary hooks and functions
 import { useState, useEffect } from 'react';
 import { Movie } from '../types/Movie';
 import { addMovie } from '../api/MoviesAPI';
 
+// Props interface for the form
 interface NewMovieFormProps {
-  onSuccess: () => void;
-  onCancel: () => void;
+  onSuccess: () => void; // Called when the form is successfully submitted
+  onCancel: () => void; // Called when the form is cancelled
 }
 
+// NewMovieForm component definition
 const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
+  // Initialize form state with default empty values
   const [formData, setFormData] = useState<Movie>({
     showId: '',
     title: '',
@@ -23,8 +28,11 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
     genres: [],
     posterUrl: '',
   });
+
+  // State for list of available genres from backend
   const [availableGenres, setAvailableGenres] = useState<string[]>([]);
 
+  // Load available genres from the API on mount
   useEffect(() => {
     const loadGenres = async () => {
       try {
@@ -35,7 +43,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
           }
         );
         const data = await res.json();
-        setAvailableGenres(data);
+        setAvailableGenres(data); // Set genres in dropdown
       } catch (error) {
         console.error('Failed to load genres:', error);
       }
@@ -44,6 +52,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
     loadGenres();
   }, []);
 
+  // Handle input field changes (text or textarea)
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -54,11 +63,12 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
     }));
   };
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent page reload
     try {
-      await addMovie(formData);
-      onSuccess();
+      await addMovie(formData); // API call to add movie
+      onSuccess(); // Call success handler from parent
     } catch (error) {
       console.error('Error during addMovie call:', error);
     }
@@ -82,7 +92,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
           🎬 Add New Movie / TV Show
         </h2>
 
-        {/* Inputs */}
+        {/* Render common text fields using a map */}
         {[
           { label: 'Title', name: 'title' },
           { label: 'Type', name: 'type' },
@@ -118,6 +128,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
           </div>
         ))}
 
+        {/* Release year input */}
         <div style={{ marginBottom: '12px' }}>
           <label
             style={{
@@ -142,6 +153,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
           />
         </div>
 
+        {/* Description textarea */}
         <div style={{ marginBottom: '12px' }}>
           <label
             style={{
@@ -166,6 +178,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
           />
         </div>
 
+        {/* Genres multiple select */}
         <div style={{ marginBottom: '12px' }}>
           <label
             style={{
@@ -206,6 +219,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
           </small>
         </div>
 
+        {/* Show a preview of the poster image if one exists */}
         {formData.posterUrl && (
           <div style={{ marginBottom: '20px', textAlign: 'center' }}>
             <img
@@ -220,7 +234,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
           </div>
         )}
 
-        {/* Buttons */}
+        {/* Form action buttons */}
         <div
           style={{
             display: 'flex',
@@ -229,6 +243,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
             marginTop: '20px',
           }}
         >
+          {/* Submit button */}
           <button
             type="submit"
             style={{
@@ -255,6 +270,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
             ➕ Add Movie / TV Show
           </button>
 
+          {/* Cancel button */}
           <button
             type="button"
             onClick={onCancel}

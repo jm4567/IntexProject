@@ -12,38 +12,39 @@ import DefaultLayout from './components/DefaultLayout';
 import AuthorizeView from './components/AuthorizeView';
 import ScrollToTop from './utils/ScrollToTop';
 import { GenreProvider } from './components/GenreContext';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
-  // const location = useLocation();
-  // const hideHeaderOnPaths = ['/login']; // Hide nav bar for login page
-  // const hideFooterrOnPaths = ['/login']; // Hide footer for login page
-
-  // const shouldShowHeader = !hideHeaderOnPaths.includes(location.pathname);
-  // const shouldShowFooter = !hideFooterrOnPaths.includes(location.pathname);
-
   return (
     <main className="container-fluid px-0">
-      {/* {shouldShowFooter && <Footer />}
-      {shouldShowHeader && <NavBar />} */}
+      {/* Scrolls to top on route change */}
       <ScrollToTop />
+
+      {/* Define application routes */}
       <Routes>
-        {/* Public Routes */}
+        {/* Public routes available to all users */}
         <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
+
+        {/* Protected routes (require user to be authenticated) */}
+
+        {/* Movie details page (uses genre context and layout wrapper) */}
         <Route
           path="/movie/:showId"
           element={
-            <GenreProvider>
-              <DefaultLayout>
-                <MovieDetailsPages />
-              </DefaultLayout>
-            </GenreProvider>
+            <AuthorizeView>
+              <GenreProvider>
+                <DefaultLayout>
+                  <MovieDetailsPages />
+                </DefaultLayout>
+              </GenreProvider>
+            </AuthorizeView>
           }
         />
 
-        {/* Protected Routes */}
+        {/* Main movies page */}
         <Route
           path="/movies"
           element={
@@ -52,6 +53,8 @@ function App() {
             </AuthorizeView>
           }
         />
+
+        {/* Genre browsing page */}
         <Route
           path="/genres"
           element={
@@ -60,6 +63,19 @@ function App() {
             </AuthorizeView>
           }
         />
+
+        {/* User profile page */}
+        <Route
+          path="/profile"
+          element={
+            <AuthorizeView>
+              <ProfilePage />
+            </AuthorizeView>
+          }
+          key="profile"
+        />
+
+        {/* Admin management page (wrapped in genre provider and layout) */}
         <Route
           path="/managemovies"
           element={
@@ -74,6 +90,7 @@ function App() {
         />
       </Routes>
 
+      {/* Previously used to show/hide header/footer conditionally */}
       {/* {shouldShowHeader && <Header />} */}
     </main>
   );

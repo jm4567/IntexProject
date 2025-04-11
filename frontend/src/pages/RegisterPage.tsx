@@ -1,20 +1,25 @@
-'use client';
+'use client'; // Enables client-side rendering for frameworks like Next.js
+
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate, useLocation } from 'react-router-dom'; // ✅ include useLocation
+import { useNavigate, useLocation } from 'react-router-dom'; // Hooks for navigation and reading query params
 
+// Register form component to create a new account
 const RegisterForm = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // ✅ read query params
+  const location = useLocation(); // Used to extract query parameters from URL
 
+  // Form field states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  // Navigate to login page
   const handleLoginClick = () => navigate('/login');
 
+  // Handle input changes and update form state
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === 'email') setEmail(value);
@@ -22,15 +27,15 @@ const RegisterForm = () => {
     if (name === 'confirmPassword') setConfirmPassword(value);
   };
 
+  // On mount: load Google font and optionally set email from query string
   useEffect(() => {
-    // Load Google font
     const link = document.createElement('link');
     link.href =
       'https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap';
     link.rel = 'stylesheet';
     document.head.appendChild(link);
 
-    // ✅ Read email from query params
+    // If email query param exists (e.g., from redirect), set it
     const params = new URLSearchParams(location.search);
     const emailFromQuery = params.get('email');
     if (emailFromQuery) {
@@ -38,9 +43,11 @@ const RegisterForm = () => {
     }
   }, [location]);
 
+  // Handles form submission and calls backend register API
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Basic client-side validation
     if (!email || !password || !confirmPassword) {
       setError('Please fill in all fields.');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -50,18 +57,23 @@ const RegisterForm = () => {
     } else {
       setError('');
       try {
-        const response = await fetch('https://localhost:5000/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password }),
-        });
+        const response = await fetch(
+          'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/register',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+          }
+        );
 
         if (response.ok) {
+          // Registration successful, redirect to login
           setError('');
           navigate('/login');
         } else {
+          // Handle API errors
           const data = await response.json();
           let messages = 'Error registering.';
           if (data.errors) {
@@ -84,15 +96,16 @@ const RegisterForm = () => {
     <FormContainer onSubmit={handleSubmit}>
       <WelcomeText>CREATE ACCOUNT</WelcomeText>
 
+      {/* Email input */}
       <Input
         type="email"
         name="email"
         placeholder="Email address"
         value={email}
         onChange={handleChange}
-        disabled={!!email} // disables input if email is pre-filled
       />
 
+      {/* Password input with toggle */}
       <InputWrapper>
         <Input
           type={showPassword ? 'text' : 'password'}
@@ -109,6 +122,7 @@ const RegisterForm = () => {
         </ToggleButton>
       </InputWrapper>
 
+      {/* Confirm password input */}
       <InputWrapper>
         <Input
           type={showPassword ? 'text' : 'password'}
@@ -119,16 +133,19 @@ const RegisterForm = () => {
         />
       </InputWrapper>
 
+      {/* Buttons */}
       <Button type="submit">Register</Button>
       <Button type="button" onClick={handleLoginClick}>
         Go to Login
       </Button>
 
+      {/* Error message */}
       {error && <ErrorMessage>{error}</ErrorMessage>}
     </FormContainer>
   );
 };
 
+// Full page wrapper around the register form
 const RegisterPage = () => {
   const navigate = useNavigate();
   return (
@@ -144,6 +161,8 @@ const RegisterPage = () => {
 export default RegisterPage;
 
 /* ---------- STYLED COMPONENTS ---------- */
+
+// Page background and layout container
 const LoginContainer = styled.main`
   background-color: rgba(244, 223, 191, 1);
   display: flex;
@@ -154,6 +173,7 @@ const LoginContainer = styled.main`
   padding: 0 20px;
 `;
 
+// Styled movie ticket wrapper (background image)
 const TicketWrapper = styled.div`
   position: relative;
   width: 700px;
@@ -170,6 +190,7 @@ const TicketWrapper = styled.div`
   box-sizing: border-box;
 `;
 
+// Register form container
 const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
@@ -177,6 +198,7 @@ const FormContainer = styled.form`
   width: 240px;
 `;
 
+// Retro pixel font title
 const WelcomeText = styled.h1`
   margin-bottom: 24px;
   color: rgba(243, 222, 190, 1);
@@ -185,15 +207,17 @@ const WelcomeText = styled.h1`
   text-align: center;
 `;
 
+// Input fields
 const Input = styled.input`
   width: 100%;
-  padding: 10px 40px 10px 10px; /* space for the toggle button */
+  padding: 10px 40px 10px 10px; // leaves space for toggle button
   margin-bottom: 12px;
   font-size: 14px;
   border-radius: 6px;
   border: 1px solid #ccc;
 `;
 
+// Form action buttons
 const Button = styled.button`
   width: 75%;
   background-color: rgba(234, 170, 54, 1);
@@ -202,6 +226,7 @@ const Button = styled.button`
   padding: 10px;
   margin-bottom: 10px;
   font-size: 15px;
+  color: #850101;
   border-radius: 6px;
   cursor: pointer;
 
@@ -210,17 +235,21 @@ const Button = styled.button`
   }
 `;
 
+// Error message styling
 const ErrorMessage = styled.p`
   color: rgba(243, 222, 190, 1);
   font-size: 10px;
   margin-top: 10px;
 `;
+
+// Wrapper to position the show/hide toggle
 const InputWrapper = styled.div`
   width: 100%;
   position: relative;
   margin-bottom: 12px;
 `;
 
+// Toggle visibility of password field
 const ToggleButton = styled.button`
   position: absolute;
   right: 10px;
@@ -236,6 +265,8 @@ const ToggleButton = styled.button`
     color: #000;
   }
 `;
+
+// Button to return to the homepage
 const GoHomeButton = styled.button`
   position: absolute;
   top: 20px;

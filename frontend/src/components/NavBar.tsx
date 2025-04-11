@@ -1,12 +1,12 @@
-import { Link } from 'react-router-dom';
-// import '../css/styles.css';
+import { Link, useLocation } from 'react-router-dom';
 import '../css/NavBar.css';
 import { useState } from 'react';
 import Logo from './Logo';
-import { useLocation } from 'react-router-dom';
 import MovieSearch from './MovieSearch';
 import { logoutUser } from '../api/logoutUser';
 import GenreFilter from './GenreFilter';
+import { useUser } from './AuthorizeView';
+import { useNavigate } from 'react-router-dom';
 
 interface NavBarProps {
   selectedGenres: string[];
@@ -14,132 +14,163 @@ interface NavBarProps {
 }
 
 const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
-  //toggle search
   const [showSearch, setShowSearch] = useState(false);
-  // const [selectedMovies, setSelectedMovies] = useState<string[]>([]);
+  const [selectedMovies, setSelectedMovies] = useState<string[]>([]);
   const [showGenreDropdown, setShowGenreDropdown] = useState(false);
-
-  //toggle profile so it shows menu
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-  const toggleProfileMenu = () => {
-    setShowProfileMenu((prev) => !prev);
-  };
+  const user = useUser();
+  const toggleProfileMenu = () => setShowProfileMenu((prev) => !prev);
+  const toggleSearch = () => setShowSearch((prev) => !prev);
 
-  const toggleSearch = () => {
-    setShowSearch((prev) => !prev);
-  };
-
-  //use location so navigation pill changes depending on the page we are on
   const location = useLocation();
   const currentPath = location.pathname;
+  const navigate = useNavigate();
 
+  {
+    /*change nav bar depending on page */
+  }
   return (
     <div className="nav-wrapper">
-      {/* Horizontal row: logo - pill - avatar */}
       <div className="nav-row">
         <Logo />
 
-        {/* Center pill nav */}
-        <div className="nav-main">
-          <div className="nav-inner">
-            <div className="nav-left">
-              {currentPath === '/genres' && (
-                <Link to="/movies" className="navbar-brand">
-                  Go Back
-                </Link>
-              )}
-              {currentPath === '/managemovies' && (
-                <Link to="/" className="navbar-brand">
-                  Home
-                </Link>
-              )}
-              {currentPath === '/movies' && (
-                <Link to="/" className="navbar-brand">
-                  Home
-                </Link>
-              )}
-            </div>
+        {/* Center nav links */}
+        <div className="nav-inner">
+          <div className="nav-left">
+            {currentPath === '/genres' && (
+              <Link to="/movies" className="navbar-brand">
+                Go Back
+              </Link>
+            )}
+            {currentPath === '/managemovies' && (
+              <Link to="/" className="navbar-brand">
+                Landing Page
+              </Link>
+            )}
+            {(['/movies'].includes(currentPath) ||
+              currentPath.startsWith('/movie/')) && (
+              <Link to="/movies" className="navbar-brand">
+                Home
+              </Link>
+            )}
+          </div>
 
-            <div className="nav-middle">
-              {currentPath === '/managemovies' && (
-                <Link to="/movies" className="navbar-brand">
-                  Access Movies
-                </Link>
-              )}
-              {currentPath === '/movies' && (
-                <div className="genre-toggle-wrapper">
-                  <div
-                    className="navbar-brand genre-filter-toggle"
-                    onClick={() => setShowGenreDropdown((prev) => !prev)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    Filter by Genre <span className="arrow">▼</span>
+          <div className="nav-middle">
+            {currentPath === '/managemovies' && (
+              <Link to="/movies" className="navbar-brand">
+                Access Movies
+              </Link>
+            )}
+            {currentPath === '/movies' && (
+              <div className="genre-toggle-wrapper">
+                <div
+                  className="navbar-brand genre-filter-toggle"
+                  onClick={() => setShowGenreDropdown((prev) => !prev)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  Filter by Genre
+                </div>
+                {showGenreDropdown && (
+                  <div className="floating-genre-dropdown">
+                    <GenreFilter
+                      selectedGenres={selectedGenres}
+                      setSelectedGenres={setSelectedGenres}
+                    />
                   </div>
-
-                  {showGenreDropdown && (
-                    <div className="floating-genre-dropdown">
-                      <GenreFilter
-                        selectedGenres={selectedGenres}
-                        setSelectedGenres={setSelectedGenres}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div className="nav-right">
-              <div className="search-icon navbar-brand" onClick={toggleSearch}>
-                Search 🔍
+                )}
               </div>
-              {showSearch && (
-                <div className="col-md-12 mb-4 drop-down">
-                  <MovieSearch
-                  // selectedMovies={selectedMovies}
-                  // setSelectedMovies={setSelectedMovies}
-                  />
+            )}
+          </div>
+
+          <div className="nav-right">
+            {(['/movies', '/managemovies'].includes(currentPath) ||
+              currentPath.startsWith('/movie/')) && (
+              <>
+                <div
+                  className="search-icon navbar-brand"
+                  onClick={toggleSearch}
+                >
+                  Search
                 </div>
-              )}
-            </div>
+                {showSearch && (
+                  <div className="col-md-12 mb-4 search-dropdown nav-search">
+                    <MovieSearch
+                      selectedMovies={selectedMovies}
+                      setSelectedMovies={setSelectedMovies}
+                    />
+                  </div>
+                )}
+              </>
+            )}
+            {user?.email === 'adminuser1@gmail.com' && (
+              <Link to="/managemovies" className="navbar-brand">
+                Admin Dashboard
+              </Link>
+            )}
+            {['/privacy'].includes(currentPath) && (
+              <>
+                <div className="privacy-buttons">
+                  <button
+                    onClick={() => navigate('/register')}
+                    className="privButt"
+                  >
+                    Sign Up Today!
+                  </button>
+
+                  <button
+                    onClick={() => navigate('/login')}
+                    className="privButt"
+                  >
+                    Login
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Avatar on right side */}
-        <div className="nav-avatar">
-          <img
-            src="/images/person.png"
-            onClick={toggleProfileMenu}
-            className="avatar-img"
-            width="120"
-            height="120"
-          />
-          {showProfileMenu && (
-            <div className="profile-dropdown">
-              <Link to="/profile" className="dropdown-item">
-                <span className="icon">👤</span> View Profile
-              </Link>
-              <Link to="/setting" className="dropdown-item">
-                <span className="icon">⚙️</span> Settings
-              </Link>
-              <button
-                className="dropdown-item"
-                onClick={async () => {
-                  const success = await logoutUser();
-                  if (success) {
-                    document.cookie =
-                      '.AspNetCore.Identity.Application=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-                    window.location.href = '/login';
-                  } else {
-                    console.error('Logout failed');
-                  }
-                }}
-              >
-                Sign Out
-              </button>
+        {['/movies', '/managemovies', '/profile'].includes(currentPath) ||
+        currentPath.startsWith('/movie/') ? (
+          <div className="nav-avatar" onClick={toggleProfileMenu}>
+            <div className="user-info-wrapper-horizontal">
+              {user?.email && (
+                <span className="user-name text-black">{user.email}</span>
+              )}
+              <img
+                src="/images/person.png"
+                className="avatar-img"
+                alt="Profile"
+              />
             </div>
-          )}
-        </div>
+
+            {showProfileMenu && (
+              <div className="profile-dropdown text-black">
+                <Link to="/profile" className="dropdown-item">
+                  <span className="icon">👤</span> View Profile
+                </Link>
+                <Link to="/setting" className="dropdown-item">
+                  <span className="icon">⚙️</span> Settings
+                </Link>
+                <button
+                  className="dropdown-item"
+                  onClick={async () => {
+                    const success = await logoutUser();
+                    if (success) {
+                      document.cookie =
+                        '.AspNetCore.Identity.Application=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+                      window.location.href = '/login';
+                    } else {
+                      console.error('Logout failed');
+                    }
+                  }}
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+        ) : null}
       </div>
     </div>
   );

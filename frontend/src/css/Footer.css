@@ -5,6 +5,23 @@
   min-height: 100px;
   color: white;
   bottom: 0rem;
+  background-color: rgba(31, 59, 60, 0.85); /* Netflix red */
+  font-family: 'Helvetica Neue', sans-serif;
+}
+
+/* For movies */
+.moviespage-footer {
+  position: fixed;
+  bottom: 1rem;
+  left: 0;
+  width: 100%;
+  color: white;
+  padding: 8px 12px; /* smaller top/bottom and left/right padding */
+  font-size: 1.2rem; /* smaller text */
+  z-index: 1000;
+  text-align: center;
+  background-color: rgba(243, 222, 190, 0.6) 50%;
+  font-family: 'Helvetica Neue', sans-serif;
 }
 
 /* For all other pages */
@@ -13,6 +30,24 @@
   padding: 4rem 0;
   min-height: 120px;
   border-top: 1px solid #ccc;
-  background-color: #111;
+  background-color: rgba(243, 222, 190, 0.6) 50%;
   color: white;
+  font-family: 'Helvetica Neue', sans-serif;
+}
+
+.footer-p {
+  margin: 0;
+  font-weight: 500;
+}
+
+footer a {
+  color: #000; /* black instead of default blue */
+  text-decoration: none; /* remove underline */
+  font-weight: bold;
+  transition: color 0.2s ease;
+}
+
+footer a:hover {
+  color: #e76f51; /* highlight on hover */
+  text-decoration: underline; /* optional underline on hover */
 }
