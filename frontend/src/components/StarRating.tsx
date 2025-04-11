@@ -14,7 +14,7 @@ const StarRating = ({ totalStars = 5, value, onChange }: StarRatingProps) => {
       style={{
         display: 'flex',
         gap: '5px',
-        fontSize: '2rem',
+        fontSize: '50px',
         cursor: 'pointer',
       }}
     >

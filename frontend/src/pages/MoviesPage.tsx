@@ -128,16 +128,20 @@ const MoviesPage = () => {
                   </div>
                 ) : (
                   <>
-                    <h1 className="mb-3">Recommended for You</h1>
+                    <h1 className="mb-3 heading-font">Recommended for You</h1>
                     <MovieRow title="" movies={recommendedMovies} />
 
-                    <h1 className="mb-3">Hidden Gems Based on Your Taste</h1>
+                    <h1 className="mb-3 heading-font">
+                      Hidden Gems Based on Your Taste
+                    </h1>
                     <MovieRow title="" movies={contentBasedMovies} />
 
-                    <h1 className="mb-3">Similar Genres You Might Like</h1>
+                    <h1 className="mb-3 heading-font">
+                      Similar Genres You Might Like
+                    </h1>
                     <MovieRow title="" movies={genreBasedMovies} />
 
-                    <h1 className="mb-3">All Movies</h1>
+                    <h1 className="mb-3 heading-font">All Movies</h1>
                     <MovieRow title="" movies={allMovies} />
                   </>
                 )}
