@@ -15,13 +15,6 @@ import { GenreProvider } from './components/GenreContext';
 import ProfilePage from './pages/ProfilePage';
 
 function App() {
-  // These commented-out lines were for conditionally hiding the header and footer on specific routes like "/login"
-  // const location = useLocation();
-  // const hideHeaderOnPaths = ['/login'];
-  // const hideFooterrOnPaths = ['/login'];
-  // const shouldShowHeader = !hideHeaderOnPaths.includes(location.pathname);
-  // const shouldShowFooter = !hideFooterrOnPaths.includes(location.pathname);
-
   return (
     <main className="container-fluid px-0">
       {/* Scrolls to top on route change */}
