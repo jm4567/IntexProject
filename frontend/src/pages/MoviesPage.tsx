@@ -210,23 +210,6 @@ const MoviesPage = () => {
                   </div>
                 ) : (
                   <>
-<<<<<<< HEAD
-                    <h1 className="mb-3 heading-font">Recommended for You</h1>
-                    <MovieRow title="" movies={recommendedMovies} />
-
-                    <h1 className="mb-3 heading-font">
-                      Hidden Gems Based on Your Taste
-                    </h1>
-                    <MovieRow title="" movies={contentBasedMovies} />
-
-                    <h1 className="mb-3 heading-font">
-                      Similar Genres You Might Like
-                    </h1>
-                    <MovieRow title="" movies={genreBasedMovies} />
-
-                    <h1 className="mb-3 heading-font">All Movies</h1>
-                    <MovieRow title="" movies={allMovies} />
-=======
                     <h1 className="mb-3">Recommended for You</h1>
                     <MovieRow title="" movies={recommendedMovies} useAltCard />
 
@@ -282,7 +265,6 @@ const MoviesPage = () => {
                         Rolling in more movies for you...
                       </div>
                     )}
->>>>>>> 9e665ab07655edf61068f0b2e2cd5df55b32c792
                   </>
                 )}
               </div>
