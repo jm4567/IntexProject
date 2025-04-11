@@ -36,7 +36,7 @@ builder.Services.AddDbContext<MovieDbContext>(options =>
     options.UseSqlite(builder.Configuration["ConnectionStrings:MoviesConnection"]));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration["ConnectionStrings:IdentityConnection"]));
+    options.UseSqlServer(builder.Configuration["ConnectionStrings:IdentityConnection"]));
 
 builder.Services.AddDbContext<RecommenderDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RecommenderConnection")));
@@ -57,6 +57,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 15;
 })
+.AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders()
 .AddErrorDescriber<CustomIdentityErrorDescriber>(); // Add this
@@ -177,6 +178,60 @@ app.MapPost("/api/register", async (
     await signInManager.SignInAsync(user, isPersistent: false);
     return Results.Ok(new { message = "Registration successful" });
 });
+
+async Task SeedAdminUserAsync(IServiceProvider services)
+{
+    using var scope = services.CreateScope();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    var adminEmail = "adminuser1@gmail.com";
+    var adminPassword = "AdminPassword123!"; // Make sure this meets your password policy
+
+    // Ensure the Admin role exists
+    if (!await roleManager.RoleExistsAsync("Administrator"))
+    {
+        var roleResult = await roleManager.CreateAsync(new IdentityRole("Administrator"));
+        if (!roleResult.Succeeded)
+        {
+            Console.WriteLine("❌ Failed to create Administrator role");
+            return;
+        }
+    }
+
+    // Check if the admin user exists
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser == null)
+    {
+        adminUser = new IdentityUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(adminUser, adminPassword);
+        if (!result.Succeeded)
+        {
+            Console.WriteLine("❌ Failed to create admin user: " +
+                string.Join(", ", result.Errors.Select(e => e.Description)));
+            return;
+        }
+
+        Console.WriteLine("✅ Admin user created");
+    }
+
+    // Assign the Admin role
+    var roles = await userManager.GetRolesAsync(adminUser);
+    if (!roles.Contains("Administrator"))
+    {
+        await userManager.AddToRoleAsync(adminUser, "Administrator");
+        Console.WriteLine("✅ Admin role assigned to admin user");
+    }
+}
+
+await SeedAdminUserAsync(app.Services);
+
 
 app.Run();
 
