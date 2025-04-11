@@ -21,9 +21,7 @@ const ProfilePage = () => {
       try {
         const response = await axios.get(
           'https://localhost:5000/api/Account/current',
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
         setUser(response.data);
       } catch (err: any) {
@@ -63,13 +61,14 @@ const ProfilePage = () => {
               </p>
             </div>
 
-            {user.accountType === 'Administrator' && (
-              <Link to="/managemovies" className="btn btn-dark mt-3">
-                Go to Admin Dashboard
-              </Link>
-            )}
-
-            <button className="edit-button mt-3">Edit Profile</button>
+            <div className="mt-4 d-flex flex-column align-items-start gap-2">
+              {user.accountType === 'Administrator' && (
+                <Link to="/managemovies" className="btn btn-dark">
+                  Go to Admin Dashboard
+                </Link>
+              )}
+              <button className="edit-button">Edit Profile</button>
+            </div>
           </div>
         </div>
 
