@@ -6,11 +6,11 @@
 }
 
 .movie-poster-img {
-  height: 600px;
+  height: 100%;
   width: 100%; /* or try 80% if it's too wide */
   max-width: 500px; /* adjust as needed */
   display: block;
-  margin-top: 30px; /* pushes it lower */
+  margin-top: 20px; /* pushes it lower */
   margin-left: auto;
   margin-right: auto;
   background-color: white;
@@ -20,16 +20,9 @@
   position: relative;
   width: 100vw;
   min-height: 100vh;
-  background-color: #f3debe;
+  background-color: #385d65;
   overflow-x: hidden;
   overflow-y: auto;
-}
-
-.react-stars svg {
-  fill: red !important; /* try bold red to test */
-  display: inline-block;
-  width: 30px;
-  height: 30px;
 }
 
 .react-stars svg:hover {
@@ -45,17 +38,68 @@
 .react-stars {
   display: flex;
   gap: 6px;
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 .react-stars svg {
   fill: #ffd700; /* Gold stars */
   stroke: #aaa; /* Soft outline */
-  width: 32px;
-  height: 32px;
+  width: 70px;
+  height: 70px;
   transition: fill 0.2s ease;
 }
 
 .react-stars svg:hover {
-  fill: #ffc107; /* Brighter gold on hover */
+  fill: #ffc61a; /* Brighter gold on hover */
+}
+
+.star-rating-container {
+  display: flex;
+  flex-direction: column;
+
+  margin-top: 20px;
+}
+
+.custom-star-wrapper {
+  display: flex;
+
+  margin-top: 10px;
+}
+
+.custom-star-wrapper svg {
+  width: 80px;
+  height: 80px;
+  fill: #ffc61a;
+  stroke: #aaa;
+  transition: fill 0.2s ease;
+}
+
+.custom-star-wrapper svg:hover {
+  fill: #ffc61a;
+}
+
+.description-style {
+  color: white;
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.button-style {
+  background-color: #f2dfc0;
+  color: #385d65;
+  font-size: 1.2rem;
+  border-radius: 20px;
+  border: 1px solid #333;
+  display: flex;
+  align-items: center;
+  padding: '12px 24px';
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.button-style:hover {
+  background-color: #e3cfa9; /* slightly darker peach */
+  color: #1d1d1d; /* optional: darker text for contrast */
+  border-color: #1d1d1d; /* optional: matches text */
 }

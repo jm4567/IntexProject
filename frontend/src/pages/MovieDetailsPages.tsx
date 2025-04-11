@@ -176,19 +176,28 @@ function MovieDetailsPage() {
       try {
         const email = await getCurrentUserEmail();
         setUserEmail(email);
+
+        // 🔧 Reset before checking the database
+        setUserRating(0);
+
         if (email && movieData?.showId) {
           const res = await axios.get(
             `https://localhost:5000/api/ratings/get?userEmail=${encodeURIComponent(email)}&showId=${movieData.showId}`,
             { withCredentials: true }
           );
+
+          // Only set if there is actually a rating
           if (res.data?.rating !== undefined) {
             setUserRating(res.data.rating);
           }
         }
       } catch (err) {
         console.error('❌ Failed to fetch user data or rating:', err);
+        // 🔧 Optional: reset here too just in case
+        setUserRating(0);
       }
     };
+
     fetchUserData();
   }, [movieData]);
 
@@ -216,120 +225,139 @@ function MovieDetailsPage() {
   };
 
   return (
-    <div className="full-screen-wrapper">
-      <div className="background-overlay"></div>
-      <div className="foreground-content">
-        <div className="container-fluid movie-detail-container py-5 px-4">
-          <div className="row justify-content-center align-items-start">
-            <div className="col-lg-4 col-md-5 text-center mb-4 mb-md-0">
-              <img
-                src={resolvePoster()}
-                alt={title}
-                className="movie-poster-img"
-                key={resolvePoster()}
-                onError={(e) => {
-                  console.warn('❌ Image failed:', e.currentTarget.src);
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = '/images/Image_coming_soon.png';
-                }}
-              />
-            </div>
-            <div className="col-lg-6 col-md-7">
-              <div className="movie-detail ps-md-4">
-                <h1 className="fw-bold display-4">{title}</h1>
-                {director && (
-                  <h5 className="text-secondary mb-3">
-                    Directed by {director}
-                  </h5>
-                )}
-                {genres.length > 0 && (
-                  <p>
-                    <strong>Genres:</strong> {genres.join(', ')}
-                  </p>
-                )}
-                {rating && (
-                  <p>
-                    <strong>Rating:</strong> {rating}
-                  </p>
-                )}
-                {type && (
-                  <p>
-                    <strong>Type:</strong> {type}
-                  </p>
-                )}
-                {duration && (
-                  <p>
-                    <strong>Duration:</strong> {duration}
-                  </p>
-                )}
-                {releaseYear && (
-                  <p>
-                    <strong>Release Year:</strong> {releaseYear}
-                  </p>
-                )}
-                {country && (
-                  <p>
-                    <strong>Country:</strong> {country}
-                  </p>
-                )}
-                {description && (
-                  <p className="mt-3">
-                    <strong>Description:</strong> {description}
-                  </p>
-                )}
-                {castList && (
-                  <p>
-                    <strong>Cast:</strong> {castList}
-                  </p>
-                )}
-                <div className="mt-3">
-                  <strong>Your Rating:</strong>
-                  <StarRating
-                    value={userRating}
-                    onChange={async (newRating: number) => {
-                      setUserRating(newRating);
-                      await axios.post(
-                        'https://localhost:5000/api/ratings/rate',
-                        {
-                          userEmail,
-                          showId: movieData?.showId,
-                          rating: newRating,
-                        },
-                        { withCredentials: true }
-                      );
-                    }}
-                  />
-                </div>
-                <button className="btn btn-outline-dark mt-3">
-                  <i className="bi bi-play-fill me-2"></i> Watch Now
-                </button>
-              </div>
-            </div>
+    <div style={{ background: '#1F3B3C', minHeight: '100vh' }}>
+      <div className="container-fluid py-5 px-4">
+        <div className="row justify-content-center align-items-start">
+          <div className="col-lg-4 col-md-5 text-center mb-4 mb-md-0">
+            <img
+              src={resolvePoster()}
+              alt={title}
+              className="movie-poster-img"
+              key={resolvePoster()}
+              onError={(e) => {
+                console.warn('❌ Image failed:', e.currentTarget.src);
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/images/Image_coming_soon.png';
+              }}
+            />
           </div>
-
-          {!loadingRecs && collabMovies.length > 0 && (
-            <div className="mt-5" ref={collabRef}>
-              <MovieRow title="Other users liked…" movies={collabMovies} />
-            </div>
-          )}
-
-          {!loadingRecs && contentMovies.length > 0 && (
-            <div className="mt-5" ref={contentRef}>
-              <MovieRow
-                title={`Recommendations Based on "${title}"`}
-                movies={contentMovies}
-              />
-            </div>
-          )}
-
-          {!loadingRecs &&
-            collabMovies.length === 0 &&
-            contentMovies.length === 0 && (
-              <div className="text-center mt-5">
-                <h4>No recommendations found for this title.</h4>
+          <div className="col-lg-6 col-md-7">
+            <h1 className="fw-bold display-4" style={{ color: 'white' }}>
+              {title}
+            </h1>
+            <div className="star-rating-container mt-2">
+              <div className="custom-star-wrapper">
+                <StarRating
+                  value={userRating}
+                  onChange={async (newRating: number) => {
+                    setUserRating(newRating);
+                    await axios.post(
+                      'https://localhost:5000/api/ratings/rate',
+                      {
+                        userEmail,
+                        showId: movieData?.showId,
+                        rating: newRating,
+                      },
+                      { withCredentials: true }
+                    );
+                  }}
+                />
               </div>
-            )}
+            </div>
+            <div className="description-style">
+              {director && (
+                <h5
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: '500',
+                    marginTop: '8px',
+                    color: 'white',
+                  }}
+                >
+                  Directed by {director}
+                </h5>
+              )}
+              {genres.length > 0 && (
+                <p>
+                  <strong>Genres:</strong> {genres.join(' • ')}
+                </p>
+              )}
+              {rating && (
+                <p>
+                  <strong>Rating:</strong> {rating}
+                </p>
+              )}
+              {type && (
+                <p>
+                  <strong>Type:</strong> {type}
+                </p>
+              )}
+              {duration && (
+                <p>
+                  <strong>Duration:</strong> {duration}
+                </p>
+              )}
+              {releaseYear && (
+                <p>
+                  <strong>Release Year:</strong> {releaseYear}
+                </p>
+              )}
+              {country && (
+                <p>
+                  <strong>Country:</strong> {country}
+                </p>
+              )}
+              {description && (
+                <p className="mt-3">
+                  <strong>Summary:</strong> {description}
+                </p>
+              )}
+              {castList && (
+                <p>
+                  <strong>Cast:</strong>{' '}
+                  {castList
+                    .split(' ')
+                    .reduce((acc, name, idx, arr) => {
+                      acc += name;
+                      if ((idx + 1) % 2 === 0 && idx !== arr.length - 1) {
+                        acc += ', ';
+                      } else {
+                        acc += ' ';
+                      }
+                      return acc;
+                    }, '')
+                    .trim()}
+                </p>
+              )}
+            </div>
+            <button className="btn btn-outline-dark mt-3 button-style">
+              ► Watch Now
+            </button>
+          </div>
         </div>
+
+        {!loadingRecs && collabMovies.length > 0 && (
+          <div className="mt-5" ref={collabRef}>
+            <MovieRow title="Other users liked…" movies={collabMovies} />
+          </div>
+        )}
+
+        {!loadingRecs && contentMovies.length > 0 && (
+          <div className="mt-5" ref={contentRef}>
+            <MovieRow
+              title={`Recommendations Based on "${title}"`}
+              movies={contentMovies}
+            />
+          </div>
+        )}
+
+        {!loadingRecs &&
+          collabMovies.length === 0 &&
+          contentMovies.length === 0 && (
+            <div className="text-center mt-5">
+              <h4>No recommendations found for this title.</h4>
+            </div>
+          )}
       </div>
     </div>
   );
