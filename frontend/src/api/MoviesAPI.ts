@@ -2,7 +2,12 @@ import { Movie } from '../types/Movie';
 
 function getSafePosterUrl(title: string | undefined): string {
   if (!title) return '/images/Image_coming_soon.png';
-  return `https://postersintex29.blob.core.windows.net/posters/${title}.jpg`;
+
+  const encoded = encodeURIComponent(title);
+  const primary = `https://movieposters2025.blob.core.windows.net/posters/${encoded}.jpg`;
+  const fallback = `https://postersintex29.blob.core.windows.net/posters/${title}.jpg`;
+
+  return `${primary}#fallback=${fallback}`;
 }
 
 interface FetchMoviesResponse {

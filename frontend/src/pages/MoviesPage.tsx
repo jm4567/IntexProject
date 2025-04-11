@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Movie } from '../types/Movie';
-import { fetchAllMovies } from '../api/MoviesAPI';
-import MovieRow from '../components/MovieRow';
+import { fetchMoreMovies } from '../api/MoviesAPI';
 import NavBar from '../components/NavBar';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import MovieCard from '../components/MovieCard';
 import { useUser } from '../components/AuthorizeView';
+import MovieRow from '../components/MovieRow';
 import '../css/MoviePage.css';
+import AltMovieCard from '../components/AltMovieCard';
 
 const MoviesPage = () => {
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
@@ -18,80 +19,165 @@ const MoviesPage = () => {
   const [recommendedMovies, setRecommendedMovies] = useState<Movie[]>([]);
   const [contentBasedMovies, setContentBasedMovies] = useState<Movie[]>([]);
   const [genreBasedMovies, setGenreBasedMovies] = useState<Movie[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const observer = useRef<IntersectionObserver | null>(null);
+  const loader = useRef<HTMLDivElement | null>(null);
   const user = useUser();
+  //for header
+  const [topBannerMovies, setTopBannerMovies] = useState<Movie[]>([]);
+  const [genreSections, setGenreSections] = useState<
+    { title: string; movies: Movie[] }[]
+  >([]);
+
+  const handleScroll = () => {
+    setShowScrollTop(window.scrollY > 400);
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handlePlay = () => {
     const moviepage = document.querySelector('.movie-container');
     if (moviepage) moviepage.classList.add('visible');
 
+    setTimeout(() => setStartSplit(true), 3000);
+    setTimeout(() => setShowCurtain(false), 4000);
     setTimeout(() => {
-      setStartSplit(true);
-    }, 3000);
-
-    setTimeout(() => {
-      setShowCurtain(false);
-    }, 4000);
-
-    setTimeout(() => {
-      const curtain = document.querySelector(
-        '.video-split-container'
-      ) as HTMLElement;
-      if (curtain) curtain.style.display = 'none';
+      // const curtain = document.querySelector(
+      //   '.video-split-container'
+      // ) as HTMLElement;
+      // if (curtain) curtain.style.display = 'none';
     }, 4000);
   };
 
+  const loadMovies = useCallback(async () => {
+    try {
+      const data = await fetchMoreMovies([], page, 10);
+      if (data.movies.length === 0) {
+        setHasMore(false);
+      } else {
+        setAllMovies((prev) => {
+          const existingIds = new Set(prev.map((m) => m.showId));
+          const newUnique = data.movies.filter(
+            (m) => !existingIds.has(m.showId)
+          );
+          return [...prev, ...newUnique];
+        });
+      }
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  }, [page]);
+
   useEffect(() => {
-    const loadMovies = async () => {
+    const fetchBannerMovies = async () => {
       try {
-        const data = await fetchAllMovies([]);
-        setAllMovies(data.movies);
+        const data = await fetchMoreMovies([], 1, 20000); // adjust if needed
+        const bannerList = data.movies.filter((movie) =>
+          ['s42', 's7073', 's603', 's6065', 's6891', 's6063', 's6152'].includes(
+            movie.showId
+          )
+        );
+        setTopBannerMovies(bannerList);
       } catch (err) {
-        setError((err as Error).message);
+        console.error('Error fetching banner movies:', err);
       }
     };
-    loadMovies();
+
+    fetchBannerMovies();
   }, []);
 
-  // ✅ Fixed Recommendation Fetch
+  useEffect(() => {
+    if (selectedGenres.length === 0) {
+      setPage(1);
+      setAllMovies([]);
+      setHasMore(true);
+    }
+  }, [selectedGenres]);
+
+  useEffect(() => {
+    if (selectedGenres.length === 0) {
+      loadMovies();
+    }
+  }, [loadMovies, selectedGenres]);
+
+  useEffect(() => {
+    if (!hasMore) return;
+
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    });
+
+    if (loader.current) {
+      observer.current.observe(loader.current);
+    }
+
+    return () => {
+      if (loader.current && observer.current) {
+        observer.current.unobserve(loader.current);
+      }
+    };
+  }, [hasMore]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   useEffect(() => {
     const fetchRecs = async () => {
       try {
         const res = await fetch(
-          'https://localhost:5000/api/personalizedrecommendations/by-user',
+          'https://localhost:5000/api/personalized-recommendations/by-user',
           {
             credentials: 'include',
           }
         );
 
-        if (!res.ok) {
-          throw new Error('Failed to fetch recommendations');
-        }
+        if (!res.ok) throw new Error('Failed to fetch recommendations');
 
         const data = await res.json();
-        setRecommendedMovies(data.recommendations || []);
+        setRecommendedMovies(data.recommended || []);
         setContentBasedMovies(data.content || []);
         setGenreBasedMovies(data.genre || []);
+        setGenreSections(data.genreSections || []);
       } catch (err) {
         console.error('Failed to load recommendations:', err);
       }
     };
 
-    if (user?.email) {
-      fetchRecs();
-    }
+    if (user?.email) fetchRecs();
   }, [user]);
 
-  const topBannerMovies = allMovies.filter((movie) =>
-    ['s42', 's7073', 's603', 's6065', 's6891', 's6063', 's6152'].includes(
-      movie.showId
-    )
-  );
+  // const topBannerMovies = useMemo(() => {
+  //   return allMovies.filter((movie) =>
+  //     ['s42', 's7073', 's603', 's6065', 's6891', 's6063', 's6152'].includes(
+  //       movie.showId
+  //     )
+  //   );
+  // }, [allMovies]);
+
+  // const topBannerMovies = useMemo(() => {
+  //   return allMovies.filter((movie) =>
+  //     ['s3653', 's307', 's5972', 's2141', 's2037', 's2305', 's2667'].includes(
+  //       movie.showId
+  //     )
+  //   );
+  // }, [allMovies]);
 
   const filteredMovies = selectedGenres.length
     ? allMovies.filter((movie) =>
         movie.genres?.some((genre) => selectedGenres.includes(genre))
       )
     : [];
+
+  console.log('ALL MOVIES:', allMovies);
 
   return (
     <div className="full-screen-wrapper">
@@ -102,16 +188,12 @@ const MoviesPage = () => {
             selectedGenres={selectedGenres}
             setSelectedGenres={setSelectedGenres}
           />
-          {selectedGenres.length === 0 && <Header movies={topBannerMovies} />}
+          {/* <Header movies={topBannerMovies} /> */}
+          {!selectedGenres || selectedGenres.length === 0 ? (
+            <Header movies={topBannerMovies} />
+          ) : null}
           <div className="container-fluid mt-4 ">
             <div className="row">
-              {/* <div className="col-md-12 mb-4 drop-down">
-                <GenreFilter
-                  selectedGenres={selectedGenres}
-                  setSelectedGenres={setSelectedGenres}
-                />
-              </div> */}
-
               <div className="col-md-12">
                 {error && <p className="text-danger">{error}</p>}
 
@@ -128,6 +210,7 @@ const MoviesPage = () => {
                   </div>
                 ) : (
                   <>
+<<<<<<< HEAD
                     <h1 className="mb-3 heading-font">Recommended for You</h1>
                     <MovieRow title="" movies={recommendedMovies} />
 
@@ -143,14 +226,78 @@ const MoviesPage = () => {
 
                     <h1 className="mb-3 heading-font">All Movies</h1>
                     <MovieRow title="" movies={allMovies} />
+=======
+                    <h1 className="mb-3">Recommended for You</h1>
+                    <MovieRow title="" movies={recommendedMovies} useAltCard />
+
+                    {genreSections.map((section, idx) => (
+                      <div key={idx}>
+                        <h2 className="mb-3">{section.title}</h2>
+                        <MovieRow title="" movies={section.movies} useAltCard />
+                      </div>
+                    ))}
+                    <h1 className="mb-3">All Movies</h1>
+                    <div className="row">
+                      {allMovies.map((movie) => (
+                        <div className="col-md-2 mb-4" key={movie.showId}>
+                          <MovieCard movie={movie} />
+                        </div>
+                      ))}
+                    </div>
+
+                    {hasMore && (
+                      <div
+                        ref={loader}
+                        className="text-center py-4"
+                        style={{
+                          fontWeight: 'bold',
+                          letterSpacing: '1.2px',
+                          fontSize: '1.1rem',
+                          fontFamily: `'Segoe UI', sans-serif`,
+                          textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+                          color: '#3a2c1d',
+                          background:
+                            'linear-gradient(to right, #f7e6cd, #fdf6ec)',
+                          padding: '12px 24px',
+                          borderRadius: '10px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          maxWidth: 'fit-content',
+                          margin: '30px auto',
+                          boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+                        }}
+                      >
+                        <img
+                          src="/images/cleaned_logo_transparent copy.png"
+                          alt="logo"
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            marginRight: '12px',
+                            verticalAlign: 'middle',
+                            filter: 'sepia(40%) contrast(1.1)',
+                          }}
+                        />
+                        Rolling in more movies for you...
+                      </div>
+                    )}
+>>>>>>> 9e665ab07655edf61068f0b2e2cd5df55b32c792
                   </>
                 )}
               </div>
             </div>
           </div>
         </div>
-        <Footer />
       </div>
+
+      <Footer />
+
+      {showScrollTop && (
+        <button className="back-to-top-btn" onClick={scrollToTop}>
+          ⬆ Back to Top
+        </button>
+      )}
 
       {showCurtain && (
         <div className={`video-split-container ${startSplit ? 'split' : ''}`}>

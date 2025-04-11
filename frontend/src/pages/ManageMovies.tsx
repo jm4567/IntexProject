@@ -23,14 +23,12 @@ function ManageMovies() {
 
   useEffect(() => {
     if (user && user.role !== 'Administrator') {
-      navigate('/'); // Or use '/login' if you want to force login again
+      navigate('/');
     }
   }, [user]);
 
   if (!user || user.role !== 'Administrator') return null;
 
-
-  // ✨ Scroll ref
   const topRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -65,6 +63,20 @@ function ManageMovies() {
     topRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Utility: Remove punctuation from title for poster file name
+  const sanitizeTitle = (title: string) =>
+    title.replace(/[^\w\s]/gi, '').trim(); // removes punctuation but keeps letters, numbers, spaces
+
+  const cleanedMovies: Movie[] = movies.map((movie) => {
+    const cleanTitle = movie.title
+      ? sanitizeTitle(movie.title)
+      : 'Image_coming_soon';
+    return {
+      ...movie,
+      posterUrl: `https://movieposters2025.blob.core.windows.net/posters/${cleanTitle}.jpg`,
+    };
+  });
+
   if (loading)
     return (
       <p className="text-center text-lg text-[#264653] font-semibold">
@@ -74,13 +86,11 @@ function ManageMovies() {
   if (error)
     return <p className="text-center text-red-600 font-bold">Error: {error}</p>;
 
-
   return (
     <div
       style={{ background: '#fdf6ec' }}
       className="min-h-screen text-[#264653] px-6 py-10 font-sans"
     >
-      {/* 🔝 Scroll Target */}
       <div ref={topRef} />
 
       <h1
@@ -146,8 +156,8 @@ function ManageMovies() {
       )}
 
       <AdminTable
-        movies={movies}
-        onEdit={handleEdit} // 🛠 Uses scroll-to-top
+        movies={cleanedMovies}
+        onEdit={handleEdit}
         onDelete={handleDelete}
       />
 

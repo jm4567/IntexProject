@@ -5,8 +5,6 @@ import { Movie } from '../types/Movie';
 import axios from 'axios';
 import { useLocation, useParams } from 'react-router-dom';
 import { fetchAllMovies, fetchMovieById } from '../api/MoviesAPI';
-import { getBestPosterUrl } from '../utils/getBestPosterUrl';
-import { getPosterUrl } from '../utils/getPosterUrl';
 import StarRating from '../components/StarRating';
 import { getCurrentUserEmail } from '../api/UserAPI';
 

@@ -12,6 +12,7 @@ import DefaultLayout from './components/DefaultLayout';
 import AuthorizeView from './components/AuthorizeView';
 import ScrollToTop from './utils/ScrollToTop';
 import { GenreProvider } from './components/GenreContext';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   // const location = useLocation();
@@ -32,18 +33,21 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
+
+        {/* Protected Routes */}
         <Route
           path="/movie/:showId"
           element={
-            <GenreProvider>
-              <DefaultLayout>
-                <MovieDetailsPages />
-              </DefaultLayout>
-            </GenreProvider>
+            <AuthorizeView>
+              <GenreProvider>
+                <DefaultLayout>
+                  <MovieDetailsPages />
+                </DefaultLayout>
+              </GenreProvider>
+            </AuthorizeView>
           }
         />
 
-        {/* Protected Routes */}
         <Route
           path="/movies"
           element={
@@ -60,6 +64,18 @@ function App() {
             </AuthorizeView>
           }
         />
+
+        <Route
+          path="/profile"
+          element={
+            <AuthorizeView>
+              {' '}
+              <ProfilePage />{' '}
+            </AuthorizeView>
+          }
+          key="profile"
+        />
+
         <Route
           path="/managemovies"
           element={

@@ -23,8 +23,10 @@
 
 .movie-title {
   margin-top: 30px;
-  font-size: 0.9rem;
   color: white !important;
+  font-size: 1.2rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold !important;
 }
 .movie-card:hover {
   border-color: #999;

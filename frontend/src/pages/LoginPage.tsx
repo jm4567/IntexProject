@@ -1,5 +1,4 @@
 'use client';
-import React from 'react';
 import styled from 'styled-components';
 import LoginForm from '../components/LoginForm';
 import { useNavigate } from 'react-router-dom';
@@ -55,6 +54,7 @@ const GoHomeButton = styled.button`
   border: none;
   border-radius: 8px;
   font-size: 14px;
+  font-family: 'Roboto', sans-serif;
 
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
