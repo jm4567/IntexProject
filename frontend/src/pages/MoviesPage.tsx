@@ -12,7 +12,6 @@ import '../css/MoviePage.css';
 import HiddenGems from '../components/HiddenGems';
 import { useLayoutEffect } from 'react';
 
-
 // Main MoviesPage component
 const MoviesPage = () => {
   // Local state hooks for various data pieces
@@ -87,6 +86,9 @@ const MoviesPage = () => {
       setError((err as Error).message);
     }
   }, [page]);
+  {
+    /**top banner with automatic slideshow */
+  }
 
   // Fetch banner movies when component mounts
   useEffect(() => {
@@ -145,7 +147,6 @@ const MoviesPage = () => {
     }
   }, [selectedGenres]);
 
-
   // Trigger loading more movies if no genres are selected
 
   // Lazy-load when not filtering
@@ -199,29 +200,11 @@ const MoviesPage = () => {
     if (user?.email) fetchRecs();
   }, [user]);
 
-  // Filter movies based on selected genres
-
-  // const topBannerMovies = useMemo(() => {
-  //   return allMovies.filter((movie) =>
-  //     ['s42', 's7073', 's603', 's6065', 's6891', 's6063', 's6152'].includes(
-  //       movie.showId
-  //     )
-  //   );
-  // }, [allMovies]);
-
-  // const topBannerMovies = useMemo(() => {
-  //   return allMovies.filter((movie) =>
-  //     ['s3653', 's307', 's5972', 's2141', 's2037', 's2305', 's2667'].includes(
-  //       movie.showId
-  //     )
-  //   );
-  // }, [allMovies]);
   const filteredMovies = selectedGenres.length
     ? allGenreMovies.filter((movie) =>
         movie.genres?.some((genre) => selectedGenres.includes(genre))
       )
     : [];
-
 
   // JSX layout
 
@@ -259,15 +242,14 @@ const MoviesPage = () => {
                   </div>
                 ) : (
                   <>
-
                     {/* Personalized and genre-based recommendations */}
-                    <h1 className="mb-3">Recommended for You</h1>
+                    <h1 className="mb-3 text-white">Recommended for You</h1>
                     <MovieRow title="" movies={recommendedMovies} useAltCard />
 
                     {/* Only show if not admin */}
                     {user?.email !== 'adminuser1@gmail.com' && (
                       <>
-                        <h1 className="mb-3">Recommended for You</h1>
+                        <h1 className="mb-3 text-white">Recommended for You</h1>
                         <MovieRow
                           title=""
                           movies={recommendedMovies}
@@ -276,10 +258,9 @@ const MoviesPage = () => {
                       </>
                     )}
 
-
                     {genreSections.map((section, idx) => (
                       <div key={idx}>
-                        <h2 className="mb-3">{section.title}</h2>
+                        <h2 className="mb-3 text-white">{section.title}</h2>
                         <MovieRow title="" movies={section.movies} useAltCard />
                       </div>
                     ))}
@@ -289,7 +270,7 @@ const MoviesPage = () => {
 
                     {/* All movies with infinite scroll */}
 
-                    <h1 className="mb-3">All Movies</h1>
+                    <h1 className="mb-3 text-white">All Movies</h1>
                     <div className="row">
                       {allMovies.map((movie) => (
                         <div className="col-md-2 mb-4" key={movie.showId}>

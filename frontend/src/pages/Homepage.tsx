@@ -1,8 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import '../css/Homepage.css';
 import '../css/NavBar.css';
-// import AuthorizeView, { AuthorizedUser } from '../components/AuthorizeView';
-// import Logout from '../components/Logout'; // Not used here but may be used later
 import Logo from '../components/Logo';
 import Footer from '../components/Footer';
 import { Movie } from '../types/Movie';

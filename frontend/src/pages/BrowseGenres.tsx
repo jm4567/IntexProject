@@ -55,11 +55,9 @@ function BrowseGenres() {
         setPage((prevPage) => prevPage + 1);
       }
     });
-
     if (loader.current) {
       observer.current.observe(loader.current);
     }
-
     return () => {
       if (loader.current && observer.current) {
         observer.current.unobserve(loader.current);
