@@ -129,7 +129,7 @@
 }
 
 .email-button {
-  background-color: #407568; /* Netflix red */
+  background-color: rgba(31, 59, 60, 0.85); /* Netflix red */
   color: white;
   font-size: 1.1rem;
   padding: 1rem 2rem;
@@ -194,7 +194,7 @@
   height: auto;
 }
 .trending-section {
-  background-color: rgba(64, 117, 104, 0.85); /* 85% opacity */
+  background-color: rgba(31, 59, 60, 0.85); /* 85% opacity */
   color: white;
   padding: 4rem 2rem;
   margin-top: -3rem; /* try negative margin to pull it closer */

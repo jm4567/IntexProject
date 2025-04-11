@@ -1,3 +1,4 @@
+// Import hooks and components
 import { useEffect, useRef, useState } from 'react';
 import { Movie } from '../types/Movie';
 import { deleteMovie, fetchMovies } from '../api/MoviesAPI';
@@ -10,6 +11,7 @@ import { useUser } from '../components/AuthorizeView';
 import { useNavigate } from 'react-router-dom';
 
 function ManageMovies() {
+  // State variables for movies, errors, loading, pagination, forms, etc.
   const [movies, setMovies] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -18,19 +20,25 @@ function ManageMovies() {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
+
+  // User and navigation utilities
   const user = useUser();
   const navigate = useNavigate();
 
+  // Redirect non-admins to homepage
   useEffect(() => {
     if (user && user.role !== 'Administrator') {
       navigate('/');
     }
   }, [user]);
 
+  // Guard: block rendering until user role is verified
   if (!user || user.role !== 'Administrator') return null;
 
+  // Ref for smooth scroll when editing
   const topRef = useRef<HTMLDivElement>(null);
 
+  // Load paginated movies
   useEffect(() => {
     const loadMovies = async () => {
       try {
@@ -46,6 +54,7 @@ function ManageMovies() {
     loadMovies();
   }, [pageSize, pageNum]);
 
+  // Handle delete button
   const handleDelete = async (showId: string) => {
     const isConfirmed = await confirmDelete();
     if (!isConfirmed) return;
@@ -58,15 +67,17 @@ function ManageMovies() {
     }
   };
 
+  // Trigger editing and scroll to form
   const handleEdit = (movie: Movie) => {
     setEditingMovie(movie);
     topRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Utility: Remove punctuation from title for poster file name
+  // Utility: sanitize poster file name by removing punctuation
   const sanitizeTitle = (title: string) =>
-    title.replace(/[^\w\s]/gi, '').trim(); // removes punctuation but keeps letters, numbers, spaces
+    title.replace(/[^\w\s]/gi, '').trim();
 
+  // Apply sanitized poster URLs to each movie
   const cleanedMovies: Movie[] = movies.map((movie) => {
     const cleanTitle = movie.title
       ? sanitizeTitle(movie.title)
@@ -77,12 +88,15 @@ function ManageMovies() {
     };
   });
 
+  // Render loading state
   if (loading)
     return (
       <p className="text-center text-lg text-[#264653] font-semibold">
         Loading movies and TV shows...
       </p>
     );
+
+  // Render error state
   if (error)
     return <p className="text-center text-red-600 font-bold">Error: {error}</p>;
 
@@ -91,8 +105,10 @@ function ManageMovies() {
       style={{ background: '#fdf6ec' }}
       className="min-h-screen text-[#264653] px-6 py-10 font-sans"
     >
+      {/* Scroll ref anchor */}
       <div ref={topRef} />
 
+      {/* Page title */}
       <h1
         className="text-4xl font-bold mb-8 text-center tracking-wider uppercase"
         style={{ color: '#264653' }}
@@ -100,6 +116,7 @@ function ManageMovies() {
         Admin Dashboard
       </h1>
 
+      {/* Add movie button (only shown if not already showing the form) */}
       {!showForm && (
         <div className="flex justify-center mb-6">
           <button
@@ -130,6 +147,7 @@ function ManageMovies() {
         </div>
       )}
 
+      {/* Render New Movie form */}
       {showForm && (
         <NewMovieForm
           onSuccess={() => {
@@ -142,6 +160,7 @@ function ManageMovies() {
         />
       )}
 
+      {/* Render Edit Movie form */}
       {editingMovie && (
         <EditMovieForm
           movie={editingMovie}
@@ -155,12 +174,14 @@ function ManageMovies() {
         />
       )}
 
+      {/* Movie admin table */}
       <AdminTable
         movies={cleanedMovies}
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
 
+      {/* Pagination Controls */}
       <div className="flex justify-center mt-10">
         <Pagination
           currentPage={pageNum}
@@ -169,7 +190,7 @@ function ManageMovies() {
           onPageChange={setPageNum}
           onPageSizeChange={(newSize) => {
             setPageSize(newSize);
-            setPageNum(1);
+            setPageNum(1); // Reset to first page
           }}
           themeColors={{
             border: '#264653',

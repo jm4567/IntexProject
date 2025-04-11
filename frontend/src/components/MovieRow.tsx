@@ -5,6 +5,7 @@ import AltMovieCard from './AltMovieCard';
 import '../css/MovieRow.css';
 import '../css/MovieCard.css';
 
+// Props expected by this component
 interface MovieRowProps {
   title: string;
   movies: Movie[];
@@ -13,6 +14,7 @@ interface MovieRowProps {
 
 //a row of movie cards
 const MovieRow = ({ title, movies, useAltCard }: MovieRowProps) => {
+  // Ref to track the horizontal scroll container
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showArrows, setShowArrows] = useState(false);
 
@@ -43,6 +45,7 @@ const MovieRow = ({ title, movies, useAltCard }: MovieRowProps) => {
 
   return (
     <div className="movie-row mb-4">
+      {/* Title above the row */}
       <h3 className="row-title mb-3">{title}</h3>
       <div className="movie-row-hover-container position-relative">
         {showArrows && (
@@ -54,6 +57,7 @@ const MovieRow = ({ title, movies, useAltCard }: MovieRowProps) => {
           className="movie-row-scroll d-flex overflow-auto gap-3 px-3"
           ref={scrollRef}
         >
+          {/* Render movie cards dynamically. Use AltMovieCard if specified */}
           {movies.map((movie) =>
             useAltCard ? (
               <AltMovieCard key={movie.showId} movie={movie} />

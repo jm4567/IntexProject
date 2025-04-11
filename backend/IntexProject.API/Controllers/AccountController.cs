@@ -9,7 +9,7 @@ namespace IntexProject.API.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        // GET: api/Account/GetUserRole
+        // Returns the roles assigned to the currently authenticated user
         [Authorize]
         [HttpGet("GetUserRole")]
         public async Task<IActionResult> GetUserRole([FromServices] UserManager<IdentityUser> userManager)
@@ -22,7 +22,7 @@ namespace IntexProject.API.Controllers
             return Ok(new { roles });
         }
 
-        // ✅ NEW: GET: api/Account/current
+        // Returns basic profile information for the currently authenticated user
         [Authorize]
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrentUser([FromServices] UserManager<IdentityUser> userManager)
@@ -36,7 +36,7 @@ namespace IntexProject.API.Controllers
             return Ok(new
             {
                 name = user.UserName,
-                email = user.Email,     // or user.Email if preferred
+                email = user.Email,
                 accountType = roles.FirstOrDefault() ?? "Customer"
             });
         }

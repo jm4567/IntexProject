@@ -17,17 +17,20 @@ import ProfilePage from './pages/ProfilePage';
 function App() {
   return (
     <main className="container-fluid px-0">
-      {/* {shouldShowFooter && <Footer />}
-      {shouldShowHeader && <NavBar />} */}
+      {/* Scrolls to top on route change */}
       <ScrollToTop />
+
+      {/* Define application routes */}
       <Routes>
-        {/* Public Routes */}
+        {/* Public routes available to all users */}
         <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
 
-        {/* Protected Routes */}
+        {/* Protected routes (require user to be authenticated) */}
+
+        {/* Movie details page (uses genre context and layout wrapper) */}
         <Route
           path="/movie/:showId"
           element={
@@ -41,6 +44,7 @@ function App() {
           }
         />
 
+        {/* Main movies page */}
         <Route
           path="/movies"
           element={
@@ -49,6 +53,8 @@ function App() {
             </AuthorizeView>
           }
         />
+
+        {/* Genre browsing page */}
         <Route
           path="/genres"
           element={
@@ -58,17 +64,18 @@ function App() {
           }
         />
 
+        {/* User profile page */}
         <Route
           path="/profile"
           element={
             <AuthorizeView>
-              {' '}
-              <ProfilePage />{' '}
+              <ProfilePage />
             </AuthorizeView>
           }
           key="profile"
         />
 
+        {/* Admin management page (wrapped in genre provider and layout) */}
         <Route
           path="/managemovies"
           element={
@@ -83,6 +90,7 @@ function App() {
         />
       </Routes>
 
+      {/* Previously used to show/hide header/footer conditionally */}
       {/* {shouldShowHeader && <Header />} */}
     </main>
   );

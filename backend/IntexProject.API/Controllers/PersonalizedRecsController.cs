@@ -10,12 +10,18 @@ namespace IntexProject.API.Controllers
 {
     [ApiController]
     [Route("api/personalized-recommendations")]
+
+
     public class PersonalizedRecsController : ControllerBase
     {
+        // Handles access to ASP.NET Identity users
         private readonly UserManager<IdentityUser> _userManager;
+        // Access to the supplemental movies database (contains users, titles, ratings, etc.)
         private readonly SupplementalMoviesDbContext _supplementalContext;
+        // Access to the recommendatoin engine database
         private readonly RecommenderDbContext _recommenderContext;
 
+        // Constructor injects required services for user management and DB access
         public PersonalizedRecsController(
             UserManager<IdentityUser> userManager,
             SupplementalMoviesDbContext supplementalContext,
@@ -28,6 +34,7 @@ namespace IntexProject.API.Controllers
 
         [HttpGet("by-user")]
         [Authorize]
+        // Get recommendations by user email
         public async Task<IActionResult> GetRecommendations()
         {
             try
@@ -52,6 +59,7 @@ namespace IntexProject.API.Controllers
                     .AsNoTracking()
                     .ToListAsync();
 
+                // Return the recommendations for movies the user gave a rating of 3 or more
                 var ratedIds = allRatings
                     .Where(r => r.UserId == user.UserId && r.Rating >= 3)
                     .Select(r => r.ShowId)
@@ -69,6 +77,8 @@ namespace IntexProject.API.Controllers
                 var allTitles = await _supplementalContext.RecommendationMoviesTitles
                     .AsNoTracking()
                     .ToListAsync();
+
+                // Get each recommendation
 
                 foreach (var showId in ratedIds)
                 {
@@ -89,6 +99,7 @@ namespace IntexProject.API.Controllers
 
                     var genreTables = GetGenreTables(movieTitle);
 
+                    // Get the recommendatoins in the db
                     foreach (var table in genreTables)
                     {
                         try
@@ -107,9 +118,9 @@ namespace IntexProject.API.Controllers
                                 if (!string.IsNullOrWhiteSpace(m.Recommendation5)) genreTypeIds.Add(m.Recommendation5.Trim().ToLower());
                             }
                         }
-                        catch (Exception ex)
+                        catch 
                         {
-                            Console.WriteLine($"SQL error in {table}: {ex.Message}");
+                            
                         }
                     }
                 }
@@ -135,6 +146,7 @@ namespace IntexProject.API.Controllers
                     .GroupBy(m => GetCatchyGenreName(m))
                     .ToDictionary(g => g.Key, g => g.ToList());
 
+                // Group different genres if they don't return more than 5 movies
                 var mergeMap = new Dictionary<string, string>
                 {
                     { "Your Dose of Daily Humor", "The Comedy Hour" },
@@ -223,6 +235,7 @@ namespace IntexProject.API.Controllers
             }
         }
 
+        // Get a catchy genre name for each genre
         private string GetCatchyGenreName(RecommendationMoviesTitle title)
         {
             bool isMovie = title.Type?.Trim().ToLower() == "movie";
@@ -326,6 +339,7 @@ namespace IntexProject.API.Controllers
             return genres.FirstOrDefault() ?? "Top Picks For You";
         }
 
+        // Return each genre table that is rendered 
         private List<string> GetGenreTables(RecommendationMoviesTitle title)
         {
             var tables = new List<string>();
