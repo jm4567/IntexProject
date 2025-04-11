@@ -6,6 +6,7 @@ import MovieSearch from './MovieSearch';
 import { logoutUser } from '../api/logoutUser';
 import GenreFilter from './GenreFilter';
 import { useUser } from './AuthorizeView';
+import { useNavigate } from 'react-router-dom';
 
 interface NavBarProps {
   selectedGenres: string[];
@@ -24,6 +25,7 @@ const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
 
   const location = useLocation();
   const currentPath = location.pathname;
+  const navigate = useNavigate();
 
   return (
     <div className="nav-wrapper">
@@ -97,48 +99,74 @@ const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
                 )}
               </>
             )}
-          </div>
-        </div>
-
-        {/* Avatar + Email (Muriel version) */}
-        <div className="nav-avatar" onClick={toggleProfileMenu}>
-          <div className="user-info-wrapper-horizontal">
-            {user?.email && (
-              <span className="user-name text-black">{user.email}</span>
+            {user?.email === 'adminuser1@gmail.com' && (
+              <Link to="/managemovies" className="navbar-brand">
+                Admin Dashboard
+              </Link>
             )}
-            <img
-              src="/images/person.png"
-              className="avatar-img"
-              alt="Profile"
-            />
-          </div>
+            {['/privacy'].includes(currentPath) && (
+              <>
+                <div className="privacy-buttons">
+                  <button
+                    onClick={() => navigate('/register')}
+                    className="privButt"
+                  >
+                    Sign Up Today!
+                  </button>
 
-          {showProfileMenu && (
-            <div className="profile-dropdown text-black">
-              <Link to="/profile" className="dropdown-item">
-                <span className="icon">👤</span> View Profile
-              </Link>
-              <Link to="/setting" className="dropdown-item">
-                <span className="icon">⚙️</span> Settings
-              </Link>
-              <button
-                className="dropdown-item"
-                onClick={async () => {
-                  const success = await logoutUser();
-                  if (success) {
-                    document.cookie =
-                      '.AspNetCore.Identity.Application=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-                    window.location.href = '/login';
-                  } else {
-                    console.error('Logout failed');
-                  }
-                }}
-              >
-                Sign Out
-              </button>
-            </div>
-          )}
+                  <button
+                    onClick={() => navigate('/login')}
+                    className="privButt"
+                  >
+                    Login
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
+
+        {['/movies', '/managemovies', '/profile'].includes(currentPath) ||
+        currentPath.startsWith('/movie/') ? (
+          <div className="nav-avatar" onClick={toggleProfileMenu}>
+            <div className="user-info-wrapper-horizontal">
+              {user?.email && (
+                <span className="user-name text-black">{user.email}</span>
+              )}
+              <img
+                src="/images/person.png"
+                className="avatar-img"
+                alt="Profile"
+              />
+            </div>
+
+            {showProfileMenu && (
+              <div className="profile-dropdown text-black">
+                <Link to="/profile" className="dropdown-item">
+                  <span className="icon">👤</span> View Profile
+                </Link>
+                <Link to="/setting" className="dropdown-item">
+                  <span className="icon">⚙️</span> Settings
+                </Link>
+                <button
+                  className="dropdown-item"
+                  onClick={async () => {
+                    const success = await logoutUser();
+                    if (success) {
+                      document.cookie =
+                        '.AspNetCore.Identity.Application=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+                      window.location.href = '/login';
+                    } else {
+                      console.error('Logout failed');
+                    }
+                  }}
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -5,7 +5,7 @@
   min-height: 100px;
   color: white;
   bottom: 0rem;
-  background-color: #407568; /* Netflix red */
+  background-color: rgba(31, 59, 60, 0.85); /* Netflix red */
   font-family: 'Helvetica Neue', sans-serif;
 }
 

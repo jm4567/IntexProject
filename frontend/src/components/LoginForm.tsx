@@ -23,11 +23,10 @@ const LoginForm = () => {
   };
 
   const link = document.createElement('link');
-    link.href =
-      'https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
-
+  link.href =
+    'https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap';
+  link.rel = 'stylesheet';
+  document.head.appendChild(link);
 
   // Dynamically load the retro Google Font (for the welcome text)
 
@@ -95,28 +94,39 @@ const LoginForm = () => {
       : 'https://localhost:5000/login?useSessionCookies=true&useCookies=false';
 
     try {
-      const response = await fetch(loginUrl, {
+      const loginResponse = await fetch(loginUrl, {
         method: 'POST',
-        credentials: 'include', // ✅ Ensures cookies are sent & received
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
-      // Parse JSON only if content exists
-      let data = null;
-      const contentLength = response.headers.get('content-length');
-      if (contentLength && parseInt(contentLength, 10) > 0) {
-        data = await response.json();
+      if (!loginResponse.ok) {
+        throw new Error('Login failed');
       }
 
-      if (!response.ok) {
-        throw new Error(data?.message || 'Invalid email or password.');
-      }
+      // 🔄 NEW: Fetch user info from /me
+      const userRes = await fetch('https://localhost:5000/me', {
+        method: 'GET',
+        credentials: 'include',
+      });
 
-      navigate('/movies');
-    } catch (error: any) {
-      setError(error.message || 'Error logging in.');
-      console.error('Fetch attempt failed:', error);
+      const userData = await userRes.json();
+      console.log('User data from /me:', userData);
+
+      if (userData.email === 'adminuser1@gmail.com') {
+        navigate('/managemovies');
+      } else {
+        sessionStorage.setItem('justLoggedIn', 'true');
+        navigate('/movies');
+      }
+      // if (userData.email === 'adminuser1@gmail.com') {
+      //   navigate('/managemovies');
+      // } else {
+      //   navigate('/movies');
+      // }
+    } catch (err: any) {
+      setError(err.message || 'Error logging in.');
     }
   };
 
@@ -213,14 +223,9 @@ const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0px;
-<<<<<<< HEAD
   margin-bottom: 20px;
   position: relative; /* ⬅️ This is the key */
   font-family: 'Roboto', sans-serif;
-=======
-  margin-bottom: 5px;
-  position: relative; /* This is the key */
->>>>>>> e4a192eab09a1e7c70e96ab6e9313ee2df9991ea
 `;
 
 const CheckboxWrapper = styled.div`

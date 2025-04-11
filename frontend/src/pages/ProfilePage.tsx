@@ -26,9 +26,11 @@ const ProfilePage = () => {
         // Make authenticated request to get current user info
         const response = await axios.get(
           'https://localhost:5000/api/Account/current',
+
           {
             withCredentials: true, // Include cookies for auth
           }
+
         );
         setUser(response.data); // Set user data on success
       } catch (err: any) {
@@ -74,15 +76,18 @@ const ProfilePage = () => {
               </p>
             </div>
 
-            {/* Conditionally show admin dashboard link if user is admin */}
-            {user.accountType === 'Administrator' && (
-              <Link to="/managemovies" className="btn btn-dark mt-3">
-                Go to Admin Dashboard
-              </Link>
-            )}
 
-            {/* Edit button for profile (not wired yet) */}
-            <button className="edit-button mt-3">Edit Profile</button>
+            {/* Conditionally show admin dashboard link if user is admin */}
+
+            <div className="mt-4 d-flex flex-column align-items-start gap-2">
+              {user.accountType === 'Administrator' && (
+                <Link to="/managemovies" className="btn btn-dark">
+                  Go to Admin Dashboard
+                </Link>
+              )}
+              <button className="edit-button">Edit Profile</button>
+            </div>
+
           </div>
         </div>
 

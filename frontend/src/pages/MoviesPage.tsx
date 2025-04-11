@@ -9,8 +9,9 @@ import MovieCard from '../components/MovieCard';
 import { useUser } from '../components/AuthorizeView';
 import MovieRow from '../components/MovieRow';
 import '../css/MoviePage.css';
-import AltMovieCard from '../components/AltMovieCard';
 import HiddenGems from '../components/HiddenGems';
+import { useLayoutEffect } from 'react';
+
 
 // Main MoviesPage component
 const MoviesPage = () => {
@@ -33,6 +34,20 @@ const MoviesPage = () => {
   const [genreSections, setGenreSections] = useState<
     { title: string; movies: Movie[] }[]
   >([]);
+  const [allGenreMovies, setAllGenreMovies] = useState<Movie[]>([]);
+  const [fadeOutCurtain, setFadeOutCurtain] = useState(false);
+
+  useLayoutEffect(() => {
+    const justLoggedIn = sessionStorage.getItem('justLoggedIn');
+    if (justLoggedIn === 'true') {
+      setShowCurtain(true);
+      setTimeout(() => {
+        sessionStorage.removeItem('justLoggedIn');
+      }, 10); // wait a tiny bit
+    } else {
+      setShowCurtain(false);
+    }
+  }, []);
 
   // Show/hide scroll-to-top button based on scroll position
   const handleScroll = () => {
@@ -49,6 +64,7 @@ const MoviesPage = () => {
     const moviepage = document.querySelector('.movie-container');
     if (moviepage) moviepage.classList.add('visible');
     setTimeout(() => setStartSplit(true), 3000);
+
     setTimeout(() => setShowCurtain(false), 4000);
   };
 
@@ -92,6 +108,36 @@ const MoviesPage = () => {
 
   // Reset movies when selected genres are changed
   useEffect(() => {
+    const fetchAllForGenre = async () => {
+      try {
+        const data = await fetchMoreMovies([], 1, 10000); // or however many you want
+        setAllGenreMovies(data.movies);
+      } catch (err) {
+        console.error('Error fetching movies for filtering:', err);
+      }
+    };
+
+    if (selectedGenres.length > 0 && allGenreMovies.length === 0) {
+      fetchAllForGenre();
+    }
+  }, [selectedGenres, allGenreMovies.length]);
+
+  // useEffect(() => {
+  //   if (selectedGenres.length === 0) {
+  //     setPage(1);
+  //     setAllMovies([]);
+  //     setHasMore(true);
+  //   }
+  // }, [selectedGenres]);
+
+  // useEffect(() => {
+  //   if (selectedGenres.length === 0) {
+  //     loadMovies();
+  //   }
+  // }, [loadMovies, selectedGenres]);
+
+  // Reset paging when not filtering
+  useEffect(() => {
     if (selectedGenres.length === 0) {
       setPage(1);
       setAllMovies([]);
@@ -99,7 +145,10 @@ const MoviesPage = () => {
     }
   }, [selectedGenres]);
 
+
   // Trigger loading more movies if no genres are selected
+
+  // Lazy-load when not filtering
   useEffect(() => {
     if (selectedGenres.length === 0) {
       loadMovies();
@@ -151,13 +200,31 @@ const MoviesPage = () => {
   }, [user]);
 
   // Filter movies based on selected genres
+
+  // const topBannerMovies = useMemo(() => {
+  //   return allMovies.filter((movie) =>
+  //     ['s42', 's7073', 's603', 's6065', 's6891', 's6063', 's6152'].includes(
+  //       movie.showId
+  //     )
+  //   );
+  // }, [allMovies]);
+
+  // const topBannerMovies = useMemo(() => {
+  //   return allMovies.filter((movie) =>
+  //     ['s3653', 's307', 's5972', 's2141', 's2037', 's2305', 's2667'].includes(
+  //       movie.showId
+  //     )
+  //   );
+  // }, [allMovies]);
   const filteredMovies = selectedGenres.length
-    ? allMovies.filter((movie) =>
+    ? allGenreMovies.filter((movie) =>
         movie.genres?.some((genre) => selectedGenres.includes(genre))
       )
     : [];
 
+
   // JSX layout
+
   return (
     <div className="full-screen-wrapper">
       <div className="movie-container">
@@ -192,9 +259,23 @@ const MoviesPage = () => {
                   </div>
                 ) : (
                   <>
+
                     {/* Personalized and genre-based recommendations */}
                     <h1 className="mb-3">Recommended for You</h1>
                     <MovieRow title="" movies={recommendedMovies} useAltCard />
+
+                    {/* Only show if not admin */}
+                    {user?.email !== 'adminuser1@gmail.com' && (
+                      <>
+                        <h1 className="mb-3">Recommended for You</h1>
+                        <MovieRow
+                          title=""
+                          movies={recommendedMovies}
+                          useAltCard
+                        />
+                      </>
+                    )}
+
 
                     {genreSections.map((section, idx) => (
                       <div key={idx}>
@@ -207,6 +288,7 @@ const MoviesPage = () => {
                     <HiddenGems defaultGenre="Action" />
 
                     {/* All movies with infinite scroll */}
+
                     <h1 className="mb-3">All Movies</h1>
                     <div className="row">
                       {allMovies.map((movie) => (
