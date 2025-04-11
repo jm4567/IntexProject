@@ -243,13 +243,13 @@ const MoviesPage = () => {
                 ) : (
                   <>
                     {/* Personalized and genre-based recommendations */}
-                    <h1 className="mb-3">Recommended for You</h1>
+                    <h1 className="mb-3 text-white">Recommended for You</h1>
                     <MovieRow title="" movies={recommendedMovies} useAltCard />
 
                     {/* Only show if not admin */}
                     {user?.email !== 'adminuser1@gmail.com' && (
                       <>
-                        <h1 className="mb-3">Recommended for You</h1>
+                        <h1 className="mb-3 text-white">Recommended for You</h1>
                         <MovieRow
                           title=""
                           movies={recommendedMovies}
@@ -260,7 +260,7 @@ const MoviesPage = () => {
 
                     {genreSections.map((section, idx) => (
                       <div key={idx}>
-                        <h2 className="mb-3">{section.title}</h2>
+                        <h2 className="mb-3 text-white">{section.title}</h2>
                         <MovieRow title="" movies={section.movies} useAltCard />
                       </div>
                     ))}
@@ -270,7 +270,7 @@ const MoviesPage = () => {
 
                     {/* All movies with infinite scroll */}
 
-                    <h1 className="mb-3">All Movies</h1>
+                    <h1 className="mb-3 text-white">All Movies</h1>
                     <div className="row">
                       {allMovies.map((movie) => (
                         <div className="col-md-2 mb-4" key={movie.showId}>
