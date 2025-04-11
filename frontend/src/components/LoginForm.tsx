@@ -106,10 +106,13 @@ const LoginForm = () => {
       }
 
       // 🔄 NEW: Fetch user info from /me
-      const userRes = await fetch('https://localhost:5000/me', {
-        method: 'GET',
-        credentials: 'include',
-      });
+      const userRes = await fetch(
+        'https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/me',
+        {
+          method: 'GET',
+          credentials: 'include',
+        }
+      );
 
       const userData = await userRes.json();
       console.log('User data from /me:', userData);
