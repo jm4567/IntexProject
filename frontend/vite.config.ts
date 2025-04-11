@@ -6,18 +6,19 @@ export default defineConfig({
   server: {
     port: 3000,
     headers: {
-      'Content-Security-Policy': 
-        "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; " +
-        "script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; " +
-        "style-src * 'unsafe-inline' data: blob:; " +
-        "img-src * data: blob:; " +
-        "font-src * data: blob:; " +
-        "connect-src * data: blob:; " +
-        "frame-src *; " +
-        "frame-ancestors *; " +
-        "object-src *; " +
-        "base-uri *; " +
-        "form-action *;"
+      'Content-Security-Policy':
+        "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; " +
+        "img-src 'self' data: https://via.placeholder.com https://cdn.builder.io https://movieposters2025.blob.core.windows.net https://postersintex29.blob.core.windows.net; " +
+        "frame-ancestors 'none'; " +
+        "font-src 'self' https://fonts.gstatic.com data:; " +
+        "connect-src 'self' https://localhost:5000 https://accounts.google.com https://oauth2.googleapis.com https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net; " +
+        "object-src 'none'; " +
+        "base-uri 'self'; " +
+        "form-action 'self'; " +
+        "frame-src 'self' https://accounts.google.com https://oauth2.googleapis.com;",
+
     },
     cors: {
       origin: 'http://localhost:3000',
