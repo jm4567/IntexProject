@@ -18,7 +18,8 @@ const HiddenGems = ({ defaultGenre }: HiddenGemsProps) => {
       setError('');
       try {
         const res = await fetch(
-          `https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/api/HiddenGems/by-genre?genres=${selectedGenre}`
+          `https://moviecollection-team209-backend-f6cdakf2a6avh8bt.eastus-01.azurewebsites.net/api/HiddenGems/by-genre?genres=${selectedGenre}`,
+          { credentials: 'include' }
         );
         if (!res.ok) throw new Error('Failed to fetch hidden gems');
         const data = await res.json();
