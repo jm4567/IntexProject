@@ -2,7 +2,7 @@ import { Movie } from '../types/Movie';
 
 function getSafePosterUrl(title: string | undefined): string {
   if (!title) return '/images/Image_coming_soon.png';
-
+  //load the posters or fallback image
   const encoded = encodeURIComponent(title);
   const primary = `https://movieposters2025.blob.core.windows.net/posters/${encoded}.jpg`;
   const fallback = `https://postersintex29.blob.core.windows.net/posters/${title}.jpg`;
@@ -48,6 +48,7 @@ export const fetchMovies = async (
   }
 };
 
+//add movies for admin (CRUD)
 export const addMovie = async (newMovie: Movie): Promise<Movie> => {
   try {
     const response = await fetch(`${API_URL}/AddMovie`, {
@@ -65,6 +66,7 @@ export const addMovie = async (newMovie: Movie): Promise<Movie> => {
   }
 };
 
+//update movies for admin
 export const updateMovie = async (id: string, movie: Movie) => {
   const response = await fetch(
     `https://localhost:5000/api/Movie/UpdateMovie/${id}`,
@@ -84,6 +86,7 @@ export const updateMovie = async (id: string, movie: Movie) => {
     : null;
 };
 
+//delete movies for admin
 export const deleteMovie = async (showId: string): Promise<void> => {
   try {
     const response = await fetch(`${API_URL}/DeleteMovie/${showId}`, {
@@ -96,6 +99,7 @@ export const deleteMovie = async (showId: string): Promise<void> => {
   }
 };
 
+//used on movies page - used for infinite scrolling
 export const fetchMoreMovies = async (
   selectedGenres: string[],
   pageNum = 1,
@@ -129,6 +133,7 @@ export const fetchMoreMovies = async (
   }
 };
 
+//used on the movies page to load all of the movies (no genres)
 export const fetchAllMovies = async (
   selectedGenres: string[]
 ): Promise<FetchMoviesResponse> => {
@@ -154,7 +159,7 @@ export const fetchAllMovies = async (
     throw error;
   }
 };
-
+//used for movie details page
 export const fetchMovieById = async (showId: string): Promise<Movie> => {
   try {
     const response = await fetch(

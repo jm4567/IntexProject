@@ -223,7 +223,9 @@ function MovieDetailsPage() {
     if (posterUrl) return posterUrl;
     return `https://postersintex29.blob.core.windows.net/posters/${title}.jpg`;
   };
-
+  {
+    /*display all of the details */
+  }
   return (
     <div style={{ background: '#1F3B3C', minHeight: '100vh' }}>
       <div className="container-fluid py-5 px-4">
@@ -247,6 +249,7 @@ function MovieDetailsPage() {
             </h1>
             <div className="star-rating-container mt-2">
               <div className="custom-star-wrapper">
+                {/**allow user to rate movie - can rerate or add new rating */}
                 <StarRating
                   value={userRating}
                   onChange={async (newRating: number) => {

@@ -45,12 +45,7 @@ const MoviesPage = () => {
 
     setTimeout(() => setStartSplit(true), 3000);
     setTimeout(() => setShowCurtain(false), 4000);
-    setTimeout(() => {
-      // const curtain = document.querySelector(
-      //   '.video-split-container'
-      // ) as HTMLElement;
-      // if (curtain) curtain.style.display = 'none';
-    }, 4000);
+    setTimeout(() => {}, 4000);
   };
 
   const loadMovies = useCallback(async () => {
@@ -71,7 +66,9 @@ const MoviesPage = () => {
       setError((err as Error).message);
     }
   }, [page]);
-
+  {
+    /**top banner with automatic slideshow */
+  }
   useEffect(() => {
     const fetchBannerMovies = async () => {
       try {
@@ -89,7 +86,9 @@ const MoviesPage = () => {
 
     fetchBannerMovies();
   }, []);
-
+  {
+    /**associated with infinite scrolling */
+  }
   useEffect(() => {
     if (selectedGenres.length === 0) {
       setPage(1);
@@ -154,22 +153,6 @@ const MoviesPage = () => {
 
     if (user?.email) fetchRecs();
   }, [user]);
-
-  // const topBannerMovies = useMemo(() => {
-  //   return allMovies.filter((movie) =>
-  //     ['s42', 's7073', 's603', 's6065', 's6891', 's6063', 's6152'].includes(
-  //       movie.showId
-  //     )
-  //   );
-  // }, [allMovies]);
-
-  // const topBannerMovies = useMemo(() => {
-  //   return allMovies.filter((movie) =>
-  //     ['s3653', 's307', 's5972', 's2141', 's2037', 's2305', 's2667'].includes(
-  //       movie.showId
-  //     )
-  //   );
-  // }, [allMovies]);
 
   const filteredMovies = selectedGenres.length
     ? allMovies.filter((movie) =>

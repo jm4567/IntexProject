@@ -25,6 +25,9 @@ const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
   const location = useLocation();
   const currentPath = location.pathname;
 
+  {
+    /*change nav bar depending on page */
+  }
   return (
     <div className="nav-wrapper">
       <div className="nav-row">

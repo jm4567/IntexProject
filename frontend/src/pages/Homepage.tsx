@@ -1,8 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import '../css/Homepage.css';
 import '../css/NavBar.css';
-// import AuthorizeView, { AuthorizedUser } from '../components/AuthorizeView';
-// import Logout from '../components/Logout';
 import Logo from '../components/Logo';
 import Footer from '../components/Footer';
 import { Movie } from '../types/Movie';
@@ -21,6 +19,9 @@ const Homepage = () => {
     loadMovies();
   }, []);
 
+  {
+    /**used for the numbered trending movies */
+  }
   const trendingIds = [
     's42',
     's7073',
@@ -57,7 +58,6 @@ const Homepage = () => {
             className="background-image"
           />
         </div>
-
         <div className="foreground-content">
           <h1>Unlimited Movies and TV Shows.</h1>
           <br />
@@ -92,7 +92,7 @@ const Homepage = () => {
           </form>
         </div>
       </div>
-
+      {/**trending posters */}
       <div className="trending-section">
         <h2 className="trending-title">Trending Now</h2>
         <div className="trending-carousel">
@@ -108,7 +108,7 @@ const Homepage = () => {
           ))}
         </div>
       </div>
-
+      {/*cards on the bottom */}
       <section className="reasons-section">
         <h2>More Reasons to Join</h2>
         <div className="reasons-grid">

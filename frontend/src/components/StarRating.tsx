@@ -5,10 +5,12 @@ interface StarRatingProps {
   value: number;
   onChange: (rating: number) => void;
 }
-
+//star ratings - change the color according to the colors
 const StarRating = ({ totalStars = 5, value, onChange }: StarRatingProps) => {
   const [hover, setHover] = useState<number | null>(null);
-
+  {
+    /**when hovered, change color */
+  }
   return (
     <div
       style={{

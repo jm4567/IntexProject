@@ -7,6 +7,7 @@ interface MovieCardProps {
   movie: Movie;
 }
 
+//movie cards are a single poster in a row
 const MovieCard = ({ movie }: MovieCardProps) => {
   const navigate = useNavigate();
 
@@ -18,6 +19,7 @@ const MovieCard = ({ movie }: MovieCardProps) => {
     navigate(`/movie/${movie.showId}`);
   };
 
+  //if no poster available, use a fallback image
   const fallback = '/images/Image_coming_soon.png';
   const initialSrc = getBestPosterUrl(movie.title, movie.posterUrl);
 

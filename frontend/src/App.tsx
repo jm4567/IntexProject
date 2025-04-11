@@ -15,13 +15,6 @@ import { GenreProvider } from './components/GenreContext';
 import ProfilePage from './pages/ProfilePage';
 
 function App() {
-  // const location = useLocation();
-  // const hideHeaderOnPaths = ['/login']; // Hide nav bar for login page
-  // const hideFooterrOnPaths = ['/login']; // Hide footer for login page
-
-  // const shouldShowHeader = !hideHeaderOnPaths.includes(location.pathname);
-  // const shouldShowFooter = !hideFooterrOnPaths.includes(location.pathname);
-
   return (
     <main className="container-fluid px-0">
       {/* {shouldShowFooter && <Footer />}
