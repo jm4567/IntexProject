@@ -14,8 +14,8 @@
   z-index: 1;
   width: 100%;
   min-height: 100vh;
-  opacity: 0;
-  transition: opacity 1s ease-in-out;
+  opacity: 1;
+  /* transition: opacity 1s ease-in-out; */
   overflow: visible; /* <--- this is critical! */
   flex: 1;
 }
@@ -50,12 +50,13 @@ p .movie-content {
   left: 0;
   height: 100vh;
   width: 100vw;
-  z-index: 9999;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   transition: opacity 1s ease-in-out;
   opacity: 1;
+  background-color: black; /* temp for debug */
+  z-index: 9999;
 }
 .video-split-container.hidden {
   pointer-events: none;

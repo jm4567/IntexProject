@@ -8,7 +8,7 @@ import MovieCard from '../components/MovieCard';
 import { useUser } from '../components/AuthorizeView';
 import MovieRow from '../components/MovieRow';
 import '../css/MoviePage.css';
-import AltMovieCard from '../components/AltMovieCard';
+import { useLayoutEffect } from 'react';
 
 const MoviesPage = () => {
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
@@ -30,6 +30,20 @@ const MoviesPage = () => {
   const [genreSections, setGenreSections] = useState<
     { title: string; movies: Movie[] }[]
   >([]);
+  const [allGenreMovies, setAllGenreMovies] = useState<Movie[]>([]);
+  const [fadeOutCurtain, setFadeOutCurtain] = useState(false);
+
+  useLayoutEffect(() => {
+    const justLoggedIn = sessionStorage.getItem('justLoggedIn');
+    if (justLoggedIn === 'true') {
+      setShowCurtain(true);
+      setTimeout(() => {
+        sessionStorage.removeItem('justLoggedIn');
+      }, 10); // wait a tiny bit
+    } else {
+      setShowCurtain(false);
+    }
+  }, []);
 
   const handleScroll = () => {
     setShowScrollTop(window.scrollY > 400);
@@ -44,6 +58,7 @@ const MoviesPage = () => {
     if (moviepage) moviepage.classList.add('visible');
 
     setTimeout(() => setStartSplit(true), 3000);
+
     setTimeout(() => setShowCurtain(false), 4000);
     setTimeout(() => {
       // const curtain = document.querySelector(
@@ -91,6 +106,36 @@ const MoviesPage = () => {
   }, []);
 
   useEffect(() => {
+    const fetchAllForGenre = async () => {
+      try {
+        const data = await fetchMoreMovies([], 1, 10000); // or however many you want
+        setAllGenreMovies(data.movies);
+      } catch (err) {
+        console.error('Error fetching movies for filtering:', err);
+      }
+    };
+
+    if (selectedGenres.length > 0 && allGenreMovies.length === 0) {
+      fetchAllForGenre();
+    }
+  }, [selectedGenres, allGenreMovies.length]);
+
+  // useEffect(() => {
+  //   if (selectedGenres.length === 0) {
+  //     setPage(1);
+  //     setAllMovies([]);
+  //     setHasMore(true);
+  //   }
+  // }, [selectedGenres]);
+
+  // useEffect(() => {
+  //   if (selectedGenres.length === 0) {
+  //     loadMovies();
+  //   }
+  // }, [loadMovies, selectedGenres]);
+
+  // Reset paging when not filtering
+  useEffect(() => {
     if (selectedGenres.length === 0) {
       setPage(1);
       setAllMovies([]);
@@ -98,6 +143,7 @@ const MoviesPage = () => {
     }
   }, [selectedGenres]);
 
+  // Lazy-load when not filtering
   useEffect(() => {
     if (selectedGenres.length === 0) {
       loadMovies();
@@ -170,14 +216,11 @@ const MoviesPage = () => {
   //     )
   //   );
   // }, [allMovies]);
-
   const filteredMovies = selectedGenres.length
-    ? allMovies.filter((movie) =>
+    ? allGenreMovies.filter((movie) =>
         movie.genres?.some((genre) => selectedGenres.includes(genre))
       )
     : [];
-
-  console.log('ALL MOVIES:', allMovies);
 
   return (
     <div className="full-screen-wrapper">
@@ -210,8 +253,17 @@ const MoviesPage = () => {
                   </div>
                 ) : (
                   <>
-                    <h1 className="mb-3">Recommended for You</h1>
-                    <MovieRow title="" movies={recommendedMovies} useAltCard />
+                    {/* Only show if not admin */}
+                    {user?.email !== 'adminuser1@gmail.com' && (
+                      <>
+                        <h1 className="mb-3">Recommended for You</h1>
+                        <MovieRow
+                          title=""
+                          movies={recommendedMovies}
+                          useAltCard
+                        />
+                      </>
+                    )}
 
                     {genreSections.map((section, idx) => (
                       <div key={idx}>
@@ -219,6 +271,7 @@ const MoviesPage = () => {
                         <MovieRow title="" movies={section.movies} useAltCard />
                       </div>
                     ))}
+
                     <h1 className="mb-3">All Movies</h1>
                     <div className="row">
                       {allMovies.map((movie) => (

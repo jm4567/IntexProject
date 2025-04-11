@@ -36,7 +36,7 @@ builder.Services.AddDbContext<MovieDbContext>(options =>
     options.UseSqlite(builder.Configuration["ConnectionStrings:MoviesConnection"]));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration["ConnectionStrings:IdentityConnection"]));
+    options.UseSqlServer(builder.Configuration["ConnectionStrings:IdentityConnection"]));
 
 builder.Services.AddDbContext<RecommenderDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RecommenderConnection")));
@@ -177,6 +177,33 @@ app.MapPost("/api/register", async (
     await signInManager.SignInAsync(user, isPersistent: false);
     return Results.Ok(new { message = "Registration successful" });
 });
+
+app.MapGet("/me", async (
+    HttpContext context,
+    UserManager<IdentityUser> userManager
+) =>
+{
+    var email = context.User.FindFirstValue(ClaimTypes.Email);
+
+    if (string.IsNullOrEmpty(email))
+    {
+        return Results.Unauthorized();
+    }
+
+    var user = await userManager.FindByEmailAsync(email);
+    if (user == null)
+    {
+        return Results.NotFound();
+    }
+
+    var roles = await userManager.GetRolesAsync(user);
+    var isAdmin = roles.Contains("Administrator");
+
+    return Results.Ok(new {
+        email = user.Email,
+        role = isAdmin ? "admin" : "user"
+    });
+}).RequireAuthorization();
 
 app.Run();
 
