@@ -19,7 +19,7 @@ function MovieDetailsPage() {
   const [collabMovies, setCollabMovies] = useState<Movie[]>([]);
   const [contentMovies, setContentMovies] = useState<Movie[]>([]);
   const [loadingRecs, setLoadingRecs] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const collabRef = useRef<HTMLDivElement | null>(null);
 

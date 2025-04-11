@@ -21,8 +21,8 @@ const MoviesPage = () => {
   const [startSplit, setStartSplit] = useState(false);
   const [showCurtain, setShowCurtain] = useState(true);
   const [recommendedMovies, setRecommendedMovies] = useState<Movie[]>([]);
-  const [contentBasedMovies, setContentBasedMovies] = useState<Movie[]>([]);
-  const [genreBasedMovies, setGenreBasedMovies] = useState<Movie[]>([]);
+  const [_contentBasedMovies, setContentBasedMovies] = useState<Movie[]>([]);
+  const [_genreBasedMovies, setGenreBasedMovies] = useState<Movie[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -34,7 +34,6 @@ const MoviesPage = () => {
     { title: string; movies: Movie[] }[]
   >([]);
   const [allGenreMovies, setAllGenreMovies] = useState<Movie[]>([]);
-  const [fadeOutCurtain, setFadeOutCurtain] = useState(false);
 
   useLayoutEffect(() => {
     const justLoggedIn = sessionStorage.getItem('justLoggedIn');

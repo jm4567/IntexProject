@@ -3,9 +3,6 @@ import Select from 'react-select';
 import { Movie } from '../types/Movie';
 import { useNavigate } from 'react-router-dom';
 
-<<<<<<< HEAD
-function MovieSearch() {
-=======
 //search movie by title
 function MovieSearch({
   selectedMovies,
@@ -14,7 +11,6 @@ function MovieSearch({
   selectedMovies: string[];
   setSelectedMovies: (movies: string[]) => void;
 }) {
->>>>>>> 72c0768600ebe7e2a286908e25a1d3380bdeeb22
   const [movies, setMovies] = useState<Movie[]>([]);
   const [inputValue, setInputValue] = useState('');
   const navigate = useNavigate();
@@ -44,21 +40,21 @@ function MovieSearch({
     fetchMovies();
   }, []);
 
+  console.log(selectedMovies); // keeps TypeScript happy
+
   //search and retrieve id to jump to details page
   const options = movies.map((movie) => ({
     value: movie.showId,
     label: movie.title,
   }));
 
-<<<<<<< HEAD
-=======
-  const handleChange = (selected: any) => {
+  const _handleChange = (selected: any) => {
     setSelectedMovies(selected ? selected.map((opt: any) => opt.value) : []);
   };
+  _handleChange;
   {
     /*make it so that options won't appear until user starts typing */
   }
->>>>>>> 72c0768600ebe7e2a286908e25a1d3380bdeeb22
   return (
     <div className="movie-filter mb-4">
       <Select
