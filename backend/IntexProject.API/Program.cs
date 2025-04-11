@@ -10,8 +10,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add CORS
-// CORS for React frontend
+// ✅ Configure CORS to allow frontend at http://localhost:3000
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
@@ -19,18 +18,16 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("http://localhost:3000")
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowCredentials(); // required for sending cookies
     });
 });
 
-// Add services to the container.
-
-// Add services
+// ✅ Add essential services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add databases
+// ✅ Register all required database contexts
 builder.Services.AddDbContext<MovieDbContext>(options =>
     options.UseSqlite(builder.Configuration["ConnectionStrings:MoviesConnection"]));
 
@@ -45,8 +42,10 @@ builder.Services.AddDbContext<SupplementalMoviesDbContext>(options =>
 
 builder.Services.AddAuthorization();
 
+// ✅ Configure Identity and security settings
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
+    // Loosen password requirements for user convenience
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireUppercase = false;
@@ -58,31 +57,33 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 .AddDefaultTokenProviders()
 .AddErrorDescriber<CustomIdentityErrorDescriber>();
 
+// ✅ Ensure Identity uses email as the username
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
     options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
-    options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
 });
 
+// ✅ Attach custom claims factory
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, CustomUserClaimsPrincipalFactory>();
 
+// ✅ Configure cookie behavior for API vs browser requests
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
-    options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.Name = ".AspNetCore.Identity.Application";
-    options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
     options.Events.OnRedirectToLogin = context =>
     {
+        // Return 401 for API clients instead of redirect
         if (context.Request.Path.StartsWithSegments("/api"))
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
             return Task.CompletedTask;
         }
+
         context.Response.Redirect(context.RedirectUri);
         return Task.CompletedTask;
     };
@@ -94,40 +95,42 @@ builder.Services.ConfigureApplicationCookie(options =>
             context.Response.StatusCode = StatusCodes.Status403Forbidden;
             return Task.CompletedTask;
         }
+
         context.Response.Redirect(context.RedirectUri);
         return Task.CompletedTask;
     };
+
     options.LoginPath = "/login";
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
 builder.Services.AddSingleton<IEmailSender<IdentityUser>, NoOpEmailSender<IdentityUser>>();
 
 var app = builder.Build();
 
-// Middleware pipeline
+// ✅ Swagger setup for development/testing
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// ✅ Global middleware
 app.UseCors("AllowReactApp");
-
 app.UseHsts();
-
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
+// ✅ Controller mapping
 app.MapControllers();
 app.MapIdentityApi<IdentityUser>();
 
+// ✅ Logout endpoint (used by frontend to sign out)
 app.MapPost("/logout", async (HttpContext context, SignInManager<IdentityUser> signInManager) =>
 {
     await signInManager.SignOutAsync();
 
+    // Delete auth cookie on logout
     context.Response.Cookies.Delete(".AspNetCore.Identity.Application", new CookieOptions
     {
         HttpOnly = true,
@@ -139,18 +142,17 @@ app.MapPost("/logout", async (HttpContext context, SignInManager<IdentityUser> s
     return Results.Ok(new { message = "Logout successful" });
 }).RequireAuthorization();
 
+// ✅ Ping endpoint to verify login state (used after login)
 app.MapGet("/pingauth", (HttpContext context, ClaimsPrincipal user) =>
 {
-    Console.WriteLine($"User authenticated? {user.Identity?.IsAuthenticated}");
     if (!user.Identity?.IsAuthenticated ?? false)
-    {
-        Console.WriteLine("Unauthorized request to /pingauth");
         return Results.Unauthorized();
-    }
+
     var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com";
     return Results.Json(new { email = email });
 }).RequireAuthorization();
 
+// ✅ Register endpoint (used by create account form)
 app.MapPost("/api/register", async (
     HttpContext context,
     UserManager<IdentityUser> userManager,
@@ -162,9 +164,7 @@ app.MapPost("/api/register", async (
     var result = await userManager.CreateAsync(user, dto.Password);
 
     if (!result.Succeeded)
-    {
         return Results.BadRequest(result.Errors);
-    }
 
     await signInManager.SignInAsync(user, isPersistent: false);
     return Results.Ok(new { message = "Registration successful" });

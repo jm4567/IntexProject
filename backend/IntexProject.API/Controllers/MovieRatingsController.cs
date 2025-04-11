@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IntexProject.API.Models;
-using IntexProject.API.Models; // Adjust namespace as needed
+using Microsoft.AspNetCore.Authorization;
 
 namespace IntexProject.API.Controllers
 {
+    [Authorize] // Ensures only authenticated users can access these endpoints
     [ApiController]
     [Route("api/[controller]")]
     public class RatingsController : ControllerBase
@@ -20,12 +21,12 @@ namespace IntexProject.API.Controllers
         [HttpGet("get")]
         public async Task<IActionResult> GetRating(string userEmail, string showId)
         {
-            // Look up the movie-specific user by their email
+            // Look up the user by their email address
             var movieUser = await _movieContext.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
             if (movieUser == null)
                 return NotFound("Movie DB user not found");
-            
-            // Look up the rating by that user's ID and the movie's show ID.
+
+            // Look up the specific rating for the given user and show
             var rating = await _movieContext.Ratings
                 .FirstOrDefaultAsync(r => r.UserId == movieUser.UserId && r.ShowId == showId);
 
@@ -39,24 +40,24 @@ namespace IntexProject.API.Controllers
         [HttpPost("rate")]
         public async Task<IActionResult> RateMovie([FromBody] MovieRatingsDto dto)
         {
-            // Look up the movie-specific user using the provided email.
+            // Look up the user by their email
             var movieUser = await _movieContext.Users.FirstOrDefaultAsync(u => u.Email == dto.UserEmail);
             if (movieUser == null)
                 return NotFound("Movie DB user not found");
 
-            // Try to find an existing rating for this user and movie.
+            // Try to find an existing rating for the same user and movie
             var existingRating = await _movieContext.Ratings
                 .FirstOrDefaultAsync(r => r.UserId == movieUser.UserId && r.ShowId == dto.ShowId);
 
             if (existingRating != null)
             {
-                // If the user has already rated, update the rating.
+                // Update the rating if it already exists
                 existingRating.Rating = dto.Rating;
                 _movieContext.Ratings.Update(existingRating);
             }
             else
             {
-                // Otherwise, create a new rating record.
+                // Otherwise, create a new rating entry
                 var newRating = new MoviesRating
                 {
                     UserId = movieUser.UserId,
