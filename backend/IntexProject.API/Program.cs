@@ -8,7 +8,6 @@ using IntexProject.API.Models.Supplemental;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpsPolicy;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add CORS
@@ -44,10 +43,7 @@ builder.Services.AddDbContext<RecommenderDbContext>(options =>
 builder.Services.AddDbContext<SupplementalMoviesDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SupplementalMovieDb")));
 
-
-
 builder.Services.AddAuthorization();
-
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
@@ -57,18 +53,16 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 15;
 })
+.AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders()
-.AddErrorDescriber<CustomIdentityErrorDescriber>(); // Add this
-
-
+.AddErrorDescriber<CustomIdentityErrorDescriber>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
     options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
     options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
-
 });
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, CustomUserClaimsPrincipalFactory>();
@@ -80,10 +74,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.Name = ".AspNetCore.Identity.Application";
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.None;
-    // For dev, if you're not using HTTPS, use None:
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;  // Use Always for production with HTTPS
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
-    // Override redirection events for API calls
     options.Events.OnRedirectToLogin = context =>
     {
         if (context.Request.Path.StartsWithSegments("/api"))
@@ -139,9 +131,9 @@ app.MapPost("/logout", async (HttpContext context, SignInManager<IdentityUser> s
     context.Response.Cookies.Delete(".AspNetCore.Identity.Application", new CookieOptions
     {
         HttpOnly = true,
-        Secure = true, // Set to true if you're using HTTPS
+        Secure = true,
         SameSite = SameSiteMode.None,
-        Path = "/" // CRITICAL: must match the Path where the cookie was set
+        Path = "/"
     });
 
     return Results.Ok(new { message = "Logout successful" });
@@ -171,7 +163,7 @@ app.MapPost("/api/register", async (
 
     if (!result.Succeeded)
     {
-        return Results.BadRequest(result.Errors); // ✅ return detailed identity errors
+        return Results.BadRequest(result.Errors);
     }
 
     await signInManager.SignInAsync(user, isPersistent: false);
@@ -206,5 +198,3 @@ app.MapGet("/me", async (
 }).RequireAuthorization();
 
 app.Run();
-
-

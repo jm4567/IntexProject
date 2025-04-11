@@ -26,7 +26,8 @@
   position: relative;
   z-index: 2; /* ⬅ keeps it below dropdown */
   overflow: visible; /* ⬅ critical to allow things to spill out */
-  background-color: #f3debe !important;
+  /*background-color: #f3debe;*/
+  background-color: #1f3b3c;
 }
 
 .movie-container.visible {
@@ -155,6 +156,10 @@ p .movie-content {
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 1.5rem;
   padding: 0 2rem;
+}
+
+.heading-font {
+  color: white;
 }
 
 .back-to-top-btn {
