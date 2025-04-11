@@ -224,6 +224,7 @@ const Button = styled.button`
   padding: 10px;
   margin-bottom: 10px;
   font-size: 15px;
+  color: #850101;
   border-radius: 6px;
   cursor: pointer;
 

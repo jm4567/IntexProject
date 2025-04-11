@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace IntexProject.API.Controllers
 {
     // Enforces that all endpoints in this controller require authentication
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class RecommendationsController : ControllerBase
