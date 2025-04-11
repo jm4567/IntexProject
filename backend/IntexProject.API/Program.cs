@@ -8,7 +8,6 @@ using IntexProject.API.Models.Supplemental;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpsPolicy;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add CORS
@@ -44,10 +43,7 @@ builder.Services.AddDbContext<RecommenderDbContext>(options =>
 builder.Services.AddDbContext<SupplementalMoviesDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SupplementalMovieDb")));
 
-
-
 builder.Services.AddAuthorization();
-
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
@@ -60,16 +56,13 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders()
-.AddErrorDescriber<CustomIdentityErrorDescriber>(); // Add this
-
-
+.AddErrorDescriber<CustomIdentityErrorDescriber>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
     options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
     options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
-
 });
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, CustomUserClaimsPrincipalFactory>();
@@ -81,10 +74,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.Name = ".AspNetCore.Identity.Application";
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.None;
-    // For dev, if you're not using HTTPS, use None:
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;  // Use Always for production with HTTPS
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
-    // Override redirection events for API calls
     options.Events.OnRedirectToLogin = context =>
     {
         if (context.Request.Path.StartsWithSegments("/api"))
@@ -140,9 +131,9 @@ app.MapPost("/logout", async (HttpContext context, SignInManager<IdentityUser> s
     context.Response.Cookies.Delete(".AspNetCore.Identity.Application", new CookieOptions
     {
         HttpOnly = true,
-        Secure = true, // Set to true if you're using HTTPS
+        Secure = true,
         SameSite = SameSiteMode.None,
-        Path = "/" // CRITICAL: must match the Path where the cookie was set
+        Path = "/"
     });
 
     return Results.Ok(new { message = "Logout successful" });
@@ -172,67 +163,11 @@ app.MapPost("/api/register", async (
 
     if (!result.Succeeded)
     {
-        return Results.BadRequest(result.Errors); // ✅ return detailed identity errors
+        return Results.BadRequest(result.Errors);
     }
 
     await signInManager.SignInAsync(user, isPersistent: false);
     return Results.Ok(new { message = "Registration successful" });
 });
 
-async Task SeedAdminUserAsync(IServiceProvider services)
-{
-    using var scope = services.CreateScope();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-    var adminEmail = "adminuser1@gmail.com";
-    var adminPassword = "AdminPassword123!"; // Make sure this meets your password policy
-
-    // Ensure the Admin role exists
-    if (!await roleManager.RoleExistsAsync("Administrator"))
-    {
-        var roleResult = await roleManager.CreateAsync(new IdentityRole("Administrator"));
-        if (!roleResult.Succeeded)
-        {
-            Console.WriteLine("❌ Failed to create Administrator role");
-            return;
-        }
-    }
-
-    // Check if the admin user exists
-    var adminUser = await userManager.FindByEmailAsync(adminEmail);
-    if (adminUser == null)
-    {
-        adminUser = new IdentityUser
-        {
-            UserName = adminEmail,
-            Email = adminEmail,
-            EmailConfirmed = true
-        };
-
-        var result = await userManager.CreateAsync(adminUser, adminPassword);
-        if (!result.Succeeded)
-        {
-            Console.WriteLine("❌ Failed to create admin user: " +
-                string.Join(", ", result.Errors.Select(e => e.Description)));
-            return;
-        }
-
-        Console.WriteLine("✅ Admin user created");
-    }
-
-    // Assign the Admin role
-    var roles = await userManager.GetRolesAsync(adminUser);
-    if (!roles.Contains("Administrator"))
-    {
-        await userManager.AddToRoleAsync(adminUser, "Administrator");
-        Console.WriteLine("✅ Admin role assigned to admin user");
-    }
-}
-
-await SeedAdminUserAsync(app.Services);
-
-
 app.Run();
-
-
