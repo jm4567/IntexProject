@@ -189,7 +189,7 @@ const WelcomeText = styled.h1`
   margin-bottom: 20px;
   color: rgba(243, 222, 190, 1);
   text-align: center;
-  font-family: 'Press Start 2P', cursive;
+  font-family: 'Roboto', cursive;
   font-size: 24px;
   line-height: 1.5;
 `;
@@ -208,6 +208,7 @@ const InputWrapper = styled.div`
   gap: 0px;
   margin-bottom: 20px;
   position: relative; /* ⬅️ This is the key */
+  font-family: 'Roboto', sans-serif;
 `;
 
 const CheckboxWrapper = styled.div`
@@ -222,14 +223,16 @@ const Checkbox = styled.input`
 `;
 
 const CheckboxLabel = styled.label`
-  font-size: 12px;
+  font-size: 13px;
   color: rgba(243, 222, 190, 1);
+  font-family: 'Roboto', sans-serif;
 `;
 
 const ErrorMessage = styled.p`
   color: rgba(234, 170, 54, 1);
-  font-size: 12px;
+  font-size: 13px;
   text-align: cent;
+  font-family: 'Roboto', sans-serif;
 `;
 
 const ForgotPasswordLink = styled.a`
@@ -239,7 +242,8 @@ const ForgotPasswordLink = styled.a`
     Roboto,
     Helvetica,
     sans-serif;
-  font-size: 10px;
+  font-size: 12px;
+  font-family: 'Roboto', sans-serif;
   color: rgba(243, 222, 191, 1);
   margin-top: 5px;
   text-decoration: none;
@@ -256,6 +260,7 @@ const ToggleButton = styled.button`
   background: none;
   border: none;
   font-size: 12px;
+  font-family: 'Roboto', sans-serif;
   color: #555;
   cursor: pointer;
 `;

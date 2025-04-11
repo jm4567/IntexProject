@@ -22,6 +22,8 @@ const NextArrow = ({ onClick }: any) => (
 );
 
 const Header: React.FC<HeaderProps> = ({ movies }) => {
+  console.log('HEADER MOVIES:', movies); // 🔍 check what you're getting
+
   const settings = {
     dots: false,
     infinite: true,
