@@ -36,7 +36,8 @@ builder.Services.AddDbContext<MovieDbContext>(options =>
     options.UseSqlite(builder.Configuration["ConnectionStrings:MoviesConnection"]));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration["ConnectionStrings:IdentityConnection"]));
+    options.UseSqlServer(builder.Configuration["ConnectionStrings:IdentityConnection"]));
+
 
 builder.Services.AddDbContext<RecommenderDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RecommenderConnection")));

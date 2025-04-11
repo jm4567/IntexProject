@@ -11,6 +11,7 @@ import { getCurrentUserEmail } from '../api/UserAPI';
 function MovieDetailsPage() {
   const location = useLocation();
   const { showId: routeShowId } = useParams();
+
   const [movieData, setMovieData] = useState<Movie | null>(
     (location.state as Movie) ?? null
   );
@@ -74,11 +75,12 @@ function MovieDetailsPage() {
         if (!currentMovie || currentMovie.showId !== routeShowId) {
           try {
             currentMovie = await fetchMovieById(routeShowId!);
-          } catch (err) {
+          } catch {
             setError('Movie not found.');
             return;
           }
         }
+
         setMovieData(currentMovie);
         window.scrollTo({ top: 0 });
 
@@ -121,6 +123,7 @@ function MovieDetailsPage() {
         const matchedCollab = all.movies.filter((m) =>
           collabTitles.map(trim).includes(trim(m.title))
         );
+
         const matchedContentInitial = all.movies.filter((m) =>
           contentTitles.map(trim).includes(trim(m.title))
         );
@@ -155,15 +158,10 @@ function MovieDetailsPage() {
           ...filteredFallbacks,
         ];
 
-        console.log('Matched Collab Movies:', matchedCollab);
-        console.log('Matched Content Movies:', matchedContentInitial);
-        console.log('Fallback Content Movies:', filteredFallbacks);
-        console.log('Final Recommendations:', finalContentMovies);
-
         setCollabMovies(matchedCollab);
         setContentMovies(finalContentMovies);
-      } catch (err) {
-        setError((err as Error).message);
+      } catch {
+        setError('Error loading data');
       } finally {
         setLoadingRecs(false);
       }
@@ -176,8 +174,6 @@ function MovieDetailsPage() {
       try {
         const email = await getCurrentUserEmail();
         setUserEmail(email);
-
-        // 🔧 Reset before checking the database
         setUserRating(0);
 
         if (email && movieData?.showId) {
@@ -186,14 +182,11 @@ function MovieDetailsPage() {
             { withCredentials: true }
           );
 
-          // Only set if there is actually a rating
           if (res.data?.rating !== undefined) {
             setUserRating(res.data.rating);
           }
         }
-      } catch (err) {
-        console.error('❌ Failed to fetch user data or rating:', err);
-        // 🔧 Optional: reset here too just in case
+      } catch {
         setUserRating(0);
       }
     };
@@ -235,7 +228,6 @@ function MovieDetailsPage() {
               className="movie-poster-img"
               key={resolvePoster()}
               onError={(e) => {
-                console.warn('❌ Image failed:', e.currentTarget.src);
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = '/images/Image_coming_soon.png';
               }}

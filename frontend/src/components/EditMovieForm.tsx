@@ -3,16 +3,20 @@ import { useState, useEffect } from 'react';
 import { Movie } from '../types/Movie';
 import { updateMovie } from '../api/MoviesAPI';
 
+// Props for the EditMovieForm component
 interface EditMovieFormProps {
   movie: Movie;
   onSuccess: () => void;
   onCancel: () => void;
 }
 
+// Main component for editing a movie
 const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
+  // Local state to manage form data and available genres
   const [formData, setFormData] = useState<Movie>({ ...movie });
   const [availableGenres, setAvailableGenres] = useState<string[]>([]);
 
+  // Load available genres from the API when the component mounts
   useEffect(() => {
     const loadGenres = async () => {
       try {
@@ -29,6 +33,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
     loadGenres();
   }, []);
 
+  // Handle changes to text/textarea input fields
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -39,11 +44,12 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
     }));
   };
 
+  // Handle form submission (updates the movie via API)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await updateMovie(formData.showId, formData);
-      onSuccess();
+      onSuccess(); // Callback to refresh or notify success
     } catch (error) {
       console.error('Error during updateMovie call:', error);
     }
@@ -51,6 +57,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
 
   return (
     <div style={{ maxWidth: '700px', margin: '0 auto', fontSize: '0.9rem' }}>
+      {/* Form container */}
       <form
         onSubmit={handleSubmit}
         style={{
@@ -67,6 +74,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
           ✏️ Edit Movie / TV Show
         </h2>
 
+        {/* Text input fields for basic movie details */}
         {[
           { label: 'Title', name: 'title' },
           { label: 'Type', name: 'type' },
@@ -102,6 +110,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
           </div>
         ))}
 
+        {/* Numeric input for release year */}
         <div style={{ marginBottom: '12px' }}>
           <label
             style={{
@@ -126,6 +135,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
           />
         </div>
 
+        {/* Textarea for movie description */}
         <div style={{ marginBottom: '12px' }}>
           <label
             style={{
@@ -150,6 +160,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
           />
         </div>
 
+        {/* Multi-select dropdown for genres */}
         <div style={{ marginBottom: '12px' }}>
           <label
             style={{
@@ -190,6 +201,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
           </small>
         </div>
 
+        {/* Poster preview if a poster URL is provided */}
         {formData.posterUrl && (
           <div style={{ marginBottom: '20px', textAlign: 'center' }}>
             <img
@@ -204,7 +216,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
           </div>
         )}
 
-        {/* Buttons */}
+        {/* Action buttons */}
         <div
           style={{
             display: 'flex',
@@ -213,6 +225,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
             marginTop: '20px',
           }}
         >
+          {/* Submit button */}
           <button
             type="submit"
             style={{
@@ -239,6 +252,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
             ✅ Update
           </button>
 
+          {/* Cancel button */}
           <button
             type="button"
             onClick={onCancel}

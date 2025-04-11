@@ -1,12 +1,17 @@
+// Import the stylesheet for this page
 import '../css/Privacy.css';
+
+// Import the navigation bar component
 import NavBar from '../components/NavBar'; // ✅ adjust path as needed
 
+// PrivacyPolicy page component
 const PrivacyPolicy = () => {
   return (
     <>
+      {/* NavBar component with dummy props for genre selection */}
       <NavBar selectedGenres={[]} setSelectedGenres={() => {}} />{' '}
-      {/* ✅ temp props */}
       <div className="privacy-wrapper">
+        {/* Header section with main title and contact link */}
         <div className="privacy-header">
           <h1>Privacy Policy</h1>
           <p>
@@ -15,10 +20,13 @@ const PrivacyPolicy = () => {
           </p>
         </div>
 
+        {/* Main content split into a sidebar and content area */}
         <div className="privacy-content-container">
+          {/* Sidebar: Table of Contents for internal anchor navigation */}
           <div className="privacy-sidebar">
             <h4>Table of Contents</h4>
             <ul className="toc-list">
+              {/* List of in-page navigation links */}
               <li>
                 <a href="#data-we-collect">What data do we collect?</a>
               </li>
@@ -64,7 +72,9 @@ const PrivacyPolicy = () => {
             </ul>
           </div>
 
+          {/* Main body of the privacy policy text */}
           <div className="privacy-main-content">
+            {/* Each section corresponds to an anchor target */}
             <h2 id="data-we-collect">What data do we collect?</h2>
             <ul>
               <li>
@@ -150,6 +160,7 @@ const PrivacyPolicy = () => {
             </p>
             <p>Email: support@cineniche.com</p>
 
+            {/* Back to top link */}
             <p className="mt-4">
               <a href="#top">Back to top</a>
             </p>
