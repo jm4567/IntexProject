@@ -1,3 +1,4 @@
+// Import necessary React hooks, types, API functions, and components
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Movie } from '../types/Movie';
 import { fetchMoreMovies } from '../api/MoviesAPI';
@@ -8,9 +9,13 @@ import MovieCard from '../components/MovieCard';
 import { useUser } from '../components/AuthorizeView';
 import MovieRow from '../components/MovieRow';
 import '../css/MoviePage.css';
-import AltMovieCard from '../components/AltMovieCard';
+import HiddenGems from '../components/HiddenGems';
+import { useLayoutEffect } from 'react';
 
+
+// Main MoviesPage component
 const MoviesPage = () => {
+  // Local state hooks for various data pieces
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -22,42 +27,53 @@ const MoviesPage = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const observer = useRef<IntersectionObserver | null>(null);
-  const loader = useRef<HTMLDivElement | null>(null);
-  const user = useUser();
-  //for header
+  const observer = useRef<IntersectionObserver | null>(null); // For infinite scrolling
+  const loader = useRef<HTMLDivElement | null>(null); // Sentinel element for loading more
+  const user = useUser(); // Authenticated user info
   const [topBannerMovies, setTopBannerMovies] = useState<Movie[]>([]);
   const [genreSections, setGenreSections] = useState<
     { title: string; movies: Movie[] }[]
   >([]);
+  const [allGenreMovies, setAllGenreMovies] = useState<Movie[]>([]);
+  const [fadeOutCurtain, setFadeOutCurtain] = useState(false);
 
+  useLayoutEffect(() => {
+    const justLoggedIn = sessionStorage.getItem('justLoggedIn');
+    if (justLoggedIn === 'true') {
+      setShowCurtain(true);
+      setTimeout(() => {
+        sessionStorage.removeItem('justLoggedIn');
+      }, 10); // wait a tiny bit
+    } else {
+      setShowCurtain(false);
+    }
+  }, []);
+
+  // Show/hide scroll-to-top button based on scroll position
   const handleScroll = () => {
     setShowScrollTop(window.scrollY > 400);
   };
 
+  // Scroll the page to the top smoothly
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Animates the intro split-screen curtain and then removes it
   const handlePlay = () => {
     const moviepage = document.querySelector('.movie-container');
     if (moviepage) moviepage.classList.add('visible');
-
     setTimeout(() => setStartSplit(true), 3000);
+
     setTimeout(() => setShowCurtain(false), 4000);
-    setTimeout(() => {
-      // const curtain = document.querySelector(
-      //   '.video-split-container'
-      // ) as HTMLElement;
-      // if (curtain) curtain.style.display = 'none';
-    }, 4000);
   };
 
+  // Load movies with pagination (infinite scrolling)
   const loadMovies = useCallback(async () => {
     try {
       const data = await fetchMoreMovies([], page, 10);
       if (data.movies.length === 0) {
-        setHasMore(false);
+        setHasMore(false); // Stop if no more movies
       } else {
         setAllMovies((prev) => {
           const existingIds = new Set(prev.map((m) => m.showId));
@@ -72,10 +88,11 @@ const MoviesPage = () => {
     }
   }, [page]);
 
+  // Fetch banner movies when component mounts
   useEffect(() => {
     const fetchBannerMovies = async () => {
       try {
-        const data = await fetchMoreMovies([], 1, 20000); // adjust if needed
+        const data = await fetchMoreMovies([], 1, 20000);
         const bannerList = data.movies.filter((movie) =>
           ['s42', 's7073', 's603', 's6065', 's6891', 's6063', 's6152'].includes(
             movie.showId
@@ -86,10 +103,40 @@ const MoviesPage = () => {
         console.error('Error fetching banner movies:', err);
       }
     };
-
     fetchBannerMovies();
   }, []);
 
+  // Reset movies when selected genres are changed
+  useEffect(() => {
+    const fetchAllForGenre = async () => {
+      try {
+        const data = await fetchMoreMovies([], 1, 10000); // or however many you want
+        setAllGenreMovies(data.movies);
+      } catch (err) {
+        console.error('Error fetching movies for filtering:', err);
+      }
+    };
+
+    if (selectedGenres.length > 0 && allGenreMovies.length === 0) {
+      fetchAllForGenre();
+    }
+  }, [selectedGenres, allGenreMovies.length]);
+
+  // useEffect(() => {
+  //   if (selectedGenres.length === 0) {
+  //     setPage(1);
+  //     setAllMovies([]);
+  //     setHasMore(true);
+  //   }
+  // }, [selectedGenres]);
+
+  // useEffect(() => {
+  //   if (selectedGenres.length === 0) {
+  //     loadMovies();
+  //   }
+  // }, [loadMovies, selectedGenres]);
+
+  // Reset paging when not filtering
   useEffect(() => {
     if (selectedGenres.length === 0) {
       setPage(1);
@@ -98,26 +145,26 @@ const MoviesPage = () => {
     }
   }, [selectedGenres]);
 
+
+  // Trigger loading more movies if no genres are selected
+
+  // Lazy-load when not filtering
   useEffect(() => {
     if (selectedGenres.length === 0) {
       loadMovies();
     }
   }, [loadMovies, selectedGenres]);
 
+  // Set up the IntersectionObserver to handle infinite scrolling
   useEffect(() => {
     if (!hasMore) return;
-
     if (observer.current) observer.current.disconnect();
     observer.current = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
         setPage((prevPage) => prevPage + 1);
       }
     });
-
-    if (loader.current) {
-      observer.current.observe(loader.current);
-    }
-
+    if (loader.current) observer.current.observe(loader.current);
     return () => {
       if (loader.current && observer.current) {
         observer.current.unobserve(loader.current);
@@ -125,23 +172,21 @@ const MoviesPage = () => {
     };
   }, [hasMore]);
 
+  // Attach scroll event listener for "back to top" button
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Fetch personalized recommendations if user is logged in
   useEffect(() => {
     const fetchRecs = async () => {
       try {
         const res = await fetch(
           'https://localhost:5000/api/personalized-recommendations/by-user',
-          {
-            credentials: 'include',
-          }
+          { credentials: 'include' }
         );
-
         if (!res.ok) throw new Error('Failed to fetch recommendations');
-
         const data = await res.json();
         setRecommendedMovies(data.recommended || []);
         setContentBasedMovies(data.content || []);
@@ -151,9 +196,10 @@ const MoviesPage = () => {
         console.error('Failed to load recommendations:', err);
       }
     };
-
     if (user?.email) fetchRecs();
   }, [user]);
+
+  // Filter movies based on selected genres
 
   // const topBannerMovies = useMemo(() => {
   //   return allMovies.filter((movie) =>
@@ -170,14 +216,14 @@ const MoviesPage = () => {
   //     )
   //   );
   // }, [allMovies]);
-
   const filteredMovies = selectedGenres.length
-    ? allMovies.filter((movie) =>
+    ? allGenreMovies.filter((movie) =>
         movie.genres?.some((genre) => selectedGenres.includes(genre))
       )
     : [];
 
-  console.log('ALL MOVIES:', allMovies);
+
+  // JSX layout
 
   return (
     <div className="full-screen-wrapper">
@@ -188,15 +234,18 @@ const MoviesPage = () => {
             selectedGenres={selectedGenres}
             setSelectedGenres={setSelectedGenres}
           />
-          {/* <Header movies={topBannerMovies} /> */}
+
+          {/* Show header only if no genre is selected */}
           {!selectedGenres || selectedGenres.length === 0 ? (
             <Header movies={topBannerMovies} />
           ) : null}
+
           <div className="container-fluid mt-4 ">
             <div className="row">
               <div className="col-md-12">
                 {error && <p className="text-danger">{error}</p>}
 
+                {/* Genre-filtered movies view */}
                 {selectedGenres.length > 0 ? (
                   <div className="row">
                     {filteredMovies.map((movie) => (
@@ -210,8 +259,23 @@ const MoviesPage = () => {
                   </div>
                 ) : (
                   <>
+
+                    {/* Personalized and genre-based recommendations */}
                     <h1 className="mb-3">Recommended for You</h1>
                     <MovieRow title="" movies={recommendedMovies} useAltCard />
+
+                    {/* Only show if not admin */}
+                    {user?.email !== 'adminuser1@gmail.com' && (
+                      <>
+                        <h1 className="mb-3">Recommended for You</h1>
+                        <MovieRow
+                          title=""
+                          movies={recommendedMovies}
+                          useAltCard
+                        />
+                      </>
+                    )}
+
 
                     {genreSections.map((section, idx) => (
                       <div key={idx}>
@@ -219,6 +283,12 @@ const MoviesPage = () => {
                         <MovieRow title="" movies={section.movies} useAltCard />
                       </div>
                     ))}
+
+                    {/* Hidden gems section */}
+                    <HiddenGems defaultGenre="Action" />
+
+                    {/* All movies with infinite scroll */}
+
                     <h1 className="mb-3">All Movies</h1>
                     <div className="row">
                       {allMovies.map((movie) => (
@@ -228,6 +298,7 @@ const MoviesPage = () => {
                       ))}
                     </div>
 
+                    {/* Infinite loader visual */}
                     {hasMore && (
                       <div
                         ref={loader}
@@ -275,12 +346,14 @@ const MoviesPage = () => {
 
       <Footer />
 
+      {/* Scroll-to-top button */}
       {showScrollTop && (
         <button className="back-to-top-btn" onClick={scrollToTop}>
           ⬆ Back to Top
         </button>
       )}
 
+      {/* Opening video split screen curtain */}
       {showCurtain && (
         <div className={`video-split-container ${startSplit ? 'split' : ''}`}>
           <div className="video-half top-half">

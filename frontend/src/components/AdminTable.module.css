@@ -3,10 +3,10 @@
 .tableContainer {
   overflow-x: auto;
   background: #fdf6ec; /* cream background */
-  border: 2px solid #264653;
+  border: 2px solid #1f3b3c;
   border-radius: 12px;
-  box-shadow: 4px 4px 0px #264653;
-  font-family: 'Arial', sans-serif;
+  box-shadow: 4px 4px 0px #1f3b3c;
+  font-family: 'Roboto', sans-serif;
   font-size: 0.95rem;
   color: #1e1e1e;
 }
@@ -18,13 +18,14 @@
 }
 
 .table th {
-  background-color: #264653;
+  background-color: #1f3b3c;
   color: white;
   text-transform: uppercase;
   font-size: 0.8rem;
   letter-spacing: 0.05em;
   padding: 8px 10px;
   text-align: left;
+  font-family: 'Roboto', sans-serif;
 }
 
 .table td {
@@ -48,6 +49,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: background 0.2s ease;
+  font-family: 'Roboto', sans-serif;
 }
 
 .btnEdit:hover {
@@ -64,6 +66,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: background 0.2s ease;
+  font-family: 'Roboto', sans-serif;
 }
 
 .btnDelete:hover {

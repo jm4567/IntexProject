@@ -1,15 +1,18 @@
-'use client';
-import styled from 'styled-components';
+'use client'; // Enables client-side rendering for this file
 
+import styled from 'styled-components'; // Import styled-components for CSS-in-JS styling
+
+// Define the props expected by the FormInput component
 interface FormInputProps {
-  placeholder: string;
-  type?: string;
-  id?: string;
-  name?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder: string; // Placeholder text shown inside the input
+  type?: string; // Optional input type (e.g., "text", "email", "password")
+  id?: string; // Optional HTML id attribute
+  name?: string; // Optional name for form field
+  value: string; // Controlled input value
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // Change handler
 }
 
+// Stateless reusable input field styled with styled-components
 export const FormInput = ({
   placeholder,
   type = 'text',
@@ -21,28 +24,30 @@ export const FormInput = ({
   return (
     <InputWrapper>
       <Input
-        type={type}
-        name={name}
-        id={id}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        aria-label={placeholder}
+        type={type} // Input type (default: text)
+        name={name} // Form field name
+        id={id} // Element ID for labeling
+        value={value} // Controlled component value
+        onChange={onChange} // Triggered when user types
+        placeholder={placeholder} // Placeholder text
+        aria-label={placeholder} // Accessibility label
       />
     </InputWrapper>
   );
 };
 
+// Wrapper around each input field for spacing/styling
 const InputWrapper = styled.div`
   position: relative;
   width: 100%;
   margin-bottom: 37px;
 
   &:last-child {
-    margin-bottom: 0;
+    margin-bottom: 0; // Remove margin if it's the last input
   }
 `;
 
+// Styled input component with custom theming
 const Input = styled.input`
   width: 100%;
   padding: 12px;
@@ -58,13 +63,13 @@ const Input = styled.input`
   color: #43786c;
 
   &::placeholder {
-    color: #888; /* or any color you'd like for placeholder text */
-    opacity: 1; /* ensure the placeholder is fully visible */
+    color: #888; // Placeholder color
+    opacity: 1; // Full visibility
   }
 
   &:focus {
     outline: none;
-    border-color: rgba(234, 170, 54, 1);
+    border-color: rgba(234, 170, 54, 1); // Highlight border on focus
   }
 `;
 

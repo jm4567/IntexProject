@@ -6,7 +6,7 @@
 
 .privacy-header {
   text-align: center;
-  background-color: rgba(64, 117, 104, 0.85); /* 85% opacity */
+  background-color: #1f3b3c !important; /* 85% opacity */
   color: white;
   padding: 2rem;
   border-radius: 8px;
@@ -39,7 +39,7 @@
 }
 
 .toc-list a {
-  color: rgba(64, 117, 104, 0.85); /* 85% opacity */
+  color: rgba(31, 59, 60, 0.75); /* 85% opacity */
   text-decoration: none;
 }
 
