@@ -31,74 +31,72 @@ const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
         <Logo />
 
         {/* Center nav links */}
-        <div className="nav-main">
-          <div className="nav-inner">
-            <div className="nav-left">
-              {currentPath === '/genres' && (
-                <Link to="/movies" className="navbar-brand">
-                  Go Back
-                </Link>
-              )}
-              {currentPath === '/managemovies' && (
-                <Link to="/" className="navbar-brand">
-                  Landing Page
-                </Link>
-              )}
-              {(['/movies'].includes(currentPath) ||
-                currentPath.startsWith('/movie/')) && (
-                <Link to="/movies" className="navbar-brand">
-                  Home
-                </Link>
-              )}
-            </div>
+        <div className="nav-inner">
+          <div className="nav-left">
+            {currentPath === '/genres' && (
+              <Link to="/movies" className="navbar-brand">
+                Go Back
+              </Link>
+            )}
+            {currentPath === '/managemovies' && (
+              <Link to="/" className="navbar-brand">
+                Landing Page
+              </Link>
+            )}
+            {(['/movies'].includes(currentPath) ||
+              currentPath.startsWith('/movie/')) && (
+              <Link to="/movies" className="navbar-brand">
+                Home
+              </Link>
+            )}
+          </div>
 
-            <div className="nav-middle">
-              {currentPath === '/managemovies' && (
-                <Link to="/movies" className="navbar-brand">
-                  Access Movies
-                </Link>
-              )}
-              {currentPath === '/movies' && (
-                <div className="genre-toggle-wrapper">
-                  <div
-                    className="navbar-brand genre-filter-toggle"
-                    onClick={() => setShowGenreDropdown((prev) => !prev)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    Filter by Genre <span className="arrow">▼</span>
-                  </div>
-                  {showGenreDropdown && (
-                    <div className="floating-genre-dropdown">
-                      <GenreFilter
-                        selectedGenres={selectedGenres}
-                        setSelectedGenres={setSelectedGenres}
-                      />
-                    </div>
-                  )}
+          <div className="nav-middle">
+            {currentPath === '/managemovies' && (
+              <Link to="/movies" className="navbar-brand">
+                Access Movies
+              </Link>
+            )}
+            {currentPath === '/movies' && (
+              <div className="genre-toggle-wrapper">
+                <div
+                  className="navbar-brand genre-filter-toggle"
+                  onClick={() => setShowGenreDropdown((prev) => !prev)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  Filter by Genre
                 </div>
-              )}
-            </div>
-
-            <div className="nav-right">
-              {['/movies', '/managemovies'].includes(currentPath) && (
-                <>
-                  <div
-                    className="search-icon navbar-brand"
-                    onClick={toggleSearch}
-                  >
-                    Search 🔍
+                {showGenreDropdown && (
+                  <div className="floating-genre-dropdown">
+                    <GenreFilter
+                      selectedGenres={selectedGenres}
+                      setSelectedGenres={setSelectedGenres}
+                    />
                   </div>
-                  {showSearch && (
-                    <div className="col-md-12 mb-4 drop-down">
-                      <MovieSearch
-                        selectedMovies={selectedMovies}
-                        setSelectedMovies={setSelectedMovies}
-                      />
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="nav-right">
+            {['/movies', '/managemovies'].includes(currentPath) && (
+              <>
+                <div
+                  className="search-icon navbar-brand"
+                  onClick={toggleSearch}
+                >
+                  Search
+                </div>
+                {showSearch && (
+                  <div className="col-md-12 mb-4 search-dropdown nav-search">
+                    <MovieSearch
+                      selectedMovies={selectedMovies}
+                      setSelectedMovies={setSelectedMovies}
+                    />
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
 

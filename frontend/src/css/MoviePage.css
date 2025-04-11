@@ -5,6 +5,8 @@
   background-color: #f3debe;
   overflow-x: hidden;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .movie-container {
@@ -15,6 +17,7 @@
   opacity: 0;
   transition: opacity 1s ease-in-out;
   overflow: visible; /* <--- this is critical! */
+  flex: 1;
 }
 
 .movie-container,
@@ -23,13 +26,25 @@
   position: relative;
   z-index: 2; /* ⬅ keeps it below dropdown */
   overflow: visible; /* ⬅ critical to allow things to spill out */
-  background-color: #f3debe !important;
+  /*background-color: #f3debe;*/
+  background-color: #1f3b3c;
 }
 
 .movie-container.visible {
   opacity: 1;
 }
 
+h1,
+h2,
+p .movie-content {
+  font-weight: bold;
+  font-size: 35px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.loader-text {
+  font-family: 'Roboto', sans-serif;
+}
 .video-split-container {
   position: fixed;
   top: 0;
@@ -142,6 +157,10 @@
   padding: 0 2rem;
 }
 
+.heading-font {
+  color: white;
+}
+
 .back-to-top-btn {
   position: fixed;
   bottom: 30px;
@@ -175,7 +194,7 @@
   justify-content: center;
   align-items: center;
   color: #f8f8f8;
-  font-family: monospace;
+  font-family: 'Roboto', sans-serif;
   font-size: 1.5rem;
   letter-spacing: 2px;
 }
