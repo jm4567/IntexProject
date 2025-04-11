@@ -242,31 +242,32 @@ const MoviesPage = () => {
                   </div>
                 ) : (
                   <>
-                    {/* Personalized and genre-based recommendations */}
-                    <h1 className="mb-3 text-white">Recommended for You</h1>
-                    <MovieRow title="" movies={recommendedMovies} useAltCard />
-
-                    {/* Only show if not admin */}
+                    {/* Only show if NOT admin */}
                     {user?.email !== 'adminuser1@gmail.com' && (
                       <>
+                        {/* Personalized and genre-based recommendations */}
                         <h1 className="mb-3 text-white">Recommended for You</h1>
                         <MovieRow
                           title=""
                           movies={recommendedMovies}
                           useAltCard
                         />
+
+                        {genreSections.map((section, idx) => (
+                          <div key={idx}>
+                            <h2 className="mb-3 text-white">{section.title}</h2>
+                            <MovieRow
+                              title=""
+                              movies={section.movies}
+                              useAltCard
+                            />
+                          </div>
+                        ))}
+
+                        {/* Hidden gems section */}
+                        <HiddenGems defaultGenre="Action" />
                       </>
                     )}
-
-                    {genreSections.map((section, idx) => (
-                      <div key={idx}>
-                        <h2 className="mb-3 text-white">{section.title}</h2>
-                        <MovieRow title="" movies={section.movies} useAltCard />
-                      </div>
-                    ))}
-
-                    {/* Hidden gems section */}
-                    <HiddenGems defaultGenre="Action" />
 
                     {/* All movies with infinite scroll */}
 

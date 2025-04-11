@@ -26,6 +26,12 @@ function MovieDetailsPage() {
   const [userRating, setUserRating] = useState<number>(0);
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
+  const [showVideo, setShowVideo] = useState(false);
+
+  const handleWatchClick = () => {
+    setShowVideo((prev) => !prev); // Toggles it on/off
+  };
+
   const extractGenres = (movie: any): string[] => {
     const genreKeys = [
       'action',
@@ -325,9 +331,26 @@ function MovieDetailsPage() {
                 </p>
               )}
             </div>
-            <button className="btn btn-outline-dark mt-3 button-style">
-              ► Watch Now
+            <button
+              className="btn btn-outline-dark mt-3 button-style"
+              onClick={handleWatchClick}
+            >
+              {showVideo ? '⏹ Hide Video' : '► Watch Now'}
             </button>
+
+            {showVideo && (
+              <div className="video-container mt-4">
+                <iframe
+                  width="560"
+                  height="315"
+                  src="https://www.youtube.com/embed/BU_j7fyBF-A?si=zhNbvG4f-TulkdLy&autoplay=1"
+                  title="YouTube video player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            )}
           </div>
         </div>
 

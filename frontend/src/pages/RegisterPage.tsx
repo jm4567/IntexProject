@@ -100,7 +100,6 @@ const RegisterForm = () => {
         placeholder="Email address"
         value={email}
         onChange={handleChange}
-        disabled={!!email} // Prevent editing if email is pre-filled
       />
 
       {/* Password input with toggle */}

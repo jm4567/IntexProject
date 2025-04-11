@@ -84,7 +84,8 @@ const NavBar = ({ selectedGenres, setSelectedGenres }: NavBarProps) => {
           </div>
 
           <div className="nav-right">
-            {['/movies', '/managemovies'].includes(currentPath) && (
+            {(['/movies', '/managemovies'].includes(currentPath) ||
+              currentPath.startsWith('/movie/')) && (
               <>
                 <div
                   className="search-icon navbar-brand"

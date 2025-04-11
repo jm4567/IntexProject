@@ -56,7 +56,6 @@ p .movie-content {
   overflow: hidden;
   transition: opacity 1s ease-in-out;
   opacity: 1;
-  background-color: black; /* temp for debug */
   z-index: 9999;
 }
 .video-split-container.hidden {
