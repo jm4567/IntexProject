@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import '@fortawesome/fontawesome-free/css/all.css'; // Ensure Font Awesome is loaded
@@ -17,10 +17,10 @@ const LoginForm = () => {
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
 
-  const handleGoogleLogin = () => {
-    // Redirect to the backend endpoint that initiates the Google challenge.
-    window.location.href = 'https://localhost:5000/external-login/google';
-  };
+  // const handleGoogleLogin = () => {
+  //   // Redirect to the backend endpoint that initiates the Google challenge.
+  //   window.location.href = 'https://localhost:5000/external-login/google';
+  // };
 
   const link = document.createElement('link');
   link.href =

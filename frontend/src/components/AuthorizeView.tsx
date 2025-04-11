@@ -1,6 +1,5 @@
 // Import necessary React functions and routing utilities
 import React, { useState, useEffect, createContext } from 'react';
-import { Navigate } from 'react-router-dom';
 
 // Define a TypeScript interface for user structure
 interface User {
